@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Professional solar load calculator for estimating energy consumption, PV capacity, inverter size and battery capacity.">
+<title>Solar Load Calculator | ToolVault</title>
+<style>
+:root{
+ --green:#087443;--green2:#12a05a;--teal:#087f73;--lime:#a3e635;--sun:#f6b73c;
+ --ink:#15372b;--muted:#71827b;--bg:#f4f8f6;--card:#fff;--line:#dce8e2;
+ --soft:#edf8f2;--danger:#d94a4a;--shadow:0 18px 55px rgba(14,75,50,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:
+ radial-gradient(circle at 10% 0%,rgba(18,160,90,.10),transparent 28%),
+ radial-gradient(circle at 95% 12%,rgba(246,183,60,.10),transparent 22%),
+ var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+.topbar{height:66px;background:#073c2a;color:#fff;display:flex;align-items:center}
+.topbar-inner{width:min(1180px,calc(100% - 36px));margin:auto;display:flex;justify-content:space-between;align-items:center}
+.logo{display:flex;align-items:center;gap:10px;font-weight:850;font-size:20px}
+.logo-icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#19b866,#0a8062);box-shadow:inset 0 1px rgba(255,255,255,.25)}
+.top-status{font-size:12px;font-weight:750;padding:7px 12px;border:1px solid rgba(255,255,255,.18);border-radius:99px;background:rgba(255,255,255,.07)}
+.page{width:min(1180px,calc(100% - 36px));margin:auto}
+.hero{display:flex;align-items:end;justify-content:space-between;gap:30px;padding:42px 0 28px}
+.kicker{display:inline-flex;gap:7px;align-items:center;color:var(--green);font-size:12px;font-weight:850;letter-spacing:.04em;text-transform:uppercase}
+.hero h1{font-size:clamp(32px,4.5vw,52px);line-height:1.02;letter-spacing:-1.8px;margin:10px 0 10px}
+.hero p{margin:0;color:var(--muted);max-width:680px;font-size:15px;line-height:1.65}
+.hero-badge{min-width:220px;padding:16px;border:1px solid #cfe3d9;background:rgba(255,255,255,.78);border-radius:16px;box-shadow:0 8px 30px rgba(14,75,50,.06)}
+.hero-badge strong{display:block;color:var(--green);font-size:14px}.hero-badge span{font-size:12px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,.75fr);gap:18px;align-items:start}
+.card{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
+.card-head{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}
+.step{width:32px;height:32px;display:grid;place-items:center;border-radius:10px;background:var(--soft);color:var(--green);font-size:12px;font-weight:900}
+.card-head h2{font-size:16px;margin:0}.card-head p{font-size:11px;color:var(--muted);margin:3px 0 0}
+.card-body{padding:18px 20px}
+.table-wrap{border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.load-table{width:100%;border-collapse:collapse;table-layout:fixed}
+.load-table th{background:#f0f7f3;color:#60776e;text-transform:uppercase;letter-spacing:.055em;font-size:10px;text-align:left;padding:10px 8px}
+.load-table td{border-top:1px solid #edf2ef;padding:7px 8px;background:#fff}
+.load-table th:nth-child(1){width:37%}.load-table th:nth-child(2){width:15%}.load-table th:nth-child(3){width:18%}.load-table th:nth-child(4){width:18%}.load-table th:nth-child(5){width:12%}
+.control{height:38px;width:100%;border:1px solid #cddbd5;background:#fbfdfc;border-radius:9px;padding:0 9px;color:var(--ink);font:inherit;font-size:13px;outline:none;transition:.18s}
+.control:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(8,127,115,.10);background:#fff}
+.remove{height:32px;width:32px;border:1px solid #f1cccc;background:#fff7f7;color:var(--danger);border-radius:9px;font-weight:900;cursor:pointer}
+.add{margin-top:10px;border:1px dashed #9bcdb4;background:#f2fbf5;color:var(--green);font-weight:850;border-radius:10px;padding:9px 13px;cursor:pointer}
+.add:hover{background:#e6f7ed}
+.settings{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{padding:12px;border:1px solid var(--line);border-radius:13px;background:#fbfdfc}
+.field label{font-size:11px;font-weight:800;color:#527067;display:block;margin-bottom:6px}
+.field small{display:block;color:#8a9993;font-size:10px;margin-top:5px}
+.backup{margin-top:12px;border:1px solid #cde4d8;background:linear-gradient(135deg,#f2fbf6,#eef9f8);border-radius:14px;padding:13px}
+.backup-title{font-size:12px;font-weight:850;color:var(--green);margin-bottom:9px}
+.calculate{width:100%;border:0;border-radius:12px;padding:14px;margin-top:14px;color:#fff;font-weight:900;font-size:14px;cursor:pointer;background:linear-gradient(105deg,#087443,#087f73);box-shadow:0 10px 25px rgba(8,116,67,.20);transition:.18s}
+.calculate:hover{transform:translateY(-1px);box-shadow:0 14px 30px rgba(8,116,67,.26)}
+.calculate:active{transform:translateY(0)}
+.live{font-size:10px;color:#71827b;text-align:center;margin-top:8px}
+.summary{position:relative;align-self:start}
+.summary-top{padding:14px 16px;background:linear-gradient(135deg,#073c2a,#087443);color:#fff}
+.summary-top small{opacity:.72;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+.summary-top h2{font-size:18px;margin:5px 0 2px}.summary-top p{margin:0;font-size:11px;opacity:.72}
+.score{padding:13px 16px;border-bottom:1px solid var(--line)}
+.score-label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:800}.score-value{font-size:26px;line-height:1;margin-top:5px;font-weight:900;color:var(--green)}.score-unit{font-size:12px;color:var(--muted);margin-left:4px}
+.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:10px 16px}
+.mini{border:1px solid var(--line);border-radius:12px;padding:11px;background:#fbfdfc}.mini span{display:block;font-size:10px;color:var(--muted)}.mini strong{display:block;font-size:16px;margin-top:4px;color:var(--ink)}
+.battery-list{padding:0 16px 12px}.battery-title{font-size:11px;font-weight:850;color:#527067;margin:4px 0 8px}
+.bat{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:11px;margin-top:7px;background:#fff}.bat strong{color:var(--green);font-size:15px}.bat span{font-size:11px;color:var(--muted)}
+.empty{text-align:center;padding:10px 16px;color:#80918a;font-size:10px;border-top:1px solid var(--line)}
+.drag-handle{display:flex;align-items:center;justify-content:center;gap:6px;padding:6px 10px;border-bottom:1px solid rgba(255,255,255,.12);font-size:10px;opacity:.75;cursor:grab;user-select:none}.drag-handle:active{cursor:grabbing}.summary.dragging{opacity:.96;box-shadow:0 25px 65px rgba(8,116,67,.20);z-index:20}
+.full{grid-column:1/-1}
+.results{margin-top:18px;display:none}
+.results.show{display:block;animation:rise .35s ease}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.results-head{padding:18px 20px;border-bottom:1px solid var(--line)}.results-head h2{margin:0;font-size:17px}.results-head p{margin:4px 0 0;color:var(--muted);font-size:11px}
+.result-grid{padding:16px 20px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.result{border:1px solid var(--line);border-radius:13px;padding:13px;min-height:86px;background:#fff}.result.highlight{background:linear-gradient(135deg,#effaf3,#edf9f7);border-color:#c6e6d5}
+.result span{display:block;color:var(--muted);font-size:10px;font-weight:750}.result strong{display:block;color:var(--green);font-size:20px;margin-top:7px;line-height:1.1}.result small{display:block;color:#82918c;font-size:9px;margin-top:5px}
+.note{padding:13px 20px;background:#f6faf8;border-top:1px solid var(--line);font-size:11px;line-height:1.65;color:#687a73}
+.info{margin-top:18px;padding:18px 20px}.info h2{margin:0 0 7px;font-size:15px}.info p{margin:0;color:var(--muted);font-size:12px;line-height:1.7}
+footer{text-align:center;color:#80918a;font-size:11px;padding:28px}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.summary{position:relative}.hero{align-items:start;flex-direction:column}.hero-badge{width:100%}.result-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:620px){.page,.topbar-inner{width:min(100% - 22px,1180px)}.hero{padding:28px 0 20px}.card-head,.card-body{padding:14px}.table-wrap{overflow-x:auto}.load-table{min-width:650px}.settings{grid-template-columns:1fr}.result-grid{grid-template-columns:1fr}.mini-grid{padding-left:14px;padding-right:14px}.battery-list{padding-left:14px;padding-right:14px}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="topbar-inner"><div class="logo"><span class="logo-icon">☀</span>ToolVault</div><div class="top-status">⚡ Free Renewable Energy Tool</div></div></header>
+
+<main class="page">
+<section class="hero">
+<div>
+<div class="kicker">◉ Renewable Energy Planning</div>
+<h1>Solar Load Calculator</h1>
+<p>Build a quick solar estimate from your appliance load. See energy consumption, PV capacity, inverter sizing and 12V / 24V / 48V battery capacity in one clean dashboard.</p>
+</div>
+<div class="hero-badge"><strong>● Live calculation dashboard</strong><span>Change any input and recalculate instantly.</span></div>
+</section>
+
+<div class="layout">
+<section class="card">
+<div class="card-head"><div class="step">01</div><div><h2>Appliances & Load</h2><p>Enter the appliances you want the solar system to support.</p></div></div>
+<div class="card-body">
+<div class="table-wrap">
+<table class="load-table">
+<thead><tr><th>Appliance</th><th>Quantity</th><th>Watts</th><th>Hours / day</th><th></th></tr></thead>
+<tbody id="appliances"></tbody>
+</table>
+</div>
+<button id="addAppliance" class="add" type="button">＋ Add appliance</button>
+</div>
+</section>
+
+<aside class="card summary">
+<div class="summary-top"><div class="drag-handle" id="dragHandle">⋮⋮ Drag overview</div><small>System overview</small><h2 id="sidePV">— kW</h2><p>Required solar capacity</p></div>
+<div class="score"><div class="score-label">Connected load</div><div class="score-value" id="sideLoad">—<span class="score-unit">W</span></div></div>
+<div class="mini-grid"><div class="mini"><span>Daily energy</span><strong id="sideDaily">—</strong></div><div class="mini"><span>Inverter</span><strong id="sideInv">—</strong></div></div>
+<div class="battery-list"><div class="battery-title">Recommended battery module</div><div class="bat"><span>12V</span><strong id="sideBat12">— Ah</strong></div><div class="bat"><span>24V</span><strong id="sideBat24">— Ah</strong></div><div class="bat"><span>48V</span><strong id="sideBat48">— Ah</strong></div></div>
+<div class="empty">Results update after calculation.</div>
+</aside>
+
+<section class="card full">
+<div class="card-head"><div class="step">02</div><div><h2>Solar Settings</h2><p>Set the local solar resource and planning losses.</p></div></div>
+<div class="card-body">
+<div class="settings">
+<div class="field"><label>Peak sun hours / day</label><input id="sunHours" class="control" type="number" min="1" max="12" step=".1" value="5"><small>Typical planning input: 4–6 hours.</small></div>
+<div class="field"><label>System losses</label><input id="losses" class="control" type="number" min="0" max="50" step="1" value="20"><small>Accounts for wiring, temperature, dust and other losses.</small></div>
+</div>
+</div>
+</section>
+
+<section class="card full">
+<div class="card-head"><div class="step">03</div><div><h2>Battery Backup</h2><p>Only enter the backup load and required backup time.</p></div></div>
+<div class="card-body">
+<div class="backup"><div class="backup-title">⚡ Simple battery sizing</div><div style="font-size:11px;color:#657870;line-height:1.55">Choose the load you want to keep running during an outage and the number of hours you need. The calculator automatically shows equivalent 12V, 24V and 48V capacities.</div></div>
+<div class="settings" style="margin-top:12px">
+<div class="field"><label>Backup load (Watts)</label><input id="backupLoad" class="control" type="number" min="0" step="10" value="500"></div>
+<div class="field"><label>Desired backup time (hours)</label><input id="backupHours" class="control" type="number" min=".5" step=".5" value="4"></div>
+</div>
+<button id="calculate" class="calculate" type="button">Calculate Solar System <span>→</span></button>
+<div class="live">Planning estimate • No fixed panel wattage assumption</div>
+</div>
+</section>
+</div>
+
+<section id="results" class="card results">
+<div class="results-head"><h2>Your Solar System Estimate</h2><p>Calculated from your current appliance load, solar settings and backup requirement.</p></div>
+<div class="result-grid">
+<div class="result"><span>Total connected load</span><strong id="connectedLoad">—</strong></div>
+<div class="result"><span>Daily consumption</span><strong id="dailyEnergy">—</strong></div>
+<div class="result"><span>Monthly consumption</span><strong id="monthlyEnergy">—</strong></div>
+<div class="result"><span>Annual consumption</span><strong id="annualEnergy">—</strong></div>
+<div class="result highlight"><span>Required PV capacity (kW)</span><strong id="pvCapacity">—</strong></div>
+<div class="result highlight"><span>Required PV capacity (W)</span><strong id="pvWatts">—</strong></div>
+<div class="result highlight"><span>Recommended inverter</span><strong id="inverterSize">—</strong></div>
+<div class="result highlight"><span>Battery energy required</span><strong id="batteryEnergy">—</strong></div>
+<div class="result"><span>12V Battery Capacity</span><strong id="battery12">—</strong><small>Nearest practical module</small></div>
+<div class="result"><span>24V Battery Capacity</span><strong id="battery24">—</strong><small>Nearest practical module</small></div>
+<div class="result"><span>48V Battery Capacity</span><strong id="battery48">—</strong><small>Nearest practical module</small></div>
+<div class="result"><span>Backup load used</span><strong id="backupLoadResult">—</strong></div>
+</div>
+<div class="note"><b>Planning assumptions:</b> 25% inverter headroom and 80% usable battery energy. PV capacity is a power rating (kW/W), while kWh is used only for energy consumption. PV capacity is calculated from daily kWh ÷ peak-sun-hours ÷ (1 − losses). Battery capacity is rounded upward to the next practical module size for each system voltage. Actual system design should consider battery chemistry, manufacturer specifications, starting currents, temperature, shading and site conditions.</div>
+</section>
+
+<section class="card info"><h2>How the calculator works</h2><p>Daily energy = Quantity × Watts × Hours/day. Solar capacity is estimated from daily energy, peak sun hours and system losses. Battery energy is based on backup load × backup hours, adjusted for 80% usable energy. Inverter sizing includes 25% planning headroom.</p></section>
+</main>
+<footer>© 2026 ToolVault · Practical tools for renewable energy planning</footer>
+
+<script>
+(function(){
+"use strict";
+
+const APPLIANCES=[
+ ["LED Bulb",10],["Ceiling Fan",70],["TV",100],["Refrigerator",200],
+ ["Laptop",60],["Water Pump",750],["Iron",1000],["Air Conditioner",1200],
+ ["Washing Machine",500],["LED Tube Light",20],["Other",100]
+];
+
+const $=id=>document.getElementById(id);
+const tbody=$("appliances");
+
+function num(el, fallback=0){
+  const n=parseFloat(el && el.value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function makeInput(cls,type,value,min="0",max="",step="1"){
+  const el=document.createElement("input");
+  el.className="control "+cls;
+  el.type=type;
+  el.value=value;
+  el.min=min;
+  if(max!=="") el.max=max;
+  el.step=step;
+  return el;
+}
+
+function addAppliance(name="Other",qty=1,watts=100,hours=1){
+  const tr=document.createElement("tr");
+
+  const tdName=document.createElement("td");
+  const select=document.createElement("select");
+  select.className="control name";
+
+  APPLIANCES.forEach(item=>{
+    const option=document.createElement("option");
+    option.value=item[0];
+    option.textContent=item[0];
+    option.dataset.watts=item[1];
+    if(item[0]===name) option.selected=true;
+    select.appendChild(option);
+  });
+  tdName.appendChild(select);
+
+  const tdQty=document.createElement("td");
+  const qtyInput=makeInput("qty","number",qty,0,"","1");
+  tdQty.appendChild(qtyInput);
+
+  const tdWatts=document.createElement("td");
+  const watt=makeInput("watts","number",watts,0,"","1");
+  tdWatts.appendChild(watt);
+
+  const tdHours=document.createElement("td");
+  const hoursInput=makeInput("hours","number",hours,0,24,"0.5");
+  tdHours.appendChild(hoursInput);
+
+  const tdRemove=document.createElement("td");
+  const remove=document.createElement("button");
+  remove.type="button";
+  remove.className="remove";
+  remove.textContent="×";
+  remove.title="Remove appliance";
+  tdRemove.appendChild(remove);
+
+  tr.append(tdName,tdQty,tdWatts,tdHours,tdRemove);
+  tbody.appendChild(tr);
+
+  select.addEventListener("change",function(){
+    const option=this.options[this.selectedIndex];
+    watt.value=option.dataset.watts;
+    update();
+  });
+
+  [qtyInput,watt,hoursInput].forEach(input=>{
+    input.addEventListener("input",update);
+    input.addEventListener("change",update);
+  });
+
+  remove.addEventListener("click",function(){
+    tr.remove();
+    update();
+  });
+
+  return tr;
+}
+
+function nextModule(required,list){
+  for(const value of list){
+    if(value>=required) return value;
+  }
+  return Math.ceil(required/100)*100;
+}
+
+function update(){
+  let connected=0;
+  let dailyWh=0;
+
+  tbody.querySelectorAll("tr").forEach(row=>{
+    const quantity=Math.max(0,num(row.querySelector(".qty")));
+    const watts=Math.max(0,num(row.querySelector(".watts")));
+    const hours=Math.min(24,Math.max(0,num(row.querySelector(".hours"))));
+
+    connected += quantity*watts;
+    dailyWh += quantity*watts*hours;
+  });
+
+  const sunHours=Math.max(1,num($("sunHours"),5));
+  const losses=Math.min(50,Math.max(0,num($("losses"),20)));
+  const usableSolar=1-(losses/100);
+
+  // PV power in watts. Daily energy is Wh/day.
+  const pvRaw=dailyWh/(sunHours*usableSolar);
+  const pvW=Math.max(0,Math.ceil(pvRaw/10)*10);
+
+  const inverter=Math.max(1,Math.ceil((connected*1.25)/100)/10);
+
+  const backupLoad=Math.max(0,num($("backupLoad")));
+  const backupHours=Math.max(0,num($("backupHours")));
+  const batteryWh=backupLoad*backupHours;
+  const nominalWh=batteryWh/0.8;
+
+  const capacities12_24=[80,100,120,130,150,160,170,180,185,190,200,210,220,230,250,260,280,300,350,400,450,500,550,600,650,700,750,800,900,1000,1200,1500,2000];
+  const capacities48=[50,100,150,200,300,400,500,600,700,800,900,1000,1200,1500,2000,2500,3000];
+
+  const b12=nextModule(nominalWh/12,capacities12_24);
+  const b24=nextModule(nominalWh/24,capacities12_24);
+  const b48=nextModule(nominalWh/48,capacities48);
+
+  // Side overview
+  $("sideLoad").firstChild.nodeValue=Math.round(connected).toLocaleString();
+  $("sideDaily").textContent=(dailyWh/1000).toFixed(2)+" kWh";
+  $("sidePV").textContent=(pvW/1000).toFixed(2)+" kW";
+  $("sideInv").textContent=inverter.toFixed(1)+" kW";
+  $("sideBat12").textContent=b12.toLocaleString()+" Ah";
+  $("sideBat24").textContent=b24.toLocaleString()+" Ah";
+  $("sideBat48").textContent=b48.toLocaleString()+" Ah";
+
+  // Results
+  $("connectedLoad").textContent=Math.round(connected).toLocaleString()+" W";
+  $("dailyEnergy").textContent=(dailyWh/1000).toFixed(2)+" kWh";
+  $("monthlyEnergy").textContent=((dailyWh*30)/1000).toFixed(1)+" kWh";
+  $("annualEnergy").textContent=((dailyWh*365)/1000).toFixed(0)+" kWh";
+  $("pvCapacity").textContent=(pvW/1000).toFixed(2)+" kW";
+  $("pvWatts").textContent=pvW.toLocaleString()+" W";
+  $("inverterSize").textContent=inverter.toFixed(1)+" kW";
+  $("batteryEnergy").textContent=(batteryWh/1000).toFixed(2)+" kWh";
+  $("battery12").textContent=b12.toLocaleString()+" Ah";
+  $("battery24").textContent=b24.toLocaleString()+" Ah";
+  $("battery48").textContent=b48.toLocaleString()+" Ah";
+  $("backupLoadResult").textContent=Math.round(backupLoad).toLocaleString()+" W";
+
+  const note=document.querySelector(".note");
+  if(note){
+    note.innerHTML=
+      "<b>PV calculation:</b> "+
+      (dailyWh/1000).toFixed(2)+" kWh/day ÷ "+
+      sunHours.toFixed(1)+" sun-hours ÷ "+
+      usableSolar.toFixed(2)+" usable solar factor = "+
+      "<b>"+pvW.toLocaleString()+" W ("+(pvW/1000).toFixed(2)+" kW)</b>. "+
+      "&nbsp; <b>Battery:</b> 80% usable energy.";
+  }
+}
+
+// Initial appliances
+addAppliance("LED Bulb",5,10,6);
+addAppliance("Ceiling Fan",3,70,8);
+addAppliance("TV",1,100,5);
+
+// Add appliance button
+$("addAppliance").addEventListener("click",function(){
+  addAppliance("Other",1,100,1);
+  update();
+});
+
+// Settings
+["sunHours","losses","backupLoad","backupHours"].forEach(id=>{
+  $(id).addEventListener("input",update);
+  $(id).addEventListener("change",update);
+});
+
+// Main calculate button
+$("calculate").addEventListener("click",function(){
+  update();
+  $("results").classList.add("show");
+  $("results").scrollIntoView({behavior:"smooth",block:"start"});
+});
+
+// First calculation
+update();
+
+})();
+</script>
+</body>
+</html>

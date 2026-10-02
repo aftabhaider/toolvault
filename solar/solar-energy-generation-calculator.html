@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Free Solar Energy Generation Calculator using panel quantity, panel wattage and live location-based solar weather data.">
+<title>Solar Energy Generation Calculator — ToolVault</title>
+<style>
+:root{--bg:#f4faf8;--card:#fff;--ink:#10231f;--muted:#64736f;--line:#dce8e4;--brand:#0b8f78;--brand2:#086c5b;--soft:#e4f6f0;--danger:#b64b4b;--shadow:0 12px 35px rgba(16,35,31,.08)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+a{text-decoration:none;color:inherit}.wrap{max-width:1100px;margin:auto;padding:0 16px}
+header{height:68px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center}.nav{display:flex;justify-content:space-between;align-items:center}.logo{font-size:22px;font-weight:850}.logo span{color:var(--brand)}
+main{padding:22px 0 34px}.crumb{font-size:13px;color:var(--muted);margin-bottom:16px}.crumb a{color:var(--brand2);font-weight:700}
+.hero{margin-bottom:14px}.badge{display:inline-block;background:var(--soft);color:var(--brand2);font-weight:800;font-size:12px;padding:6px 10px;border-radius:999px}
+h1{font-size:clamp(30px,4.5vw,42px);line-height:1.05;letter-spacing:-1.5px;margin:9px 0 7px}.hero p{color:var(--muted);max-width:760px;margin:0}
+.layout{display:grid;grid-template-columns:1fr 360px;gap:14px;align-items:start}.card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:16px;box-shadow:0 7px 25px rgba(16,35,31,.05)}
+h2{font-size:19px;margin:0 0 18px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}label{font-size:13px;font-weight:750}.hint{font-size:11px;color:var(--muted)}
+input,select{width:100%;height:44px;border:1px solid #cfded9;border-radius:10px;background:#fff;padding:0 12px;font-size:14px;color:var(--ink);outline:none}input:focus,select:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(11,143,120,.1)}
+.locrow{display:grid;grid-template-columns:1fr 110px;gap:9px}.btn{border:0;background:var(--brand);color:#fff;border-radius:10px;padding:0 16px;font-weight:800;cursor:pointer;height:44px}.btn:hover{background:var(--brand2)}.btn.secondary{background:#edf5f2;color:var(--brand2)}.actions{display:flex;gap:10px;margin-top:18px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.metric{border:1px solid var(--line);background:#fbfdfc;border-radius:10px;padding:10px}.metric span{display:block;font-size:11px;color:var(--muted);font-weight:700}.metric b{display:block;font-size:21px;margin-top:3px;color:var(--brand2)}
+.big{grid-column:1/-1;background:var(--soft);border-color:#c5e7de}.big b{font-size:30px}
+.weather{display:grid;grid-template-columns:1fr 1fr;gap:9px}.weather .metric b{font-size:17px}.status{font-size:12px;color:var(--muted);margin:0 0 14px}.error{color:var(--danger)}
+.note{font-size:11px;color:var(--muted);line-height:1.55;margin-top:15px}.source{font-size:11px;color:var(--muted);margin-top:12px}
+footer{border-top:1px solid var(--line);padding:16px 0;color:var(--muted);font-size:12px}
+
+@media(max-width:850px){.layout{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}}
+@media(max-width:480px){.locrow{grid-template-columns:1fr}.actions{flex-direction:column}.result-grid{grid-template-columns:1fr}.big{grid-column:auto}}
+
+/* V4 CHART-ONLY ENHANCEMENT */
+#tvProChartPanel{margin-top:12px;border:1px solid #dce9e4;border-radius:18px;background:#fff;box-shadow:0 10px 28px rgba(20,70,55,.07);overflow:hidden}
+#tvProChartPanel .tvch-head{padding:11px 14px 7px;display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+#tvProChartPanel .tvch-head h3{margin:0;color:#15483d;font-size:20px}
+#tvProChartPanel .tvch-head p{margin:4px 0 0;color:#73837e;font-size:12px}
+#tvProChartPanel .tvch-tools{display:flex;flex-wrap:wrap;gap:7px;padding:10px 14px;border-top:1px solid #edf2f0;border-bottom:1px solid #edf2f0;background:#f8fbfa}
+#tvProChartPanel button,#tvProChartPanel select,#tvProChartPanel input{font:inherit}
+.tvch-btn{border:1px solid #d8e5e0;background:#fff;color:#35665b;border-radius:8px;padding:7px 10px;font-size:11px;font-weight:700;cursor:pointer}
+.tvch-btn.active{background:#16876b;color:#fff;border-color:#16876b}
+.tvch-date{height:32px;border:1px solid #d8e5e0;border-radius:8px;padding:0 8px;font-size:11px;color:#31584f}
+.tvch-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px 14px}
+.tvch-kpi{padding:9px 11px;background:#f7faf9;border:1px solid #e6efec;border-radius:10px}
+.tvch-kpi small{display:block;color:#82918d;font-size:9px;text-transform:uppercase;font-weight:800}
+.tvch-kpi b{display:block;color:#16483d;font-size:15px;margin-top:2px}
+.tvch-wrap{height:300px;position:relative;margin:0 12px 12px;border:1px solid #e5ece9;border-radius:12px;overflow:hidden}
+#tvchSvg{width:100%;height:100%;display:block;touch-action:none}
+.tvch-tip{position:absolute;pointer-events:none;z-index:4;min-width:165px;background:rgba(255,255,255,.98);border:1px solid #d9e6e1;border-radius:10px;padding:9px 11px;box-shadow:0 8px 22px rgba(20,60,50,.15);font-size:10px;color:#35554d}
+.tvch-tip strong{display:block;color:#11755d;font-size:12px;margin-bottom:4px}
+.tvch-foot{padding:0 16px 13px;color:#7a8985;font-size:10px}
+@media(max-width:700px){
+ #tvProChartPanel .tvch-head{display:block}.tvch-kpis{grid-template-columns:repeat(2,1fr)}
+ .tvch-wrap{height:250px}
+}
+
+
+/* V5: GOOGLE-WEATHER-STYLE LIVE WEATHER WIDGET — additive only */
+#tvWeatherWidget{margin-top:10px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,#f8fffd,#eef9f5);overflow:hidden}
+.tvw-top{padding:11px 13px 8px;display:flex;justify-content:space-between;gap:12px}
+.tvw-place{font-size:12px;font-weight:800;color:#55716a}
+.tvw-time{font-size:10px;color:#84938f;margin-top:3px}
+.tvw-current{display:grid;grid-template-columns:82px 1fr;gap:9px;align-items:center;padding:0 13px 10px}
+.tvw-icon{height:82px;width:92px;display:flex;align-items:center;justify-content:center}
+.tvw-temp{font-size:42px;line-height:1;font-weight:500;color:#183f37;letter-spacing:-2px}
+.tvw-unit{font-size:17px;vertical-align:top;margin-left:3px}
+.tvw-condition{font-size:14px;font-weight:750;color:#315c52;margin-top:5px}
+.tvw-feels{font-size:11px;color:#778b85;margin-top:3px}
+.tvw-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;padding:0 13px 10px}
+.tvw-stat{background:rgba(255,255,255,.78);border:1px solid #e1ece8;border-radius:10px;padding:8px 9px}
+.tvw-stat span{display:block;font-size:9px;color:#7d8d88;font-weight:750;text-transform:uppercase}
+.tvw-stat b{display:block;font-size:12px;color:#31584f;margin-top:2px}
+.tvw-divider{height:1px;background:#dfeae6}
+.tvw-forecast-title{padding:12px 16px 7px;font-size:11px;font-weight:850;color:#3b6259}
+.tvw-days{display:grid;grid-template-columns:repeat(7,minmax(64px,1fr));overflow-x:auto;padding:0 10px 13px;gap:5px}
+.tvw-day{min-width:64px;text-align:center;padding:8px 5px;border-radius:10px;background:rgba(255,255,255,.6);border:1px solid transparent;cursor:pointer;transition:.15s}.tvw-day:hover{border-color:#b9d9cf;transform:translateY(-1px)}.tvw-day.selected{background:#eaf7f2;border-color:#1ea67e;box-shadow:0 3px 10px rgba(20,70,55,.08)}
+.tvw-day.today{background:#fff;border-color:#d5e6e0;box-shadow:0 3px 10px rgba(20,70,55,.05)}
+.tvw-day-name{font-size:9px;font-weight:850;color:#687d76}
+.tvw-day-icon{height:30px;display:flex;justify-content:center;align-items:center;margin:4px 0}
+.tvw-day-temp{font-size:11px;font-weight:800;color:#31584f}
+.tvw-day-rain{font-size:9px;color:#738982;margin-top:3px}
+.tvw-update{padding:8px 16px;background:rgba(232,246,241,.7);font-size:9px;color:#728680}
+.tvw-error{padding:14px 16px;color:#9b514e;font-size:11px}
+@media(max-width:700px){
+ #tvWeatherWidget{margin-top:12px}.tvw-current{grid-template-columns:76px 1fr}.tvw-icon{width:76px}
+ .tvw-days{grid-template-columns:repeat(7,64px)}
+}
+
+/* V8 compact System & live weather panel — layout-only changes */
+.layout{grid-template-columns:1fr 340px;gap:12px}
+.layout>aside.card{padding:12px}
+.layout>aside.card h2{font-size:17px;margin-bottom:9px}
+.layout>aside.card .status{font-size:10px;margin-bottom:9px}
+.layout>aside.card hr{margin:12px 0 !important}
+.layout>aside.card .result-grid{gap:5px}
+.layout>aside.card .metric{padding:7px 8px}
+.layout>aside.card .metric b{font-size:17px;margin-top:2px}
+.layout>aside.card .metric.big b{font-size:24px}
+.layout>aside.card .weather{gap:5px}
+.layout>aside.card .weather .metric b{font-size:15px}
+.layout>aside.card .source{font-size:9px;margin-top:8px}
+#tvWeatherWidget{margin-top:7px;border-radius:13px}
+#tvWeatherWidget .tvw-top{padding:8px 10px 5px}
+#tvWeatherWidget .tvw-current{grid-template-columns:64px 1fr;gap:5px;padding:0 10px 7px}
+#tvWeatherWidget .tvw-icon{height:64px;width:64px}
+#tvWeatherWidget .tvw-temp{font-size:32px}
+#tvWeatherWidget .tvw-unit{font-size:14px}
+#tvWeatherWidget .tvw-condition{font-size:12px;margin-top:3px}
+#tvWeatherWidget .tvw-feels{font-size:10px;margin-top:2px}
+#tvWeatherWidget .tvw-stats{gap:5px;padding:0 10px 7px}
+#tvWeatherWidget .tvw-stat{padding:6px 8px}
+#tvWeatherWidget .tvw-stat b{font-size:11px}
+#tvWeatherWidget .tvw-forecast-title{padding:8px 12px 5px;font-size:10px}
+#tvWeatherWidget .tvw-days{padding:0 8px 8px;gap:4px}
+#tvWeatherWidget .tvw-day{min-width:61px;padding:6px 4px}
+#tvWeatherWidget .tvw-day-icon{height:27px;margin:3px 0}
+#tvWeatherWidget .tvw-day-temp{font-size:10px}
+#tvWeatherWidget .tvw-day-rain{font-size:8px;margin-top:2px}
+#tvWeatherWidget .tvw-selected{margin:5px 8px 0 !important;padding:7px 9px !important}
+#tvWeatherWidget .tvw-selected span{font-size:9px !important}
+#tvWeatherWidget .tvw-selected b{font-size:14px !important}
+#tvWeatherWidget .tvw-update{padding:6px 10px;font-size:8px}
+@media(max-width:850px){.layout{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="wrap nav"><a class="logo" href="../index.html">Tool<span>Vault</span></a><a href="../index.html" style="font-size:13px;color:#64736f">← All tools</a></div></header>
+<main class="wrap">
+<div class="crumb"><a href="../index.html">ToolVault</a> / <a href="../index.html#tools">Solar Tools</a> / Solar Energy Generation</div>
+<div class="hero">
+<span class="badge">☀️ Live Weather & Solar Data</span>
+<h1>Solar Energy Generation Calculator</h1>
+<p>Enter your location, number of solar panels and panel wattage. The calculator uses location-based weather and solar-radiation data to estimate energy generation.</p>
+</div>
+
+<div class="layout">
+<section class="card">
+<h2>Solar system inputs</h2>
+<div class="formgrid">
+<div class="field full"><label for="location">Area / City / Location</label>
+<div class="locrow"><input id="location" value="Islamabad" placeholder="e.g. Islamabad, Peshawar, Lahore"><button class="btn" id="locBtn">Find</button></div>
+<div class="hint" id="locStatus">Enter a city or area and press Find.</div></div>
+
+<div class="field"><label for="panelCount">Number of panels</label><input id="panelCount" type="number" min="1" step="1" value="8"></div>
+<div class="field"><label for="panelWatt">Panel capacity (watts)</label><input id="panelWatt" type="number" min="50" step="1" value="625"></div>
+
+<div class="field"><label for="losses">System losses (%)</label><input id="losses" type="number" min="0" max="40" step="1" value="14"><div class="hint">Inverter, wiring, temperature, mismatch and other system losses.</div></div>
+<div class="field"><label for="period">Forecast period</label><select id="period"><option value="1">Today</option><option value="7" selected>Next 7 days</option><option value="30">Next 30 days</option></select></div>
+
+<div class="field"><label for="tilt">Panel tilt (°)</label><input id="tilt" type="number" min="0" max="90" step="1" value="30"><div class="hint">Used for Global Tilted Irradiance (GTI).</div></div>
+<div class="field"><label for="azimuth">Panel azimuth (°)</label><input id="azimuth" type="number" min="-180" max="180" step="1" value="0"><div class="hint">0° = South, -90° = East, 90° = West, ±180° = North.</div></div>
+</div>
+<div class="actions"><button class="btn" id="calc">Calculate generation</button><button class="btn secondary" id="refresh">Refresh live data</button></div>
+<p class="note">Generation is an estimate, not a guarantee. Weather forecasts and solar-radiation models can differ from actual inverter production. The estimate uses GTI where available, scaled by your installed PV capacity and system-loss assumption.</p>
+</section>
+
+<aside class="card">
+<h2>System & live weather</h2>
+<p class="status" id="status">Waiting for location data…</p>
+<div class="result-grid">
+<div class="metric big"><span>Total solar capacity</span><b id="kwp">—</b></div>
+<div class="metric"><span>Panel count</span><b id="outPanels">—</b></div>
+<div class="metric"><span>Panel wattage</span><b id="outWatt">—</b></div>
+</div>
+<hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
+<div class="weather">
+<div class="metric"><span>Temperature</span><b id="temp">—</b></div>
+<div class="metric"><span>Cloud cover</span><b id="cloud">—</b></div>
+<div class="metric"><span>Solar radiation</span><b id="rad">—</b></div>
+<div class="metric"><span>Weather</span><b id="weather">—</b></div>
+</div>
+<div class="source">Weather & solar radiation: Open-Meteo forecast data.</div>
+<!-- V5 LIVE WEATHER WIDGET: additive; existing calculator/weather panel remains unchanged -->
+<div id="tvWeatherWidget">
+  <div class="tvw-top">
+    <div>
+      <div class="tvw-place" id="tvwPlace">Live weather</div>
+      <div class="tvw-time" id="tvwTime">Waiting for location…</div>
+    </div>
+    <div style="font-size:10px;color:#5f7b73;font-weight:800">LIVE</div>
+  </div>
+  <div id="tvwBody">
+    <div class="tvw-current">
+      <div class="tvw-icon" id="tvwIcon"></div>
+      <div>
+        <div class="tvw-temp"><span id="tvwTemp">—</span><span class="tvw-unit">°C</span></div>
+        <div class="tvw-condition" id="tvwCondition">Loading weather…</div>
+        <div class="tvw-feels">Feels like <b id="tvwFeels">—</b>°C</div>
+      </div>
+    </div>
+    <div class="tvw-stats">
+      <div class="tvw-stat"><span>Humidity</span><b id="tvwHumidity">—</b></div>
+      <div class="tvw-stat"><span>Wind</span><b id="tvwWind">—</b></div>
+      <div class="tvw-stat"><span>Rain</span><b id="tvwRain">—</b></div>
+      <div class="tvw-stat"><span>Cloud cover</span><b id="tvwCloud">—</b></div>
+    </div>
+    <div class="tvw-divider"></div>
+    <div class="tvw-forecast-title">7-day forecast</div>
+    <div class="tvw-days" id="tvwDays"></div>
+    <div class="tvw-selected" id="tvwSelected" style="margin:8px 10px 0;padding:10px 12px;border-radius:10px;background:#f1faf7;border:1px solid #d8ebe5;display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="font-size:10px;color:#688079;font-weight:800" id="tvwSelectedLabel">Selected day generation</span><b id="tvwSelectedGen" style="font-size:15px;color:#126e59">—</b></div>
+    <div class="tvw-update" id="tvwUpdate">Weather data: Open-Meteo</div>
+  </div>
+</div>
+
+</aside>
+</div>
+
+<section class="card" style="margin-top:20px">
+<h2>Estimated energy generation</h2>
+<div class="result-grid">
+<div class="metric big"><span>Selected period generation</span><b id="generation">—</b></div>
+<div class="metric"><span>Average per day</span><b id="daily">—</b></div>
+<div class="metric"><span>Equivalent per kW/day</span><b id="perkw">—</b></div>
+<div class="metric"><span>Solar irradiation</span><b id="irradiation">—</b></div>
+<div class="metric"><span>Location</span><b id="place" style="font-size:16px">—</b></div>
+<div class="metric"><span>Data period</span><b id="dateRange" style="font-size:16px">—</b></div>
+</div>
+
+</section>
+
+</main>
+<footer><div class="wrap">© 2026 ToolVault · Practical tools for renewable energy planning.</div></footer>
+
+<script>
+const $=id=>document.getElementById(id);
+let coords=null, weatherData=null;
+
+function setStatus(t,err=false){$('status').textContent=t;$('status').className='status'+(err?' error':'')}
+function weatherCode(c){if(c==0)return'Clear';if(c<=3)return'Partly cloudy';if(c<=48)return'Fog';if(c<=67)return'Rain';if(c<=77)return'Snow';if(c<=82)return'Rain showers';if(c<=86)return'Snow showers';return'Thunderstorm'}
+function n(v,d=0){return Number(v).toLocaleString(undefined,{maximumFractionDigits:d})}
+
+async function geocode(){
+ const q=$('location').value.trim(); if(!q){setStatus('Please enter an area or city.',true);return}
+ $('locStatus').textContent='Finding location…';
+ try{
+  const r=await fetch('https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(q)+'&count=1&language=en&format=json');
+  const j=await r.json(); if(!j.results?.length)throw new Error('Location not found');
+  const x=j.results[0]; coords={lat:x.latitude,lon:x.longitude,name:x.name,country:x.country||''};
+  $('locStatus').textContent=`Found: ${x.name}${x.country?', '+x.country:''} (${x.latitude.toFixed(3)}, ${x.longitude.toFixed(3)})`;
+  await loadWeather();
+ }catch(e){$('locStatus').textContent='Location could not be found. Try a nearby city.';setStatus(e.message,true)}
+}
+
+async function loadWeather(){
+ if(!coords) await geocode();
+ if(!coords)return;
+ setStatus('Loading live weather and solar-radiation data…');
+ const days=Number($('period').value);
+ const tilt=Number($('tilt').value)||30, az=Number($('azimuth').value)||0;
+ const url='https://api.open-meteo.com/v1/forecast?latitude='+coords.lat+'&longitude='+coords.lon+
+ '&forecast_days='+days+'&timezone=auto&current=temperature_2m,cloud_cover,weather_code,shortwave_radiation'+
+ '&hourly=temperature_2m,cloud_cover,weather_code,global_tilted_irradiance,shortwave_radiation'+
+ '&tilt='+encodeURIComponent(tilt)+'&azimuth='+encodeURIComponent(az);
+ try{
+  const r=await fetch(url);if(!r.ok)throw new Error('Weather service unavailable');
+  weatherData=await r.json();
+  window.__toolvaultSolarForecast=weatherData;
+  render();
+ }catch(e){setStatus('Could not load live solar data: '+e.message,true)}
+}
+
+function render(){
+ const count=Math.max(1,Number($('panelCount').value)||1), watts=Math.max(1,Number($('panelWatt').value)||1);
+ const loss=Math.min(40,Math.max(0,Number($('losses').value)||0));
+ const kwp=count*watts/1000;
+ $('kwp').textContent=n(kwp,2)+' kWp';$('outPanels').textContent=n(count);$('outWatt').textContent=n(watts)+' W';
+ const c=weatherData.current||{};
+ $('temp').textContent=c.temperature_2m!=null?n(c.temperature_2m,1)+' °C':'—';
+ $('cloud').textContent=c.cloud_cover!=null?n(c.cloud_cover)+' %':'—';
+ $('rad').textContent=c.shortwave_radiation!=null?n(c.shortwave_radiation)+' W/m²':'—';
+ $('weather').textContent=weatherCode(c.weather_code);
+ $('place').textContent=coords.name+(coords.country?', '+coords.country:'');
+ const times=weatherData.hourly?.time||[], gti=weatherData.hourly?.global_tilted_irradiance||[];
+ const hourlyKwh=gti.map(v=>Math.max(0,Number(v)||0)*kwp/1000*(1-loss/100));
+ const totalIrr=gti.reduce((s,v)=>s+(Number(v)||0),0);
+ const totalKwh=hourlyKwh.reduce((s,v)=>s+v,0);
+ const days=Math.max(1,Number($('period').value));
+ const daily=totalKwh/days;
+ $('generation').textContent=n(totalKwh,1)+' kWh';
+ $('daily').textContent=n(daily,1)+' kWh/day';
+ $('perkw').textContent=n(daily/kwp,2)+' kWh/kW/day';
+ $('irradiation').textContent=n(totalIrr/1000,2)+' kWh/m²';
+ const start=times[0]?.slice(0,10)||'—', end=times[times.length-1]?.slice(0,10)||'—';
+ $('dateRange').textContent=start===end?start:`${start} → ${end}`;
+ setStatus(`Updated from live forecast data for ${coords.name}.`);
+
+}
+
+$('locBtn').onclick=geocode;
+$('calc').onclick=async()=>{if(!coords)await geocode(); if(coords){if(!weatherData)await loadWeather();else render()}};
+$('refresh').onclick=loadWeather;
+$('period').onchange=loadWeather;
+['panelCount','panelWatt','losses','tilt','azimuth'].forEach(id=>$(id).addEventListener('input',()=>{if(weatherData)render()}));
+geocode();
+</script>
+
+<!-- V4: CHART-ONLY ENHANCEMENT -->
+<section id="tvProChartPanel">
+  <div class="tvch-head">
+    <div>
+      <h3>Solar Generation Chart</h3>
+      <p>Interactive hourly and daily generation view using the same forecast data already used by this calculator.</p>
+    </div>
+  </div>
+  <div class="tvch-tools">
+    <button class="tvch-btn active" data-tvview="daily">Daily</button>
+    <button class="tvch-btn" data-tvview="hourly">Hourly</button>
+    <button class="tvch-btn active" data-tvdays="7">7 Days</button>
+    <button class="tvch-btn" data-tvdays="14">14 Days</button>
+    <button class="tvch-btn" data-tvdays="30">30 Days</button>
+    <select id="tvchMetric" class="tvch-date">
+      <option value="generation">Generation (kWh)</option>
+      <option value="irradiation">Solar irradiation</option>
+      <option value="temperature">Temperature</option>
+      <option value="cloud">Cloud cover</option>
+    </select>
+    <button class="tvch-btn" id="tvchPrev">‹ Previous</button>
+    <input id="tvchDate" class="tvch-date" type="date">
+    <button class="tvch-btn" id="tvchNext">Next ›</button>
+    <button class="tvch-btn" id="tvchReset">Reset</button>
+  </div>
+  <div class="tvch-kpis">
+    <div class="tvch-kpi"><small>Total</small><b id="tvchTotal">—</b></div>
+    <div class="tvch-kpi"><small>Average / day</small><b id="tvchAvg">—</b></div>
+    <div class="tvch-kpi"><small>Peak</small><b id="tvchPeak">—</b></div>
+    <div class="tvch-kpi"><small>Peak time</small><b id="tvchPeakTime">—</b></div>
+  </div>
+  <div class="tvch-wrap">
+    <svg id="tvchSvg" viewBox="0 0 1100 390" preserveAspectRatio="none"></svg>
+    <div id="tvchTip" class="tvch-tip" hidden></div>
+  </div>
+  <div class="tvch-foot">Hover over the chart for exact values. Use the date controls to inspect individual days. The original calculator inputs and calculations are unchanged.</div>
+</section>
+
+
+<script>
+/* V4 CHART-ONLY JS — reads the existing forecast data and does not alter calculator logic */
+(function(){
+  const svg=document.getElementById('tvchSvg'); if(!svg)return;
+  const NS='http://www.w3.org/2000/svg';
+  const S={view:'daily',days:7,metric:'generation',date:'',data:null};
+  const $=id=>document.getElementById(id);
+  const n=(x,d=0)=>Number.isFinite(Number(x))?Number(x):d;
+  const fmt=(x,d=2)=>n(x).toFixed(d);
+  const dk=d=>new Date(d).toISOString().slice(0,10);
+
+  function source(){
+    return S.data||window.__toolvaultSolarForecast||window.solarForecastData||window.forecastData||window.weatherData||null;
+  }
+  function normalize(){
+    const D=source(); if(!D)return [];
+    const h=D.hourly||D.forecast?.hourly||D;
+    const times=h.time||[]; if(!times.length)return [];
+    const arr=(names)=>{for(const k of names)if(Array.isArray(h[k]))return h[k];return times.map(()=>0)};
+    const gti=arr(['global_tilted_irradiance','global_tilted_irradiance_instant']);
+    const sw=arr(['shortwave_radiation','shortwave_radiation_instant']);
+    const temp=arr(['temperature_2m']), cloud=arr(['cloud_cover']);
+    const count=n(document.querySelector('#panelCount,#panels,#numberOfPanels')?.value,8);
+    const watts=n(document.querySelector('#panelWatts,#panelCapacity,#watts')?.value,625);
+    const loss=n(document.querySelector('#systemLoss,#losses,#systemLosses')?.value,14);
+    const kwp=count*watts/1000, factor=1-Math.min(50,Math.max(0,loss))/100;
+    return times.map((t,i)=>{
+      const d=new Date(t), irr=n(gti[i],n(sw[i],0));
+      return {t:d,date:dk(d),hour:d.getHours(),irr,temp:n(temp[i]),cloud:n(cloud[i]),gen:Math.max(0,irr)*kwp/1000*factor};
+    });
+  }
+  function daily(rows){
+    const m=new Map();
+    rows.forEach(r=>{
+      if(!m.has(r.date))m.set(r.date,{date:r.date,gen:0,irr:0,temp:[],cloud:[]});
+      const x=m.get(r.date);x.gen+=r.gen;x.irr+=r.irr;x.temp.push(r.temp);x.cloud.push(r.cloud);
+    });
+    return [...m.values()].map(x=>({date:x.date,gen:x.gen,irr:x.irr/24,temp:x.temp.reduce((a,b)=>a+b,0)/x.temp.length,cloud:x.cloud.reduce((a,b)=>a+b,0)/x.cloud.length}));
+  }
+  function val(r){return S.metric==='generation'?r.gen:S.metric==='irradiation'?r.irr:S.metric==='temperature'?r.temp:r.cloud}
+  function render(){
+    const rows=normalize(); if(!rows.length){svg.innerHTML='<text x="550" y="200" text-anchor="middle" fill="#788b85" font-size="14">Run the forecast to load the chart.</text>';return}
+    S.data=source()||S.data;
+    let a=S.view==='hourly'?rows.filter(r=>r.date===(S.date||rows[0].date)):daily(rows).slice(0,S.days);
+    if(!a.length)return;
+    const vals=a.map(val), max=Math.max(...vals,0.001), W=1100,H=390,L=58,R=20,T=22,B=48,PW=W-L-R,PH=H-T-B;
+    const sx=i=>L+(i/(Math.max(1,a.length-1)))*PW, sy=v=>T+PH-(v/max)*PH;
+    svg.innerHTML='';
+    for(let j=0;j<=4;j++){let y=T+PH*j/4;svg.appendChild(el('line',{x1:L,y1:y,x2:W-R,y2:y,stroke:'#e7efec'}));svg.appendChild(el('text',{x:L-7,y:y+4,'text-anchor':'end',fill:'#7a8a85','font-size':'10'},fmt(max*(1-j/4),S.metric==='generation'?2:0)));}
+    let path='';
+    a.forEach((r,i)=>path+=(i?' L ':'M ')+sx(i)+' '+sy(val(r)));
+    svg.appendChild(el('path',{d:path,fill:'none',stroke:'#159879','stroke-width':'3','stroke-linecap':'round','stroke-linejoin':'round'}));
+    a.forEach((r,i)=>{
+      const x=sx(i),y=sy(val(r));
+      svg.appendChild(el('circle',{cx:x,cy:y,r:4,fill:'#fff',stroke:'#159879','stroke-width':'2'}));
+      const hit=el('rect',{x:Math.max(L,x-PW/a.length/2),y:T,width:Math.max(2,PW/a.length),height:PH,fill:'transparent'});
+      hit.addEventListener('mousemove',e=>tip(e,r));hit.addEventListener('mouseleave',()=>{$('tvchTip').hidden=true});
+      svg.appendChild(hit);
+      if(i===0||i===a.length-1||i%Math.max(1,Math.ceil(a.length/8))===0){
+        const label=S.view==='hourly'?String(r.hour).padStart(2,'0')+':00':new Date(r.date+'T12:00:00').toLocaleDateString(undefined,{day:'2-digit',month:'short'});
+        svg.appendChild(el('text',{x,y:H-18,'text-anchor':'middle',fill:'#74847f','font-size':'10'},label));
+      }
+    });
+    const total=a.reduce((s,r)=>s+r.gen,0), avg=total/(S.view==='daily'?a.length:1), pi=vals.indexOf(Math.max(...vals));
+    $('tvchTotal').textContent=fmt(total,2)+' kWh';$('tvchAvg').textContent=fmt(avg,2)+' kWh';
+    $('tvchPeak').textContent=fmt(vals[pi],2)+(S.metric==='generation'?' kWh':'');
+    $('tvchPeakTime').textContent=S.view==='hourly'?String(a[pi].hour).padStart(2,'0')+':00':new Date(a[pi].date+'T12:00:00').toLocaleDateString(undefined,{day:'2-digit',month:'short'});
+  }
+  function el(tag,a,text){const e=document.createElementNS(NS,tag);Object.entries(a).forEach(([k,v])=>e.setAttribute(k,v));if(text!==undefined)e.textContent=text;return e}
+  function tip(e,r){
+    const t=$('tvchTip'),box=svg.parentElement.getBoundingClientRect();t.hidden=false;
+    t.innerHTML='<strong>'+new Date(r.t).toLocaleString()+'</strong>Generation: '+fmt(r.gen,2)+' kWh<br>Irradiation: '+fmt(r.irr,0)+' W/m²<br>Temperature: '+fmt(r.temp,1)+' °C<br>Cloud cover: '+fmt(r.cloud,0)+'%';
+    t.style.left=Math.min(box.width-180,Math.max(8,e.clientX-box.left+10))+'px';t.style.top=Math.max(8,e.clientY-box.top+10)+'px';
+  }
+  document.querySelectorAll('[data-tvview]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tvview]').forEach(x=>x.classList.remove('active'));b.classList.add('active');S.view=b.dataset.tvview;render()});
+  document.querySelectorAll('[data-tvdays]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tvdays]').forEach(x=>x.classList.remove('active'));b.classList.add('active');S.days=+b.dataset.tvdays;render()});
+  $('tvchMetric').onchange=e=>{S.metric=e.target.value;render()};
+  $('tvchDate').onchange=e=>{S.date=e.target.value;S.view='hourly';document.querySelectorAll('[data-tvview]').forEach(x=>x.classList.toggle('active',x.dataset.tvview==='hourly'));render()};
+  $('tvchReset').onclick=()=>{S.view='daily';S.days=7;S.metric='generation';document.querySelector('[data-tvview="daily"]').classList.add('active');document.querySelector('[data-tvview="hourly"]').classList.remove('active');render()};
+  $('tvchPrev').onclick=()=>shift(-1);$('tvchNext').onclick=()=>shift(1);
+  function shift(dir){const r=normalize(),ds=[...new Set(r.map(x=>x.date))];if(!ds.length)return;let i=Math.max(0,ds.indexOf(S.date||ds[0]));i=Math.min(ds.length-1,Math.max(0,i+dir));S.date=ds[i];$('tvchDate').value=S.date;S.view='hourly';document.querySelectorAll('[data-tvview]').forEach(x=>x.classList.toggle('active',x.dataset.tvview==='hourly'));render()}
+  const oldFetch=window.fetch;
+  window.fetch=async function(){const res=await oldFetch.apply(this,arguments);try{const c=res.clone();const u=String(arguments[0]||'');if(/open-meteo|forecast/i.test(u)){const j=await c.json();if(j&&j.hourly){S.data=j;const r=normalize();if(r.length){S.date=r[0].date;$('tvchDate').value=S.date}render()}}}catch(e){}return res};
+  setInterval(()=>{if(normalize().length)render()},1200);
+})();
+</script>
+
+
+<script>
+/* V5 LIVE WEATHER WIDGET — separate additive data request; does not change calculator calculations */
+(function(){
+ const $=id=>document.getElementById(id);
+ if(!$('tvWeatherWidget'))return;
+ let lastCoords=null;
+ const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+ const names={
+  0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',
+  45:'Fog',48:'Rime fog',51:'Light drizzle',53:'Drizzle',55:'Dense drizzle',
+  56:'Freezing drizzle',57:'Freezing drizzle',61:'Light rain',63:'Moderate rain',65:'Heavy rain',
+  66:'Freezing rain',67:'Heavy freezing rain',71:'Light snow',73:'Snow',75:'Heavy snow',77:'Snow grains',
+  80:'Light rain showers',81:'Rain showers',82:'Heavy rain showers',85:'Snow showers',86:'Heavy snow showers',
+  95:'Thunderstorm',96:'Thunderstorm + hail',99:'Thunderstorm + hail'
+ };
+ function condition(c){return names[c]||'Weather'}
+ function icon(c,day=true,small=false){
+   const sun=day?'#f5ad35':'#aeb8d9', cloud='#9aa9aa', rain='#4f9fd1', snow='#a8cde2';
+   let body='';
+   if(c===0||c===1) body=`<circle cx="50" cy="50" r="20" fill="${sun}"/><g stroke="${sun}" stroke-width="5" stroke-linecap="round">${[0,45,90,135,180,225,270,315].map(a=>{let r=a*Math.PI/180,x1=50+29*Math.cos(r),y1=50+29*Math.sin(r),x2=50+39*Math.cos(r),y2=50+39*Math.sin(r);return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`}).join('')}</g>`;
+   else if(c===2||c===3||c===45||c===48) body=`<circle cx="37" cy="38" r="14" fill="${c<45?sun:cloud}"/><path d="M28 68h43c11 0 16-7 16-15s-7-14-16-14c-2-12-11-19-22-19-13 0-22 9-23 21-10 1-17 8-17 17 0 6 7 10 19 10z" fill="${cloud}"/>`;
+   else if(c>=71&&c<=77||c>=85&&c<=86) body=`<path d="M27 61h43c11 0 17-7 17-15s-7-14-17-14c-2-11-11-18-22-18-13 0-22 9-23 20-10 1-17 8-17 17 0 6 7 10 19 10z" fill="${cloud}"/><g stroke="${snow}" stroke-width="4" stroke-linecap="round"><line x1="35" y1="70" x2="32" y2="78"/><line x1="52" y1="70" x2="49" y2="78"/><line x1="69" y1="70" x2="66" y2="78"/></g>`;
+   else if(c>=95) body=`<path d="M27 61h43c11 0 17-7 17-15s-7-14-17-14c-2-11-11-18-22-18-13 0-22 9-23 20-10 1-17 8-17 17 0 6 7 10 19 10z" fill="${cloud}"/><path d="M54 53l-8 15h9l-6 13 17-20h-9z" fill="#e3b53f"/>`;
+   else body=`<path d="M27 61h43c11 0 17-7 17-15s-7-14-17-14c-2-11-11-18-22-18-13 0-22 9-23 20-10 1-17 8-17 17 0 6 7 10 19 10z" fill="${cloud}"/><g stroke="${rain}" stroke-width="4" stroke-linecap="round"><line x1="36" y1="69" x2="32" y2="79"/><line x1="53" y1="69" x2="49" y2="79"/><line x1="70" y1="69" x2="66" y2="79"/></g>`;
+   const size=small?34:82;
+   return `<svg width="${size}" height="${size}" viewBox="0 0 100 100" aria-label="${esc(condition(c))}">${body}</svg>`;
+ }
+ async function load(coords){
+   if(!coords||!coords.lat)return;
+   lastCoords=coords;
+   $('tvwPlace').textContent=coords.name+(coords.country?', '+coords.country:'');
+   $('tvwTime').textContent='Updating live weather…';
+   const url='https://api.open-meteo.com/v1/forecast?latitude='+coords.lat+'&longitude='+coords.lon+
+     '&timezone=auto&forecast_days=7&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,cloud_cover,wind_speed_10m,wind_direction_10m,is_day'+
+     '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,sunrise,sunset';
+   try{
+     const r=await fetch(url);if(!r.ok)throw Error('Weather service unavailable');
+     const j=await r.json(), c=j.current, d=j.daily;
+     $('tvwIcon').innerHTML=icon(Number(c.weather_code),Number(c.is_day)===1);
+     $('tvwTemp').textContent=Math.round(c.temperature_2m);
+     $('tvwCondition').textContent=condition(Number(c.weather_code));
+     $('tvwFeels').textContent=Math.round(c.apparent_temperature);
+     $('tvwHumidity').textContent=Math.round(c.relative_humidity_2m)+'%';
+     $('tvwWind').textContent=Math.round(c.wind_speed_10m)+' km/h';
+     $('tvwRain').textContent=Number(c.precipitation||0).toFixed(1)+' mm';
+     $('tvwCloud').textContent=Math.round(c.cloud_cover)+'%';
+     const days=(d.time||[]).map((date,i)=>`<div class="tvw-day ${i===0?'today ':''}${i===0?'selected':''}" data-weather-date="${date}">
+       <div class="tvw-day-name">${i===0?'Today':new Date(date+'T12:00:00').toLocaleDateString(undefined,{weekday:'short'})}</div>
+       <div class="tvw-day-icon">${icon(Number(d.weather_code[i]),true,true)}</div>
+       <div class="tvw-day-temp">${Math.round(d.temperature_2m_max[i])}° / ${Math.round(d.temperature_2m_min[i])}°</div>
+       <div class="tvw-day-rain">💧 ${Math.round(d.precipitation_probability_max[i]||0)}%</div>
+     </div>`).join('');
+     $('tvwDays').innerHTML=days;
+     function showDayGeneration(date){
+       const f=window.__toolvaultSolarForecast || window.weatherData;
+       const h=f&&f.hourly;
+       const times=h&&h.time||[];
+       const gti=h&&(h.global_tilted_irradiance||h.global_tilted_irradiance_instant)||[];
+       const count=Number(document.getElementById('panelCount')?.value)||8;
+       const watts=Number(document.getElementById('panelWatt')?.value)||625;
+       const loss=Math.min(40,Math.max(0,Number(document.getElementById('losses')?.value)||0));
+       const kwp=count*watts/1000, factor=1-loss/100;
+       let total=0;
+       times.forEach((t,i)=>{if(String(t).slice(0,10)===date) total+=Math.max(0,Number(gti[i])||0)*kwp/1000*factor/1;});
+       $('tvwSelectedLabel').textContent=(date===d.time[0]?'Today':new Date(date+'T12:00:00').toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'}))+' generation';
+       $('tvwSelectedGen').textContent=total.toFixed(2)+' kWh';
+       document.querySelectorAll('.tvw-day').forEach(x=>x.classList.toggle('selected',x.dataset.weatherDate===date));
+     }
+     document.querySelectorAll('.tvw-day').forEach(x=>x.addEventListener('click',()=>showDayGeneration(x.dataset.weatherDate)));
+     showDayGeneration(d.time[0]);
+     const local=new Date().toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'});
+     $('tvwTime').textContent='Live conditions • Updated '+local;
+     $('tvwUpdate').textContent='Weather forecast: Open-Meteo • 7-day outlook • Local time';
+   }catch(e){
+     $('tvwBody').innerHTML='<div class="tvw-error">Live weather could not be loaded right now. The solar calculator can still use its existing forecast data.</div>';
+   }
+ }
+ // Watch the existing calculator's geocoding result. This leaves its original flow intact.
+ const oldFetch=window.fetch;
+ window.fetch=async function(){
+   const res=await oldFetch.apply(this,arguments);
+   try{
+     const u=String(arguments[0]||''); const c=res.clone();
+     if(/geocoding-api\.open-meteo\.com/.test(u)){
+       const j=await c.json(); if(j.results&&j.results[0]){
+         const x=j.results[0]; load({lat:x.latitude,lon:x.longitude,name:x.name,country:x.country||''});
+       }
+     }
+   }catch(e){}
+   return res;
+ };
+ // If the calculator already has coords, load it after its first weather request.
+ const watcher=setInterval(()=>{if(window.coords&&window.coords.lat){load(window.coords);clearInterval(watcher)}},700);
+})();
+</script>
+</body>
+</html>
