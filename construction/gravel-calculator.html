@@ -166,16 +166,49 @@ function addArea(){
 
 function applyUnitUI(){
   document.querySelectorAll('.metricOnly').forEach(el=>el.style.display=unitSystem==='metric'?'block':'none');
-  document.querySelectorAll('.imperialOnly').forEach(el=>el.style.display=unitSystem==='imperial'?'block':'none');
+  document.querySelectorAll('.imperialOnly').forEach(el=>{
+    const show=unitSystem==='imperial';
+    el.style.display=show?(el.classList.contains('pair')?'grid':'block'):'none';
+  });
   document.querySelectorAll('.unitChoice').forEach(el=>{
     const radio=el.querySelector('input');
     el.classList.toggle('active',radio.checked);
   });
 }
 
+function convertUnitFields(from,to){
+  document.querySelectorAll('.areaItem').forEach(el=>{
+    const l=from==='metric'?num(el,'lenM'):(num(el,'lenFt')+num(el,'lenIn')/12)*0.3048;
+    const w=from==='metric'?num(el,'widM'):(num(el,'widFt')+num(el,'widIn')/12)*0.3048;
+    const d=from==='metric'?num(el,'depthCm')/100:num(el,'depthIn')*0.0254;
+    const dia=from==='metric'?num(el,'diaM'):(num(el,'diaFt')+num(el,'diaIn')/12)*0.3048;
+    if(to==='metric'){
+      el.querySelector('.lenM').value=l.toFixed(3);
+      el.querySelector('.widM').value=w.toFixed(3);
+      el.querySelector('.depthCm').value=(d*100).toFixed(1);
+      el.querySelector('.diaM').value=dia.toFixed(3);
+    }else{
+      const writeImperial=(prefix,m)=>{
+        const totalIn=m/0.0254;
+        const ft=Math.floor(totalIn/12);
+        const inch=totalIn-ft*12;
+        el.querySelector('.'+prefix+'Ft').value=String(ft);
+        el.querySelector('.'+prefix+'In').value=inch.toFixed(1);
+      };
+      writeImperial('len',l);
+      writeImperial('wid',w);
+      writeImperial('dia',dia);
+      el.querySelector('.depthIn').value=(d/0.0254).toFixed(1);
+    }
+  });
+}
+
 document.querySelectorAll('input[name="unitSystem"]').forEach(r=>{
   r.addEventListener('change',()=>{
-    unitSystem=r.value;
+    const previous=unitSystem;
+    const next=r.value;
+    if(previous!==next) convertUnitFields(previous,next);
+    unitSystem=next;
     applyUnitUI();
     calculate();
   });
