@@ -1,28 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
-  <url>
-    <loc>https://toolvault.aftabjordan1.workers.dev/</loc>
-  </url>
-
-  <url>
-    <loc>https://toolvault.aftabjordan1.workers.dev/solar/</loc>
-  </url>
-
-  <url>
-    <loc>https://toolvault.aftabjordan1.workers.dev/solar/solar-load-calculator.html</loc>
-  </url>
-
-  <url>
-    <loc>https://toolvault.aftabjordan1.workers.dev/solar/solar-energy-generation-calculator.html</loc>
-  </url>
-
-  <url>
-    <loc>https://toolvault.aftabjordan1.workers.dev/solar/solar-panel-area-calculator.html</loc>
-  </url>
-
-  <url>
-  <loc>https://toolvault.aftabjordan1.workers.dev/solar/how-to-calculate-solar-system-size.html</loc>
-  </url>
-
+  <url><loc>https://toolvault.aftabjordan1.workers.dev/</loc></url>
+  <url><loc>https://toolvault.aftabjordan1.workers.dev/calculators/</loc></url>
+  <url><loc>https://toolvault.aftabjordan1.workers.dev/converters/</loc></url>
+  <url><loc>https://toolvault.aftabjordan1.workers.dev/education/</loc></url>
+  <url><loc>https://toolvault.aftabjordan1.workers.dev/construction/</loc></url>
+  <url><loc>https://toolvault.aftabjordan1.workers.dev/engineering/</loc></url>
+  <url><loc>https://toolvault.aftabjordan1.workers.dev/developer/</loc></url>
+  <url><loc>https://toolvault.aftabjordan1.workers.dev/documents/</loc></url>
+  <url><loc>https://toolvault.aftabjordan1.workers.dev/business/</loc></url>
+  <url><loc>https://toolvault.aftabjordan1.workers.dev/smart-tools/</loc></url>
+  <url><loc>https://toolvault.aftabjordan1.workers.dev/solar/</loc></url>
+  <url><loc>https://toolvault.aftabjordan1.workers.dev/solar/solar-load-calculator.html</loc></url>
+  <url><loc>https://toolvault.aftabjordan1.workers.dev/solar/solar-energy-generation-calculator.html</loc></url>
+  <url><loc>https://toolvault.aftabjordan1.workers.dev/solar/solar-panel-area-calculator.html</loc></url>
+  <url><loc>https://toolvault.aftabjordan1.workers.dev/solar/how-to-calculate-solar-system-size.html</loc></url>
 </urlset>
