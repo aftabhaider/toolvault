@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gravel Calculator — Volume, Weight, Bags & Cost | ToolVault</title>
+<meta name="description" content="Free gravel calculator to estimate gravel volume, weight, bags and cost. Supports metric and imperial units, waste allowance, custom density and multiple shapes.">
+<link rel="canonical" href="https://toolvault.aftabjordan1.workers.dev/construction/gravel-calculator.html">
+<meta property="og:title" content="Gravel Calculator — Volume, Weight, Bags & Cost | ToolVault">
+<meta property="og:description" content="Estimate gravel volume, weight, bags and cost for driveways, paths, bases and landscaping with metric or imperial units.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://toolvault.aftabjordan1.workers.dev/construction/gravel-calculator.html">
+<style>
+:root{--bg:#f5faf8;--card:#fff;--ink:#10231f;--muted:#65766f;--line:#dce8e3;--brand:#0b8f78;--brand2:#086c5b;--soft:#e4f6f0;--dark:#0d3029;--warn:#8a5a12;--warnbg:#fff8e8;--shadow:0 14px 38px rgba(16,35,31,.08)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.55}a{text-decoration:none;color:inherit}.wrap{max-width:1120px;margin:auto;padding:0 20px}
+header{background:#fff;border-bottom:1px solid var(--line)}.nav{min-height:68px;display:flex;justify-content:space-between;align-items:center}.logo{font-size:23px;font-weight:900}.logo span{color:var(--brand)}.nav a{font-size:13px;color:var(--brand2);font-weight:800}
+main{padding:23px 0 55px}.crumb{font-size:13px;color:var(--muted);margin-bottom:16px}.crumb a{color:var(--brand2);font-weight:800}
+.hero{background:linear-gradient(135deg,#e8f8f3,#f8fcfb 60%,#fff);border:1px solid var(--line);border-radius:22px;padding:34px;box-shadow:var(--shadow)}.badge{display:inline-flex;gap:8px;align-items:center;padding:7px 11px;border-radius:999px;background:var(--soft);color:var(--brand2);font-size:12px;font-weight:850}.hero h1{font-size:clamp(36px,5vw,55px);line-height:1.02;letter-spacing:-2px;margin:14px 0 10px}.hero p{margin:0;color:var(--muted);max-width:830px;font-size:16px}
+.layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(330px,.8fr);gap:16px;margin-top:17px}.card{background:var(--card);border:1px solid var(--line);border-radius:19px;box-shadow:0 8px 27px rgba(16,35,31,.05);overflow:hidden}.head{padding:17px 19px;border-bottom:1px solid var(--line)}.head h2{margin:0;font-size:18px}.head p{margin:4px 0 0;color:var(--muted);font-size:12px}.body{padding:18px 19px}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:11px}.field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}.field small{display:block;color:#8a9993;font-size:10px;margin-top:5px}input,select{width:100%;height:42px;border:1px solid #ceddd7;border-radius:10px;background:#fff;padding:0 11px;color:var(--ink);font:inherit;font-size:14px;outline:none}input:focus,select:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(11,143,120,.1)}
+.full{grid-column:1/-1}.shapeRow{display:grid;grid-template-columns:1fr 1fr;gap:8px}.shape{border:1px solid var(--line);border-radius:11px;padding:10px 11px;cursor:pointer;background:#fbfdfc;font-size:12px;font-weight:800}.shape.active{border-color:#9bcfc2;background:var(--soft);color:var(--brand2)}.shape input{display:none}
+.addArea{margin-top:11px;width:100%;height:40px;border:1px dashed #99cabe;border-radius:10px;background:#f6fcfa;color:var(--brand2);font-weight:850;cursor:pointer}
+.areaList{display:grid;gap:10px}.areaItem{border:1px solid var(--line);border-radius:13px;padding:13px;background:#fbfdfc;position:relative}.areaTop{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.areaTop strong{font-size:12px}.remove{border:1px solid #f0cccc;background:#fff7f7;color:#a64242;border-radius:8px;padding:4px 8px;font-weight:850;cursor:pointer}.areaFields{display:grid;grid-template-columns:1fr 1fr;gap:9px}.areaItem[data-shape="circle"] .rectOnly{display:none}.areaItem[data-shape="rect"] .circleOnly{display:none}
+.resultTop{background:linear-gradient(135deg,#0d3029,#087f6b);color:#fff;padding:18px}.resultTop small{font-size:10px;text-transform:uppercase;letter-spacing:.08em;opacity:.74;font-weight:850}.resultTop h2{font-size:20px;margin:5px 0 0}.results{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:12px}.metric{border:1px solid var(--line);border-radius:12px;padding:11px;background:#fbfdfc}.metric.primary{background:var(--soft);border-color:#c7e9df}.metric span{display:block;color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}.metric b{display:block;font-size:20px;margin-top:4px}.metric small{color:var(--muted);font-size:10px}.note{padding:0 13px 13px;color:var(--muted);font-size:11px;line-height:1.55}.cost{margin:0 12px 12px;padding:12px;border:1px solid #d9e7e2;border-radius:12px;background:#f8fbfa}.cost strong{display:block;font-size:11px;color:var(--brand2)}.cost span{font-size:18px;font-weight:900}
+.advanced{margin-top:12px;border-top:1px solid var(--line);padding-top:14px}.advanced h3{font-size:13px;margin:0 0 10px}.help{padding:13px;background:var(--warnbg);border:1px solid #f0dfb6;border-radius:12px;color:var(--warn);font-size:11px;line-height:1.55;margin-top:12px}
+.article{margin-top:17px;padding:27px}.article h2{font-size:24px;margin:0 0 8px}.article h3{font-size:17px;margin:24px 0 7px}.article p,.article li{color:#566760;font-size:14px}.formula{padding:14px 16px;background:var(--soft);border:1px solid #c8e9df;border-radius:12px;color:#255c51;font-weight:800;margin:14px 0}.related{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:15px}.rel{border:1px solid var(--line);border-radius:12px;padding:15px;background:#fff}.rel strong{display:block;font-size:13px;margin-bottom:4px}.rel span{color:var(--muted);font-size:11px}
+footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-size:12px}
+@media(max-width:820px){.layout{grid-template-columns:1fr}.related{grid-template-columns:1fr}.controls{grid-template-columns:1fr}.full{grid-column:auto}}
+@media(max-width:520px){.wrap{padding:0 14px}.hero{padding:27px 20px}.areaFields{grid-template-columns:1fr}.results{grid-template-columns:1fr}.metric.primary{grid-column:auto}}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"WebApplication","@id":"https://toolvault.aftabjordan1.workers.dev/construction/gravel-calculator.html#app","name":"Gravel Calculator","url":"https://toolvault.aftabjordan1.workers.dev/construction/gravel-calculator.html","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires a modern web browser","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
+{"@type":"WebPage","@id":"https://toolvault.aftabjordan1.workers.dev/construction/gravel-calculator.html#page","url":"https://toolvault.aftabjordan1.workers.dev/construction/gravel-calculator.html","name":"Gravel Calculator — Volume, Weight, Bags & Cost","isPartOf":{"@type":"WebSite","name":"ToolVault","url":"https://toolvault.aftabjordan1.workers.dev/"}},
+{"@type":"BreadcrumbList","itemListElement":[
+{"@type":"ListItem","position":1,"name":"ToolVault","item":"https://toolvault.aftabjordan1.workers.dev/"},
+{"@type":"ListItem","position":2,"name":"Construction","item":"https://toolvault.aftabjordan1.workers.dev/construction/"},
+{"@type":"ListItem","position":3,"name":"Gravel Calculator","item":"https://toolvault.aftabjordan1.workers.dev/construction/gravel-calculator.html"}]}
+]}
+</script>
+</head>
+<body>
+<header><div class="wrap nav"><a class="logo" href="/">Tool<span>Vault</span></a><a href="/construction/">← Construction tools</a></div></header>
+<main class="wrap">
+<div class="crumb"><a href="/">ToolVault</a> / <a href="/construction/">Construction</a> / Gravel Calculator</div>
+<section class="hero"><span class="badge">🪨 Free construction quantity tool</span><h1>Gravel Calculator</h1><p>Estimate the gravel, crushed stone or aggregate you need by area and depth, then convert the result into volume, weight, bags and cost. Metric and imperial units are supported, with waste and density controls for more realistic planning.</p></section>
+
+<div class="layout">
+<section class="card">
+<div class="head"><h2>Project inputs</h2><p>Add one area or combine several areas such as a driveway, path and garden bed.</p></div>
+<div class="body">
+<div class="areaList" id="areas"></div>
+<button class="addArea" id="addArea">＋ Add another area</button>
+<div class="controls" style="margin-top:13px">
+<div class="field"><label for="unit">Measurement system</label><select id="unit"><option value="metric">Metric (m, cm)</option><option value="imperial">Imperial (ft, in)</option></select></div>
+<div class="field"><label for="density">Material density (t/m³)</label><input id="density" type="number" min="0.01" step="0.01" value="1.60"><small>Common loose crushed stone/gravel is often around 1.5–1.8 t/m³. Replace with the supplier's figure when known.</small></div>
+<div class="field"><label for="waste">Waste / extra allowance (%)</label><input id="waste" type="number" min="0" max="100" step="1" value="10"></div>
+<div class="field"><label for="price">Optional price per tonne</label><input id="price" type="number" min="0" step="0.01" placeholder="e.g. 35.00"></div>
+<div class="field"><label for="currency">Currency</label><input id="currency" maxlength="4" value="$"></div>
+<div class="field"><label for="bagSize">Optional bag weight (kg)</label><input id="bagSize" type="number" min="0" step="0.1" placeholder="e.g. 20"></div>
+</div>
+<div class="help">Planning estimate: actual gravel density varies by rock type, moisture and compaction. For purchasing, use the supplier's stated density or bag coverage and round up to the next practical order quantity.</div>
+</div>
+</section>
+
+<aside class="card">
+<div class="resultTop"><small>Live estimate</small><h2 id="resultTitle">Enter your project dimensions</h2></div>
+<div class="results">
+<div class="metric primary"><span>Volume incl. waste</span><b id="m3">—</b><small>cubic metres</small></div>
+<div class="metric"><span>Weight</span><b id="tons">—</b><small>metric tonnes</small></div>
+<div class="metric"><span>Volume</span><b id="yd3">—</b><small>cubic yards</small></div>
+<div class="metric"><span>Volume</span><b id="ft3">—</b><small>cubic feet</small></div>
+<div class="metric"><span>Bag count</span><b id="bags">—</b><small id="bagsNote">enter bag weight</small></div>
+<div class="metric"><span>Project areas</span><b id="areaCount">0</b><small>included</small></div>
+</div>
+<div class="cost"><strong>Estimated material cost</strong><span id="cost">—</span></div>
+<div class="note">The calculation adds your waste allowance to the geometric volume, then applies the selected density. Cost is optional and uses your entered price per tonne.</div>
+</aside>
+</div>
+
+<section class="card article">
+<h2>How the Gravel Calculator Works</h2>
+<p>For each project area, ToolVault calculates the geometric volume from the shape and dimensions, adds the waste allowance, and then estimates weight using the density you enter. You can combine several areas in one project.</p>
+<div class="formula">Volume = Area × Depth &nbsp; • &nbsp; Volume with waste = Volume × (1 + waste ÷ 100) &nbsp; • &nbsp; Weight = Volume with waste × density</div>
+<h3>Why the density matters</h3>
+<p>Gravel is sold by different measures depending on the supplier: tonnes, kilograms, cubic yards, cubic metres or bags. A volume-only answer can therefore be misleading for purchasing. Density changes with material type, moisture and compaction, so the most accurate approach is to replace the default density with the supplier's published figure.</p>
+<h3>What can you use it for?</h3>
+<ul><li>Driveways, parking areas and paths</li><li>Drainage and landscaping layers</li><li>Foundation and sub-base planning</li><li>Multiple areas with different shapes</li></ul>
+<h3>Metric and imperial conversion</h3>
+<p>The calculator accepts metric or imperial dimensions and reports the main result in cubic metres, cubic yards and cubic feet, plus estimated metric tonnes.</p>
+<div class="related">
+<a class="rel" href="/construction/"><strong>Construction Tools</strong><span>Explore the growing ToolVault construction collection.</span></a>
+<a class="rel" href="/calculators/"><strong>Calculators</strong><span>Return to the wider ToolVault calculator library.</span></a>
+<a class="rel" href="/"><strong>ToolVault Home</strong><span>Browse all global tools and categories.</span></a>
+</div>
+</section>
+</main>
+<footer><div class="wrap">© 2026 ToolVault · Free practical tools for the web. Planning estimates should be checked against project specifications and supplier data.</div></footer>
+
+<script>
+const areasEl=document.getElementById('areas');
+let nextId=1;
+function areaTemplate(id){
+  const el=document.createElement('div');
+  el.className='areaItem';el.dataset.shape='rect';el.dataset.id=id;
+  el.innerHTML='<div class="areaTop"><strong>Area '+id+'</strong><button class="remove" type="button">Remove</button></div>'+
+    '<div class="shapeRow">'+
+    '<label class="shape active"><input type="radio" name="shape-'+id+'" value="rect" checked>▭ Rectangle</label>'+
+    '<label class="shape"><input type="radio" name="shape-'+id+'" value="circle">○ Circle</label></div>'+
+    '<div class="areaFields" style="margin-top:9px">'+
+    '<div class="field rectOnly"><label>Length</label><input class="len" type="number" min="0" step="any" value="10"></div>'+
+    '<div class="field rectOnly"><label>Width</label><input class="wid" type="number" min="0" step="any" value="5"></div>'+
+    '<div class="field circleOnly"><label>Diameter</label><input class="dia" type="number" min="0" step="any" value="5"></div>'+
+    '<div class="field full"><label>Depth</label><input class="depth" type="number" min="0" step="any" value="0.10"></div></div>';
+  const radios=[...el.querySelectorAll('input[type=radio]')];
+  radios.forEach(r=>r.addEventListener('change',()=>{
+    el.dataset.shape=r.value;
+    el.querySelectorAll('.shape').forEach(s=>s.classList.toggle('active',s.querySelector('input').checked));
+    calculate();
+  }));
+  el.querySelector('.remove').addEventListener('click',()=>{el.remove();calculate()});
+  el.querySelectorAll('input').forEach(i=>i.addEventListener('input',calculate));
+  return el;
+}
+function addArea(){areasEl.appendChild(areaTemplate(nextId++)); calculate();}
+document.getElementById('addArea').addEventListener('click',addArea);
+['unit','density','waste','price','currency','bagSize'].forEach(id=>document.getElementById(id).addEventListener('input',calculate));
+document.getElementById('unit').addEventListener('change',()=>{updateLabels();calculate()});
+
+function updateLabels(){
+  const metric=document.getElementById('unit').value==='metric';
+  document.querySelectorAll('.areaItem').forEach(el=>{
+    const labels=el.querySelectorAll('.field label');
+    if(el.dataset.shape==='rect'){labels[0].textContent='Length';labels[1].textContent='Width';}
+    labels[labels.length-1].textContent='Depth';
+    el.querySelector('.len')?.setAttribute('placeholder',metric?'10':'30');
+    el.querySelector('.wid')?.setAttribute('placeholder',metric?'5':'15');
+    el.querySelector('.dia')?.setAttribute('placeholder',metric?'5':'15');
+    el.querySelector('.depth')?.setAttribute('placeholder',metric?'0.10':'4');
+  });
+  const unit=document.getElementById('unit').value;
+  document.querySelectorAll('.areaItem').forEach(el=>{
+    const vals=el.querySelectorAll('input[type=number]');
+    vals.forEach((inp,idx)=>{
+      if(inp.classList.contains('depth')) return;
+    });
+  });
+}
+
+function dimensionsToMeters(v,type){
+  const n=Math.max(0,Number(v)||0);
+  if(document.getElementById('unit').value==='metric'){
+    return type==='depth'?n:n;
+  }
+  return type==='depth'?n*0.0254:n*0.3048;
+}
+function calculate(){
+  let netM3=0,count=0;
+  document.querySelectorAll('.areaItem').forEach(el=>{
+    const depth=dimensionsToMeters(el.querySelector('.depth').value,'depth');
+    let areaM2=0;
+    if(el.dataset.shape==='circle'){
+      const d=dimensionsToMeters(el.querySelector('.dia').value,'length');
+      areaM2=Math.PI*Math.pow(d/2,2);
+    }else{
+      const l=dimensionsToMeters(el.querySelector('.len').value,'length');
+      const w=dimensionsToMeters(el.querySelector('.wid').value,'length');
+      areaM2=l*w;
+    }
+    netM3+=areaM2*depth;count++;
+  });
+  const waste=Math.max(0,Number(document.getElementById('waste').value)||0);
+  const density=Math.max(0,Number(document.getElementById('density').value)||0);
+  const gross=netM3*(1+waste/100);
+  const tons=gross*density;
+  const yd3=gross*1.30795062;
+  const ft3=gross*35.3146667;
+  const bagKg=Math.max(0,Number(document.getElementById('bagSize').value)||0);
+  const bags=bagKg>0?Math.ceil((tons*1000)/bagKg):0;
+  const price=Math.max(0,Number(document.getElementById('price').value)||0);
+  const currency=(document.getElementById('currency').value||'$').trim();
+  document.getElementById('m3').textContent=count?gross.toFixed(2):'—';
+  document.getElementById('tons').textContent=count?tons.toFixed(2):'—';
+  document.getElementById('yd3').textContent=count?yd3.toFixed(2):'—';
+  document.getElementById('ft3').textContent=count?ft3.toFixed(1):'—';
+  document.getElementById('bags').textContent=bagKg>0&&count?String(bags):'—';
+  document.getElementById('bagsNote').textContent=bagKg>0?'bags of '+bagKg+' kg':'enter bag weight';
+  document.getElementById('areaCount').textContent=count;
+  document.getElementById('cost').textContent=price>0&&count?currency+' '+(tons*price).toFixed(2):'Add price/tonne';
+  document.getElementById('resultTitle').textContent=count?gross.toFixed(2)+' m³ of material':'Enter your project dimensions';
+}
+addArea();
+</script>
+</body>
+</html>
