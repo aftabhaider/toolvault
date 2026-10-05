@@ -1,1 +1,751 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
+<title>How to Calculate Solar System Size: Panels, Inverter & Battery | ToolVault</title>
+
+<meta name="description" content="Learn how to calculate solar system size from electricity load, daily energy use, solar PV capacity, inverter size and battery capacity with a practical step-by-step example.">
+
+<link rel="canonical" href="https://toolvault.aftabjordan1.workers.dev/solar/how-to-calculate-solar-system-size.html">
+
+<style>
+:root{
+  --bg:#f4faf8;
+  --card:#fff;
+  --ink:#17312f;
+  --muted:#667774;
+  --line:#dbe7e4;
+  --green:#087f6b;
+  --green2:#0ca98d;
+  --soft:#e8f7f3;
+  --shadow:0 10px 30px rgba(18,54,48,.08)
+}
+
+*{box-sizing:border-box}
+
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:Arial,sans-serif;
+  line-height:1.7
+}
+
+a{
+  color:var(--green);
+  text-decoration:none;
+  font-weight:700
+}
+
+.header{
+  background:#fff;
+  border-bottom:1px solid var(--line)
+}
+
+.nav{
+  max-width:1180px;
+  margin:auto;
+  padding:16px 22px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px
+}
+
+.logo{
+  font-size:22px;
+  font-weight:800;
+  color:var(--ink)
+}
+
+.logo span{color:var(--green)}
+
+.wrap{
+  max-width:980px;
+  margin:auto;
+  padding:26px 22px 55px
+}
+
+.crumb{
+  font-size:13px;
+  color:var(--muted);
+  margin-bottom:20px
+}
+
+.crumb a{color:var(--green)}
+
+.hero{
+  background:linear-gradient(135deg,#e9f8f4,#f8fcfb 60%,#fff);
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:38px;
+  box-shadow:var(--shadow)
+}
+
+.badge{
+  display:inline-block;
+  background:var(--soft);
+  color:var(--green);
+  font-size:12px;
+  font-weight:800;
+  padding:7px 11px;
+  border-radius:999px;
+  margin-bottom:14px
+}
+
+h1{
+  font-size:clamp(34px,5vw,50px);
+  line-height:1.1;
+  letter-spacing:-1.6px;
+  margin:0 0 14px
+}
+
+.hero p{
+  margin:0;
+  max-width:800px;
+  color:var(--muted);
+  font-size:16px
+}
+
+.article{
+  margin-top:22px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:30px;
+  box-shadow:0 7px 24px rgba(18,54,48,.04)
+}
+
+.article h2{
+  font-size:25px;
+  line-height:1.25;
+  margin:32px 0 10px
+}
+
+.article h2:first-child{
+  margin-top:0
+}
+
+.article h3{
+  font-size:18px;
+  margin:24px 0 8px
+}
+
+.article p,
+.article li{
+  color:#526663;
+  font-size:14px
+}
+
+.article ul,
+.article ol{
+  padding-left:22px
+}
+
+.formula{
+  margin:16px 0;
+  padding:16px 18px;
+  background:var(--soft);
+  border:1px solid #c9e9df;
+  border-radius:13px;
+  color:#24594f;
+  font-weight:800
+}
+
+.example{
+  margin:18px 0;
+  padding:20px;
+  background:#f7fbfa;
+  border:1px solid var(--line);
+  border-radius:14px
+}
+
+.example strong{
+  color:var(--green)
+}
+
+.tools{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+  margin-top:18px
+}
+
+.tool{
+  display:block;
+  padding:19px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:15px;
+  box-shadow:0 5px 18px rgba(18,54,48,.04)
+}
+
+.tool:hover{
+  border-color:#bddfd6;
+  transform:translateY(-2px)
+}
+
+.tool h3{
+  margin:0 0 6px;
+  color:var(--ink);
+  font-size:17px
+}
+
+.tool p{
+  margin:0;
+  font-size:13px;
+  color:var(--muted)
+}
+
+.faq{
+  margin-top:22px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:30px;
+  box-shadow:0 7px 24px rgba(18,54,48,.04)
+}
+
+.faq h2{
+  margin:0 0 15px;
+  font-size:25px
+}
+
+details{
+  border-top:1px solid var(--line);
+  padding:15px 0
+}
+
+details:first-of-type{
+  border-top:0
+}
+
+summary{
+  cursor:pointer;
+  font-weight:800;
+  font-size:14px
+}
+
+details p{
+  margin:9px 0 0;
+  color:var(--muted);
+  font-size:13px
+}
+
+.cta{
+  margin-top:22px;
+  padding:25px;
+  background:#0f302a;
+  color:#fff;
+  border-radius:18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:18px
+}
+
+.cta h2{
+  margin:0 0 5px;
+  font-size:22px
+}
+
+.cta p{
+  margin:0;
+  color:#c9d9d5;
+  font-size:13px
+}
+
+.cta a{
+  background:#fff;
+  color:var(--green);
+  padding:11px 16px;
+  border-radius:10px;
+  white-space:nowrap
+}
+
+.footer{
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+  margin-top:30px
+}
+
+@media(max-width:800px){
+  .tools{
+    grid-template-columns:1fr
+  }
+
+  .hero{
+    padding:28px 22px
+  }
+
+  .article,
+  .faq{
+    padding:22px
+  }
+
+  .cta{
+    display:block
+  }
+
+  .cta a{
+    display:inline-block;
+    margin-top:15px
+  }
+}
+</style>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@graph":[
+    {
+      "@type":"Article",
+      "@id":"https://toolvault.aftabjordan1.workers.dev/solar/how-to-calculate-solar-system-size.html#article",
+      "headline":"How to Calculate Solar System Size: Panels, Inverter & Battery",
+      "description":"A practical guide to estimating solar system size from electrical load, daily energy consumption, PV capacity, inverter size and battery capacity.",
+      "mainEntityOfPage":{
+        "@type":"WebPage",
+        "@id":"https://toolvault.aftabjordan1.workers.dev/solar/how-to-calculate-solar-system-size.html"
+      },
+      "publisher":{
+        "@type":"Organization",
+        "name":"ToolVault",
+        "url":"https://toolvault.aftabjordan1.workers.dev/"
+      }
+    },
+    {
+      "@type":"BreadcrumbList",
+      "itemListElement":[
+        {
+          "@type":"ListItem",
+          "position":1,
+          "name":"ToolVault",
+          "item":"https://toolvault.aftabjordan1.workers.dev/"
+        },
+        {
+          "@type":"ListItem",
+          "position":2,
+          "name":"Solar Tools",
+          "item":"https://toolvault.aftabjordan1.workers.dev/solar/"
+        },
+        {
+          "@type":"ListItem",
+          "position":3,
+          "name":"How to Calculate Solar System Size",
+          "item":"https://toolvault.aftabjordan1.workers.dev/solar/how-to-calculate-solar-system-size.html"
+        }
+      ]
+    }
+  ]
+}
+</script>
+
+</head>
+
+<body>
+
+<header class="header">
+  <div class="nav">
+    <a class="logo" href="../index.html">Tool<span>Vault</span></a>
+    <a href="index.html">← Solar Tools</a>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="crumb">
+    <a href="../index.html">ToolVault</a> /
+    <a href="index.html">Solar Tools</a> /
+    How to Calculate Solar System Size
+  </div>
+
+  <section class="hero">
+    <span class="badge">☀ Solar Planning Guide</span>
+
+    <h1>How to Calculate Solar System Size</h1>
+
+    <p>
+      Learn how to estimate the size of a solar PV system from your
+      electricity load, daily energy consumption, solar panel capacity,
+      inverter requirements and battery backup needs.
+    </p>
+  </section>
+
+  <article class="article">
+
+    <h2>What Does Solar System Size Mean?</h2>
+
+    <p>
+      Solar system size usually refers to the installed photovoltaic
+      capacity of the solar panels, expressed in watts (W) or kilowatts
+      (kW or kWp). A complete system also needs an appropriately sized
+      inverter and, when backup power is required, a suitable battery
+      system.
+    </p>
+
+    <p>
+      A practical solar system estimate starts with the electrical load,
+      converts that load into daily energy consumption, estimates the PV
+      capacity required to produce that energy, and then considers inverter
+      and battery requirements.
+    </p>
+
+    <h2>Step 1: Calculate Your Electricity Load</h2>
+
+    <p>
+      Start by listing the appliances and equipment that the solar system
+      needs to support. For each appliance, consider its quantity, power
+      rating in watts and average operating hours per day.
+    </p>
+
+    <div class="formula">
+      Daily energy (Wh) = Quantity × Watts × Hours per day
+    </div>
+
+    <p>
+      Add the energy use of all appliances to calculate the estimated total
+      daily electricity consumption.
+    </p>
+
+    <h3>Example</h3>
+
+    <div class="example">
+      <p>
+        Suppose you use 5 LED bulbs rated at 10 W for 6 hours per day:
+      </p>
+
+      <p>
+        <strong>5 × 10 W × 6 h = 300 Wh/day</strong>
+      </p>
+
+      <p>
+        Repeat this calculation for fans, televisions, refrigerators,
+        pumps, laptops, air conditioners and other loads, then add the
+        results together.
+      </p>
+    </div>
+
+    <p>
+      For a quicker calculation, use the
+      <a href="solar-load-calculator.html">Solar Load Calculator</a>
+      to enter your appliances and calculate connected load and daily
+      energy consumption.
+    </p>
+
+    <h2>Step 2: Estimate Required Solar PV Capacity</h2>
+
+    <p>
+      After calculating daily energy consumption, estimate how much solar
+      PV capacity is needed to produce that energy. The result depends on
+      available peak sun hours and expected system losses.
+    </p>
+
+    <div class="formula">
+      PV capacity ≈ Daily energy ÷ Peak sun hours ÷ (1 − system losses)
+    </div>
+
+    <p>
+      Daily energy should be expressed in Wh, peak sun hours should be
+      expressed as hours per day, and system losses should be represented
+      as a decimal factor in the calculation.
+    </p>
+
+    <h3>Example PV Calculation</h3>
+
+    <div class="example">
+      <p>
+        Suppose a household uses approximately <strong>5,000 Wh/day</strong>,
+        has <strong>5 peak sun hours</strong> and assumes
+        <strong>20% system losses</strong>.
+      </p>
+
+      <p>
+        The usable solar factor is 0.80.
+      </p>
+
+      <p>
+        <strong>5,000 ÷ 5 ÷ 0.80 = 1,250 W</strong>
+      </p>
+
+      <p>
+        This gives a planning estimate of approximately
+        <strong>1.25 kW</strong> of PV capacity.
+      </p>
+    </div>
+
+    <p>
+      Actual production can vary with weather, shading, panel orientation,
+      temperature, dust, wiring losses, inverter efficiency and other site
+      conditions.
+    </p>
+
+    <h2>Step 3: Calculate Solar Panel Capacity</h2>
+
+    <p>
+      Once the required PV capacity is estimated, you can determine an
+      approximate number of panels from the wattage of the selected module.
+    </p>
+
+    <div class="formula">
+      Number of panels ≈ Required PV capacity (W) ÷ Panel wattage (W)
+    </div>
+
+    <div class="example">
+      <p>
+        For example, if the estimated PV requirement is
+        <strong>5,000 W</strong> and each solar panel is rated at
+        <strong>625 W</strong>:
+      </p>
+
+      <p>
+        <strong>5,000 ÷ 625 = 8 panels</strong>
+      </p>
+
+      <p>
+        That produces an installed capacity of:
+        <strong>8 × 625 = 5,000 W = 5 kWp</strong>.
+      </p>
+    </div>
+
+    <h2>Step 4: Choose an Inverter Size</h2>
+
+    <p>
+      The inverter converts DC electricity from the solar system into AC
+      electricity for compatible loads. Its size should be appropriate for
+      the connected load and the intended operating conditions.
+    </p>
+
+    <p>
+      A practical planning approach is to allow some headroom above the
+      calculated connected load rather than selecting an inverter exactly
+      equal to the load.
+    </p>
+
+    <div class="formula">
+      Planning inverter size ≈ Connected load × 1.25
+    </div>
+
+    <p>
+      The final inverter selection should also consider surge or starting
+      currents, manufacturer limits, PV input specifications and the
+      actual system configuration.
+    </p>
+
+    <p>
+      The
+      <a href="solar-load-calculator.html">Solar Load Calculator</a>
+      provides an estimated inverter size together with the load and PV
+      calculations.
+    </p>
+
+    <h2>Step 5: Calculate Battery Capacity</h2>
+
+    <p>
+      Battery sizing depends on the backup load and the amount of time that
+      load must operate during an outage. The basic energy requirement is
+      calculated from load multiplied by backup time.
+    </p>
+
+    <div class="formula">
+      Battery energy required (Wh) = Backup load (W) × Backup time (hours)
+    </div>
+
+    <p>
+      Because not all battery energy is normally treated as usable for
+      planning, the required nominal energy can be higher than the usable
+      energy requirement.
+    </p>
+
+    <div class="formula">
+      Nominal battery energy ≈ Required battery energy ÷ usable energy fraction
+    </div>
+
+    <p>
+      The ToolVault Solar Load Calculator uses an 80% usable-energy
+      assumption for its battery planning estimate and presents equivalent
+      12V, 24V and 48V battery capacities.
+    </p>
+
+    <h2>Solar Panel Wattage and System Size</h2>
+
+    <p>
+      Panel wattage affects how many modules are needed to reach a target PV
+      capacity. Higher-wattage panels can achieve the same total capacity
+      with fewer modules, while the physical panel dimensions still matter
+      when estimating installation space.
+    </p>
+
+    <p>
+      Use the
+      <a href="solar-panel-area-calculator.html">Solar Panel Area Calculator</a>
+      to estimate the total panel surface and practical installation area
+      required for a selected number of panels.
+    </p>
+
+    <h2>How Weather Affects Solar Generation</h2>
+
+    <p>
+      A solar system's actual energy generation changes with available solar
+      radiation and weather conditions. Cloud cover, temperature, panel
+      orientation, tilt and system losses can all affect the amount of energy
+      produced.
+    </p>
+
+    <p>
+      For a location-based estimate, use the
+      <a href="solar-energy-generation-calculator.html">
+        Solar Energy Generation Calculator
+      </a>
+      to estimate generation using location and weather-based solar data.
+    </p>
+
+    <h2>Example: Putting the Solar Calculation Together</h2>
+
+    <div class="example">
+      <p>
+        Consider a simplified planning example with:
+      </p>
+
+      <ul>
+        <li>Daily energy consumption: <strong>5,000 Wh/day</strong></li>
+        <li>Peak sun hours: <strong>5 hours/day</strong></li>
+        <li>System losses: <strong>20%</strong></li>
+        <li>Panel wattage: <strong>625 W</strong></li>
+      </ul>
+
+      <p>
+        Estimated PV capacity:
+        <strong>5,000 ÷ 5 ÷ 0.80 = 1,250 W</strong>.
+      </p>
+
+      <p>
+        The next step is to choose an appropriate panel configuration that
+        meets or exceeds the required capacity and then check inverter,
+        battery and installation-space requirements.
+      </p>
+    </div>
+
+    <h2>Important Solar System Design Considerations</h2>
+
+    <p>
+      A calculator provides a useful starting estimate, but a final
+      installation should account for actual site conditions and equipment
+      specifications. Roof orientation, shading, temperature, structural
+      limitations, panel layout, cable sizing, inverter specifications,
+      battery chemistry and starting currents can all affect the final
+      design.
+    </p>
+
+    <p>
+      ToolVault calculators are intended for practical planning and
+      estimation. They should not replace a detailed site-specific
+      engineering design.
+    </p>
+
+    <h2>Use ToolVault Solar Calculators</h2>
+
+    <div class="tools">
+
+      <a class="tool" href="solar-load-calculator.html">
+        <h3>Solar Load Calculator →</h3>
+        <p>
+          Calculate connected load, daily energy, PV capacity, inverter size
+          and battery capacity.
+        </p>
+      </a>
+
+      <a class="tool" href="solar-energy-generation-calculator.html">
+        <h3>Solar Energy Generation Calculator →</h3>
+        <p>
+          Estimate PV energy generation using location, solar radiation,
+          weather data and system settings.
+        </p>
+      </a>
+
+      <a class="tool" href="solar-panel-area-calculator.html">
+        <h3>Solar Panel Area Calculator →</h3>
+        <p>
+          Estimate panel surface area and practical installation space for
+          your solar PV system.
+        </p>
+      </a>
+
+    </div>
+
+  </article>
+
+  <section class="faq">
+
+    <h2>Frequently Asked Questions</h2>
+
+    <details>
+      <summary>How do I calculate the size of a solar system?</summary>
+      <p>
+        Start by calculating daily electricity consumption from appliance
+        quantity, wattage and operating hours. Then estimate PV capacity
+        using daily energy, peak sun hours and system losses. After that,
+        select an appropriate inverter and, where required, calculate
+        battery capacity from the backup load and required backup time.
+      </p>
+    </details>
+
+    <details>
+      <summary>How many solar panels do I need?</summary>
+      <p>
+        The approximate number of panels can be estimated by dividing the
+        required PV capacity in watts by the wattage of the selected panel.
+        The final configuration should meet or exceed the required capacity
+        and should also be checked against the inverter and installation
+        requirements.
+      </p>
+    </details>
+
+    <details>
+      <summary>How do I calculate battery size for solar?</summary>
+      <p>
+        Multiply the backup load in watts by the required backup time in
+        hours to estimate battery energy, then account for the usable energy
+        fraction of the battery system. Battery chemistry and manufacturer
+        specifications should be considered in the final design.
+      </p>
+    </details>
+
+    <details>
+      <summary>Does solar system size depend on location?</summary>
+      <p>
+        Yes. Available solar radiation and peak sun hours vary by location,
+        while weather conditions can change expected energy generation.
+        A location-based solar generation estimate can therefore be useful
+        when planning a PV system.
+      </p>
+    </details>
+
+  </section>
+
+  <section class="cta">
+    <div>
+      <h2>Start with your actual load</h2>
+      <p>
+        Use ToolVault's Solar Load Calculator to turn your appliance list
+        into a practical solar system estimate.
+      </p>
+    </div>
+
+    <a href="solar-load-calculator.html">
+      Open Solar Load Calculator →
+    </a>
+  </section>
+
+  <div class="footer">
+    © 2026 ToolVault · Practical tools for renewable energy planning.
+  </div>
+
+</main>
+
+</body>
+</html>
