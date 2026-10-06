@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Paint Calculator — How Much Paint Do I Need? | ToolVault</title>
+<meta name="description" content="Free paint calculator to estimate how much paint you need for walls, rooms and ceilings. Calculate paint coverage, litres, US gallons and cans from area, coats and product coverage.">
+<link rel="canonical" href="https://toolvault.aftabjordan1.workers.dev/construction/paint-calculator.html">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="theme-color" content="#0b8f78">
+<meta property="og:site_name" content="ToolVault">
+<meta property="og:title" content="Paint Calculator — How Much Paint Do I Need? | ToolVault">
+<meta property="og:description" content="Estimate paint quantity for walls, rooms and ceilings from surface area, coats and product coverage.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://toolvault.aftabjordan1.workers.dev/construction/paint-calculator.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Paint Calculator — How Much Paint Do I Need? | ToolVault">
+<meta name="twitter:description" content="Estimate paint quantity for walls, rooms and ceilings from surface area, coats and product coverage.">
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"WebApplication","@id":"https://toolvault.aftabjordan1.workers.dev/construction/paint-calculator.html#app","name":"Paint Calculator","url":"https://toolvault.aftabjordan1.workers.dev/construction/paint-calculator.html","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires a modern web browser","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
+{"@type":"WebPage","@id":"https://toolvault.aftabjordan1.workers.dev/construction/paint-calculator.html#page","url":"https://toolvault.aftabjordan1.workers.dev/construction/paint-calculator.html","name":"Paint Calculator — How Much Paint Do I Need?","isPartOf":{"@type":"WebSite","name":"ToolVault","url":"https://toolvault.aftabjordan1.workers.dev/"}},
+{"@type":"BreadcrumbList","itemListElement":[
+{"@type":"ListItem","position":1,"name":"ToolVault","item":"https://toolvault.aftabjordan1.workers.dev/"},
+{"@type":"ListItem","position":2,"name":"Construction","item":"https://toolvault.aftabjordan1.workers.dev/construction/"},
+{"@type":"ListItem","position":3,"name":"Paint Calculator","item":"https://toolvault.aftabjordan1.workers.dev/construction/paint-calculator.html"}]}
+]}
+</script>
+
+<style>
+:root{--page:#edf5f2;--surface:#fff;--surface2:#f7fbfa;--ink:#202927;--muted:#697672;--line:#d5e1dd;--brand:#0b8f78;--brand2:#086c5b;--soft:#e4f6f0;--warn:#fff7e6;--warnline:#eedcaf;--shadow:0 8px 24px rgba(25,42,38,.07)}
+*{box-sizing:border-box}body{margin:0;background:var(--page);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.55}a{text-decoration:none;color:inherit}
+.wrap{max-width:1080px;margin:auto;padding:0 20px}header{background:rgba(255,255,255,.97);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20;backdrop-filter:blur(10px)}
+.nav{min-height:68px;display:flex;align-items:center;justify-content:space-between}.logo{font-size:24px;font-weight:950}.logo span{color:var(--brand)}.nav a{font-size:13px;color:var(--brand2);font-weight:850}
+main{padding:24px 0 58px}.crumb{font-size:12px;color:var(--muted);margin-bottom:14px}.crumb a{color:var(--brand2);font-weight:800}
+.hero{background:linear-gradient(135deg,#fff,#f5fbf8);border:1px solid var(--line);border-radius:21px;padding:28px;box-shadow:var(--shadow)}.eyebrow{display:inline-flex;background:var(--soft);color:var(--brand2);padding:7px 11px;border-radius:999px;font-size:11px;font-weight:900}.hero h1{font-size:clamp(35px,5vw,52px);line-height:1.03;letter-spacing:-2px;margin:13px 0 8px}.hero p{max-width:820px;color:var(--muted);margin:0;font-size:15px}
+.tool{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(320px,.92fr);gap:17px;margin-top:18px}.card{background:var(--surface);border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);overflow:hidden}.card-head{padding:19px 21px;border-bottom:1px solid var(--line)}.card-head h2{font-size:20px;margin:0}.card-head p{font-size:12px;color:var(--muted);margin:5px 0 0}.card-body{padding:19px 21px}
+.segment{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:15px}.seg{position:relative;border:1px solid var(--line);background:var(--surface2);border-radius:10px;padding:10px;text-align:center;font-size:12px;font-weight:900;color:#52605b;cursor:pointer}.seg.active{background:var(--soft);border-color:#a5d1c5;color:var(--brand2)}.seg input{position:absolute;opacity:0}
+.unitrow{display:flex;gap:8px;margin-bottom:15px}.unit{border:1px solid var(--line);background:var(--surface2);border-radius:10px;padding:9px 14px;font-size:12px;font-weight:900;cursor:pointer}.unit.active{background:#24282a;color:#fff;border-color:#24282a}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field.full{grid-column:1/-1}.field label{display:block;font-size:11px;font-weight:900;margin-bottom:6px}.field input,.field select{width:100%;border:1px solid #c8dad4;border-radius:9px;padding:11px 10px;background:#fbfefd;color:var(--ink);font-size:13px;outline:0}.field input:focus,.field select:focus{border-color:#7bbcad;box-shadow:0 0 0 3px rgba(11,143,120,.08)}.hint{font-size:10px;color:#82908b;line-height:1.45;margin-top:5px}
+.advanced{margin-top:12px;border:1px solid var(--line);border-radius:11px;overflow:hidden}.advanced summary{cursor:pointer;list-style:none;padding:12px 14px;background:#f8fbfa;font-size:12px;font-weight:900;color:var(--brand2)}.advanced summary::-webkit-details-marker{display:none}.advanced summary:before{content:'+';display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;background:var(--soft);margin-right:8px}.advanced[open] summary:before{content:'−'}.advanced-body{padding:14px;border-top:1px solid var(--line)}
+.checkrow{display:flex;gap:8px;align-items:center;font-size:12px;font-weight:800;margin-top:12px}.checkrow input{width:auto}
+.buttonrow{display:flex;gap:9px;margin-top:15px}.primary{border:0;border-radius:10px;padding:12px 15px;background:var(--brand);color:#fff;font-weight:900;cursor:pointer}.primary:hover{background:var(--brand2)}.secondary{border:1px solid var(--line);border-radius:10px;padding:12px 15px;background:#fff;color:var(--brand2);font-weight:900;cursor:pointer}
+.result-head{padding:20px;background:linear-gradient(135deg,#0d3029,#087f6b);color:#fff}.result-head small{display:block;text-transform:uppercase;letter-spacing:.08em;font-size:10px;opacity:.72}.result-head h2{margin:5px 0 0;font-size:21px}.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:13px}.metric{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--surface2)}.metric.primary{background:var(--soft);border-color:#c2e5dc}.metric span{display:block;font-size:10px;color:var(--muted);font-weight:850;text-transform:uppercase;letter-spacing:.04em}.metric b{display:block;font-size:20px;margin-top:4px}.metric small{font-size:10px;color:var(--muted)}.result-note{padding:0 13px 15px;font-size:10px;line-height:1.55;color:var(--muted)}.cost{margin:0 13px 13px;padding:12px;border:1px solid var(--line);border-radius:12px}.cost strong{display:block;font-size:11px;color:var(--brand2)}.cost span{font-size:17px;font-weight:900}
+.details{margin-top:18px}.seo{background:#fff;border:1px solid var(--line);border-radius:17px;overflow:hidden;box-shadow:var(--shadow)}.seo summary{list-style:none;cursor:pointer;padding:15px 18px;background:#f8fbfa;color:var(--brand2);font-size:13px;font-weight:900}.seo summary::-webkit-details-marker{display:none}.seo summary:before{content:'+';display:inline-grid;place-items:center;width:21px;height:21px;border-radius:7px;background:var(--soft);margin-right:8px}.seo[open] summary:before{content:'−'}.seo-body{padding:23px}.seo-body h2{font-size:24px;letter-spacing:-.7px;margin:0 0 8px}.seo-body h2:not(:first-child){margin-top:27px}.seo-body h3{font-size:16px;margin:20px 0 6px}.seo-body p,.seo-body li{font-size:14px;color:#566760}.formula{padding:12px 14px;border-radius:11px;background:var(--soft);border:1px solid #c6e6dd;color:#245d52;font-weight:850;margin:11px 0}.example{padding:14px;border:1px solid var(--line);border-radius:11px;background:#fbfdfc}.related{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.rel{padding:13px;border:1px solid var(--line);border-radius:11px;background:#f7fbfa}.rel strong{display:block;font-size:12px;color:var(--brand2)}.rel span{font-size:10px;color:var(--muted)}
+footer{border-top:1px solid var(--line);background:#fff;padding:25px 0;color:#74807b;font-size:12px}@media(max-width:820px){.tool{grid-template-columns:1fr}.related{grid-template-columns:1fr 1fr}}@media(max-width:560px){.wrap{padding:0 14px}.hero{padding:23px 18px}.fields,.result-grid,.related{grid-template-columns:1fr}.field.full{grid-column:auto}.buttonrow{flex-direction:column}.nav a{font-size:11px}}
+</style>
+</head>
+<body>
+<header><div class="wrap nav"><a class="logo" href="/">Tool<span>Vault</span></a><a href="/construction/">← Construction tools</a></div></header>
+<main class="wrap">
+<div class="crumb"><a href="/">ToolVault</a> / <a href="/construction/">Construction</a> / Paint Calculator</div>
+<section class="hero"><span class="eyebrow">🎨 Free paint quantity calculator</span><h1>Paint Calculator</h1><p>Estimate how much paint you need for a room, walls, ceilings or a known surface area. Calculate paint coverage, litres, US gallons and optional cans and cost from the measurements and coverage printed on your paint product.</p></section>
+
+<div class="tool">
+<section class="card">
+<div class="card-head"><h2>Paint project</h2><p>Start with the smallest set of inputs needed for a useful estimate.</p></div>
+<div class="card-body">
+<div class="segment">
+<label class="seg active"><input type="radio" name="mode" value="room" checked>Room dimensions</label>
+<label class="seg"><input type="radio" name="mode" value="area">I know the area</label>
+</div>
+<div class="unitrow">
+<button class="unit active" data-unit="metric" type="button">Metric (m / m²)</button>
+<button class="unit" data-unit="imperial" type="button">Imperial (ft / ft²)</button>
+</div>
+<div id="roomFields" class="fields">
+<div class="field"><label for="length">Room length</label><input id="length" type="number" min="0" step="any" value="4"><div class="hint">Longest room dimension.</div></div>
+<div class="field"><label for="width">Room width</label><input id="width" type="number" min="0" step="any" value="3"><div class="hint">Wall-to-wall width.</div></div>
+<div class="field"><label for="height">Wall height</label><input id="height" type="number" min="0" step="any" value="2.7"><div class="hint">Floor to ceiling height.</div></div>
+<div class="field"><label for="coats">Number of coats</label><input id="coats" type="number" min="1" max="10" step="1" value="2"></div>
+</div>
+<div id="areaFields" class="fields" style="display:none">
+<div class="field full"><label for="knownArea">Paintable surface area</label><input id="knownArea" type="number" min="0" step="any" value="50"><div class="hint">Use this for an exterior wall project or when you already measured the total paintable surface.</div></div>
+<div class="field"><label for="areaCoats">Number of coats</label><input id="areaCoats" type="number" min="1" max="10" step="1" value="2"></div>
+</div>
+<div class="fields" style="margin-top:12px">
+<div class="field"><label for="coverage">Paint coverage</label><input id="coverage" type="number" min="0.01" step="any" value="10"><div class="hint" id="coverageHint">m² per litre per coat. Use the product label for best accuracy.</div></div>
+</div>
+
+<details class="advanced">
+<summary>Advanced settings: openings, ceiling, waste, cans & cost</summary>
+<div class="advanced-body">
+<div class="fields">
+<div class="field"><label for="opening">Doors & windows area</label><input id="opening" type="number" min="0" step="any" value="0"><div class="hint">Total area of surfaces that will not be painted.</div></div>
+<div class="field"><label for="extra">Additional paintable area</label><input id="extra" type="number" min="0" step="any" value="0"><div class="hint">Useful for feature walls or other measured surfaces.</div></div>
+<div class="field"><label for="waste">Extra allowance (%)</label><input id="waste" type="number" min="0" max="100" step="1" value="5"></div>
+<div class="field"><label for="canSize">Can size (litres)</label><input id="canSize" type="number" min="0" step="any" placeholder="e.g. 4"></div>
+<div class="field"><label for="price">Price per litre</label><input id="price" type="number" min="0" step="any" placeholder="Optional"></div>
+</div>
+<label class="checkrow"><input id="ceiling" type="checkbox"> Include the ceiling</label>
+</div>
+</details>
+
+<div class="buttonrow"><button class="primary" id="calculate" type="button">Calculate Paint</button><button class="secondary" id="reset" type="button">Reset</button></div>
+</div>
+</section>
+
+<aside class="card">
+<div class="result-head"><small>Live estimate</small><h2 id="resultTitle">Enter your project details</h2></div>
+<div class="result-grid">
+<div class="metric primary"><span>Paint required</span><b id="paintL">—</b><small>litres incl. allowance</small></div>
+<div class="metric primary"><span>US gallons</span><b id="paintGal">—</b><small>US gal incl. allowance</small></div>
+<div class="metric"><span>Net surface</span><b id="surfaceM2">—</b><small id="surfaceUnit">m²</small></div>
+<div class="metric"><span>Coated area</span><b id="coatedM2">—</b><small id="coatedUnit">m²</small></div>
+<div class="metric"><span>Whole cans</span><b id="cans">—</b><small id="canNote">enter can size</small></div>
+<div class="metric"><span>Coverage</span><b id="coverageOut">—</b><small id="coverageOutUnit">m²/L</small></div>
+</div>
+<div class="cost"><strong>Estimated paint cost</strong><span id="cost">Add an optional price per litre</span></div>
+<div class="result-note">The formula uses your measured area, coats, product coverage and any optional allowance. Coverage varies by paint product and surface; verify the manufacturer's label before purchasing.</div>
+</aside>
+</div>
+
+<section class="details">
+<details class="seo" open>
+<summary>How to use, formulas, worked example, FAQs & related paint tools</summary>
+<div class="seo-body">
+<h2>How to Use the Paint Calculator</h2>
+<p>Choose <strong>Room dimensions</strong> when you know the room length, width and wall height. Choose <strong>I know the area</strong> when you already have a measured paintable surface, which is useful for exterior walls or irregular projects. Enter the number of coats and the coverage rate shown on the paint can, then use Advanced settings for doors, windows, ceilings, waste, can size and cost.</p>
+
+<h2>Paint Calculator Formula</h2>
+<p>For a rectangular room, the gross wall area is the perimeter multiplied by wall height:</p>
+<div class="formula">Gross wall area = 2 × (Length + Width) × Height</div>
+<p>Subtract the area of doors and windows, then add a ceiling or other measured painted surfaces when required:</p>
+<div class="formula">Net paintable area = Wall area − Openings + Ceiling area + Extra area</div>
+<p>The amount of paint is based on coverage and the number of coats:</p>
+<div class="formula">Paint needed (L) = Net area × Coats ÷ Coverage (m²/L)</div>
+<p>When an allowance is used:</p>
+<div class="formula">Purchase paint = Paint needed × (1 + Allowance% ÷ 100)</div>
+
+<h2>Paint Coverage Calculator</h2>
+<p>Paint coverage is normally stated by the manufacturer for a particular product and surface. ToolVault therefore lets you replace the default planning value with the coverage printed on your paint product. A rough or porous surface, color change, application method and product type can change the actual coverage. Product instructions should take priority over generic rules of thumb. citeturn418975search12turn418975search4</p>
+
+<h2>Wall Paint Calculator and Paint Calculator in Square Feet</h2>
+<p>For a wall-only job, use Room dimensions for a rectangular room or I know the area when the total wall surface is already measured. Switch to Imperial mode for feet and square feet. The same calculation can be viewed in litres and US gallons so the result is useful across common measurement systems.</p>
+
+<h2>Ceiling Paint Calculator</h2>
+<p>A rectangular ceiling uses length × width for its area. Turn on <strong>Include the ceiling</strong> when you want ceiling paint included in the same room estimate. Ceiling coverage can differ from wall coverage, so use the appropriate product's stated coverage when accuracy matters.</p>
+
+<h2>Worked Example: How Much Paint Do I Need?</h2>
+<div class="example">
+<p>Suppose a room is 4 m long, 3 m wide and 2.7 m high, with 2 coats. There are no openings for this example and the ceiling is not included.</p>
+<p>Gross wall area = 2 × (4 + 3) × 2.7 = <strong>37.8 m²</strong>.</p>
+<p>With a coverage rate of 10 m²/L per coat, theoretical paint = 37.8 × 2 ÷ 10 = <strong>7.56 L</strong>.</p>
+<p>With a 5% planning allowance, purchase quantity = 7.56 × 1.05 = <strong>7.938 L</strong>, or about <strong>2.10 US gallons</strong>.</p>
+</div>
+
+<h2>How Many Gallons of Paint Do I Need?</h2>
+<p>ToolVault converts litres to US gallons using the standard relationship:</p>
+<div class="formula">1 US gallon = 3.785411784 litres</div>
+<p>Because paint products are sold in product-specific container sizes, a whole-can result is only shown when you enter the actual can size. This avoids assuming that every “gallon” or tin has the same usable volume.</p>
+
+<h2>How Accurate Is a Paint Estimate?</h2>
+<p>The geometry is deterministic for the dimensions entered. The uncertainty comes mainly from product coverage, surface condition, application method, number of coats and waste. A paint calculator is therefore best treated as a planning and purchasing estimate, not a guarantee of final consumption. Manufacturers such as Dulux explicitly note that actual paint requirements vary with the product and surface. citeturn418975search12</p>
+
+<h2>Frequently Asked Questions</h2>
+<h3>How much paint do I need for a room?</h3>
+<p>Calculate the paintable wall and ceiling area, multiply by the number of coats and divide by the product's coverage rate. Add any planning allowance only after the geometric and coverage calculation.</p>
+<h3>How much paint covers 100 square feet?</h3>
+<p>It depends on the product's coverage. Convert 100 ft² to about 9.2903 m², then divide by the coverage in m²/L and multiply by the number of coats.</p>
+<h3>Does the calculator subtract doors and windows?</h3>
+<p>Yes. In Room dimensions mode, enter the combined area of doors, windows and other unpainted openings in Advanced settings and the calculator subtracts it from the wall area.</p>
+<h3>Does it calculate ceiling paint?</h3>
+<p>Yes. Turn on Include the ceiling. The ceiling is calculated separately as room length × room width and then included in the net painted surface.</p>
+<h3>Can I use it for exterior paint?</h3>
+<p>Yes. Select I know the area and enter the measured exterior paintable surface. This is particularly useful when the exterior walls are irregular or have already been measured.</p>
+<h3>Why should I use the paint can's coverage rate?</h3>
+<p>Coverage varies by product and surface. Using the current manufacturer's stated coverage makes the estimate more relevant than applying one universal rule.</p>
+
+<h2>Related Construction Calculators</h2>
+<div class="related">
+<a class="rel" href="/construction/gravel-calculator.html"><strong>Gravel Calculator</strong><span>Estimate gravel volume, weight, bags and cost.</span></a>
+<a class="rel" href="/construction/concrete-calculator.html"><strong>Concrete Calculator</strong><span>Calculate concrete quantity for slabs and footings.</span></a>
+<a class="rel" href="/construction/"><strong>Construction Tools</strong><span>Browse construction calculators.</span></a>
+<a class="rel" href="/calculators/"><strong>All Calculators</strong><span>Explore the growing ToolVault library.</span></a>
+</div>
+</div>
+</details>
+</section>
+</main>
+<footer><div class="wrap">© 2026 ToolVault · Free practical tools for the web. Paint coverage and purchasing quantities should be checked against the product label.</div></footer>
+
+<script type="module">
+import {calculatePaint,conversions} from './paint-engine.js';
+
+const $=id=>document.getElementById(id);
+let unit="metric", mode="room";
+
+const els={length:$("length"),width:$("width"),height:$("height"),coats:$("coats"),knownArea:$("knownArea"),areaCoats:$("areaCoats"),coverage:$("coverage"),opening:$("opening"),extra:$("extra"),waste:$("waste"),canSize:$("canSize"),price:$("price"),ceiling:$("ceiling"),roomFields:$("roomFields"),areaFields:$("areaFields"),coverageHint:$("coverageHint")};
+
+function num(v,f=0){const n=Number(v);return Number.isFinite(n)?Math.max(0,n):f}
+function fmt(v,max=2){return new Intl.NumberFormat("en-US",{minimumFractionDigits:0,maximumFractionDigits:max}).format(v)}
+function syncMode(){
+  els.roomFields.style.display=mode==="room"?"grid":"none";
+  els.areaFields.style.display=mode==="area"?"grid":"none";
+  els.opening.disabled=mode==="area";
+  els.ceiling.disabled=mode==="area";
+  if(mode==="area"){els.opening.value=0;els.ceiling.checked=false}
+  calculate();
+}
+function syncUnit(){
+  const values=unit==="metric"
+    ? {length:4,width:3,height:2.7,area:50,coverage:10,coverageHint:"m² per litre per coat. Use the product label for best accuracy."}
+    : {length:13.1234,width:9.8425,height:8.8583,area:538.196,coverage:350,coverageHint:"ft² per US gallon per coat. Use the product label for best accuracy."};
+  els.length.value=values.length;els.width.value=values.width;els.height.value=values.height;els.knownArea.value=values.area;els.coverage.value=values.coverage;els.coverageHint.textContent=values.coverageHint;
+  const opening=els.opening.value;els.opening.value=opening;
+  calculate();
+}
+function collect(){
+  const factor=0.09290304;
+  if(unit==="metric"){
+    return {
+      mode,roomLengthM:num(els.length.value),roomWidthM:num(els.width.value),wallHeightM:num(els.height.value),
+      knownAreaM2:num(els.knownArea.value),openingAreaM2:num(els.opening.value),extraAreaM2:num(els.extra.value),
+      coats:mode==="room"?num(els.coats.value,2):num(els.areaCoats.value,2),
+      coverageM2PerL:num(els.coverage.value,10),
+      wastePercent:num(els.waste.value,5),includeCeiling:els.ceiling.checked,canSizeL:num(els.canSize.value),pricePerLiter:num(els.price.value)
+    };
+  }
+  const coverageM2PerL=num(els.coverage.value,350)/(1/factor/3.785411784); // overwritten below
+  const ft2ToM2=factor;
+  const ft2PerGal=num(els.coverage.value,350);
+  const coverageMetric=(ft2PerGal*ft2ToM2)/3.785411784;
+  return {
+    mode,roomLengthM:num(els.length.value)*0.3048,roomWidthM:num(els.width.value)*0.3048,wallHeightM:num(els.height.value)*0.3048,
+    knownAreaM2:num(els.knownArea.value)*ft2ToM2,openingAreaM2:num(els.opening.value)*ft2ToM2,extraAreaM2:num(els.extra.value)*ft2ToM2,
+    coats:mode==="room"?num(els.coats.value,2):num(els.areaCoats.value,2),
+    coverageM2PerL:coverageMetric,wastePercent:num(els.waste.value,5),includeCeiling:els.ceiling.checked,
+    canSizeL:num(els.canSize.value),pricePerLiter:num(els.price.value)/3.785411784
+  };
+}
+function calculate(){
+  const r=calculatePaint(collect());
+  const surface=unit==="metric"?r.netSurfaceArea:conversions.m2ToFt2(r.netSurfaceArea);
+  const coated=unit==="metric"?r.coatedArea:conversions.m2ToFt2(r.coatedArea);
+  const cov=unit==="metric"?r.coverage:r.coverage*3.785411784/conversions.ft2ToM2(1);
+  $("resultTitle").textContent=r.netSurfaceArea>0?"Paint quantity estimate":"Enter your project details";
+  $("paintL").textContent=fmt(r.purchaseLiters,2)+" L";
+  $("paintGal").textContent=fmt(r.gallons,2);
+  $("surfaceM2").textContent=fmt(surface,2);
+  $("surfaceUnit").textContent=unit==="metric"?"m²":"ft²";
+  $("coatedM2").textContent=fmt(coated,2);
+  $("coatedUnit").textContent=unit==="metric"?"m²":"ft²";
+  $("cans").textContent=r.canCount==null?"—":fmt(r.canCount,0);
+  $("canNote").textContent=r.canCount==null?"enter can size":unit==="metric"?fmt(r.canSize,2)+" L each":"uses litre size entered";
+  $("coverageOut").textContent=unit==="metric"?fmt(r.coverage,2):fmt(r.coverage*3.785411784/0.09290304,0);
+  $("coverageOutUnit").textContent=unit==="metric"?"m²/L":"ft²/US gal";
+  $("cost").textContent=r.cost==null?(unit==="metric"?"Add an optional price per litre":"Add an optional price per US gallon"):(unit==="metric"?fmt(r.cost,2):"$"+fmt(r.cost*3.785411784,2));
+}
+function reset(){
+  mode="room";unit="metric";document.querySelector('.seg input[value="room"]').checked=true;document.querySelectorAll(".seg").forEach((x,i)=>x.classList.toggle("active",i===0));
+  document.querySelectorAll(".unit").forEach((x,i)=>x.classList.toggle("active",i===0));
+  els.length.value=4;els.width.value=3;els.height.value=2.7;els.coats.value=2;els.knownArea.value=50;els.areaCoats.value=2;els.coverage.value=10;els.opening.value=0;els.extra.value=0;els.waste.value=5;els.canSize.value="";els.price.value="";els.ceiling.checked=false;els.coverageHint.textContent="m² per litre per coat. Use the product label for best accuracy.";
+  syncMode();
+}
+document.querySelectorAll('input[name="mode"]').forEach(x=>x.addEventListener("change",()=>{mode=x.value;syncMode()}));
+document.querySelectorAll(".seg").forEach(label=>label.addEventListener("click",()=>document.querySelector('input[name="mode"]:checked')?.dispatchEvent(new Event("change"))));
+document.querySelectorAll(".unit").forEach(btn=>btn.addEventListener("click",()=>{unit=btn.dataset.unit;document.querySelectorAll(".unit").forEach(x=>x.classList.toggle("active",x===btn));syncUnit()}));
+Object.values(els).forEach(x=>{if(x&&["INPUT","SELECT"].includes(x.tagName)){x.addEventListener("input",calculate);x.addEventListener("change",calculate)}});
+$("calculate").addEventListener("click",calculate);$("reset").addEventListener("click",reset);
+syncMode();
+</script>
+</body>
+</html>
