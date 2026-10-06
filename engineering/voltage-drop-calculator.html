@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Voltage Drop Calculator — DC, 1-Phase & 3-Phase | ToolVault</title>
+<meta name="description" content="Free voltage drop calculator for DC, single-phase and three-phase circuits. Calculate voltage drop, percentage, load-end voltage, power loss, maximum cable length and required conductor area using metric or AWG sizes.">
+<link rel="canonical" href="https://toolvault.aftabjordan1.workers.dev/engineering/voltage-drop-calculator.html">
+<meta property="og:title" content="Voltage Drop Calculator — DC, 1-Phase & 3-Phase | ToolVault">
+<meta property="og:description" content="Calculate conductor voltage drop with clear metric or AWG inputs, copper or aluminum, one-way cable length, voltage, current and transparent formulas.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://toolvault.aftabjordan1.workers.dev/engineering/voltage-drop-calculator.html">
+<style>
+:root{--bg:#f5faf8;--card:#fff;--ink:#10231f;--muted:#65766f;--line:#dce8e3;--brand:#0b8f78;--brand2:#086c5b;--soft:#e4f6f0;--dark:#0d3029;--warnbg:#fff8e7;--warn:#7b5b17;--badbg:#fff4f4;--bad:#9d3e3e;--shadow:0 10px 30px rgba(16,35,31,.06)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.6}a{text-decoration:none;color:inherit}.wrap{max-width:1120px;margin:auto;padding:0 20px}
+header{background:#fff;border-bottom:1px solid var(--line)}.nav{min-height:68px;display:flex;align-items:center;justify-content:space-between}.logo{font-size:23px;font-weight:900}.logo span{color:var(--brand)}.nav a{font-size:13px;color:var(--brand2);font-weight:800}
+main{padding:24px 0 55px}.crumb{font-size:13px;color:var(--muted);margin-bottom:16px}.crumb a{color:var(--brand2);font-weight:800}
+.hero{background:linear-gradient(135deg,#e8f8f3,#f9fcfb 58%,#fff);border:1px solid var(--line);border-radius:22px;padding:35px;box-shadow:var(--shadow)}.badge{display:inline-flex;padding:7px 11px;border-radius:999px;background:var(--soft);color:var(--brand2);font-size:12px;font-weight:850}.hero h1{font-size:clamp(34px,5vw,54px);line-height:1.03;letter-spacing:-2px;margin:14px 0 10px}.hero p{margin:0;max-width:880px;color:var(--muted);font-size:16px}
+.layout{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(330px,.88fr);gap:18px;margin-top:18px}.card{background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:0 7px 24px rgba(16,35,31,.04);overflow:hidden}.head{padding:22px 24px;border-bottom:1px solid var(--line)}.head h2{margin:0;font-size:24px;letter-spacing:-.7px}.head p{margin:6px 0 0;color:var(--muted);font-size:13px}.body{padding:20px 24px}
+.segment{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}.seg{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fbfdfc;text-align:center;font-size:12px;font-weight:850;cursor:pointer}.seg.active{border-color:#9bcfc2;background:var(--soft);color:var(--brand2)}.seg input{display:none}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field label,.field .label{display:block;font-size:11px;font-weight:850;margin-bottom:6px}.field input,.field select{width:100%;border:1px solid #cbdcd6;border-radius:9px;padding:10px;font-size:13px;background:#fff;outline:none}.field input:focus,.field select:focus{border-color:#7dbfb1;box-shadow:0 0 0 3px rgba(11,143,120,.08)}.field small{display:block;color:#8b9893;font-size:10px;margin-top:5px;line-height:1.45}
+.sizeRow{display:grid;grid-template-columns:1fr 1fr;gap:8px}.choiceRow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:11px}.choice{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff;font-size:11px;font-weight:850;cursor:pointer}.choice.active{border-color:#9bcfc2;background:var(--soft);color:var(--brand2)}.choice input{display:none}
+.resultTop{background:linear-gradient(135deg,#0d3029,#087f6b);color:#fff;padding:19px}.resultTop small{text-transform:uppercase;letter-spacing:.08em;font-size:10px;opacity:.72;font-weight:850}.resultTop h2{font-size:21px;line-height:1.25;margin:5px 0 0}.results{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:12px}.metric{border:1px solid var(--line);border-radius:12px;padding:11px;background:#fbfdfc}.metric.primary{background:var(--soft);border-color:#c7e9df}.metric span{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em;font-weight:800}.metric b{display:block;font-size:19px;margin-top:4px}.metric small{color:var(--muted);font-size:10px}
+.modebar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px;border-top:1px solid var(--line)}.mode{border:1px solid var(--line);border-radius:10px;background:#fff;padding:9px;text-align:center;font-size:10px;font-weight:850;cursor:pointer}.mode.active{background:var(--soft);border-color:#9bcfc2;color:var(--brand2)}
+.breakdown{border-top:1px solid var(--line);padding:13px}.breakdown h3{font-size:13px;margin:0 0 8px}.breakRow{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px dashed #dbe7e2;font-size:11px}.breakRow:last-child{border-bottom:0}.breakRow span:last-child{font-weight:850;text-align:right}
+.help{padding:12px;background:var(--warnbg);border:1px solid #eedfb6;border-radius:12px;color:var(--warn);font-size:11px;line-height:1.55;margin-top:12px}.error{display:none;padding:11px 12px;background:var(--badbg);border:1px solid #efcaca;border-radius:10px;color:var(--bad);font-size:11px;margin-bottom:11px}
+.article{margin-top:18px;padding:26px}.article h2{font-size:24px;margin:0 0 8px}.article h3{font-size:17px;margin:24px 0 7px}.article p,.article li{color:#566760;font-size:14px}.formula{padding:13px 15px;background:var(--soft);border:1px solid #c8e9df;border-radius:12px;color:#255c51;margin:12px 0;font-weight:800}.formula code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}.related{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}.rel{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff}.rel strong{display:block;font-size:12px;margin-bottom:3px}.rel span{color:var(--muted);font-size:11px}
+footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-size:12px}
+@media(max-width:860px){.layout{grid-template-columns:1fr}.related{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.wrap{padding:0 14px}.hero{padding:27px 20px}.grid2,.sizeRow,.choiceRow,.results{grid-template-columns:1fr}.segment,.modebar{grid-template-columns:1fr}.related{grid-template-columns:1fr}}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"WebApplication","name":"Voltage Drop Calculator","url":"https://toolvault.aftabjordan1.workers.dev/engineering/voltage-drop-calculator.html","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
+{"@type":"WebPage","name":"Voltage Drop Calculator — DC, 1-Phase & 3-Phase","url":"https://toolvault.aftabjordan1.workers.dev/engineering/voltage-drop-calculator.html","isPartOf":{"@type":"WebSite","name":"ToolVault","url":"https://toolvault.aftabjordan1.workers.dev/"}},
+{"@type":"BreadcrumbList","itemListElement":[
+{"@type":"ListItem","position":1,"name":"ToolVault","item":"https://toolvault.aftabjordan1.workers.dev/"},
+{"@type":"ListItem","position":2,"name":"Engineering","item":"https://toolvault.aftabjordan1.workers.dev/engineering/"},
+{"@type":"ListItem","position":3,"name":"Voltage Drop Calculator","item":"https://toolvault.aftabjordan1.workers.dev/engineering/voltage-drop-calculator.html"}]}
+]}
+</script>
+</head>
+<body>
+<header><div class="wrap nav"><a class="logo" href="/">Tool<span>Vault</span></a><a href="/engineering/">← Engineering tools</a></div></header>
+<main class="wrap">
+<div class="crumb"><a href="/">ToolVault</a> / <a href="/engineering/">Engineering</a> / Voltage Drop Calculator</div>
+<section class="hero"><span class="badge">⚡ Free electrical planning tool</span><h1>Voltage Drop Calculator</h1><p>Estimate voltage drop for DC, single-phase and balanced three-phase circuits. Choose copper or aluminum, enter a conductor size in mm² or AWG, and see the drop in volts and percent, load-end voltage, conductor power loss, maximum one-way length and required cross-sectional area for a chosen drop target.</p></section>
+
+<div class="layout">
+<section class="card">
+<div class="head"><h2>Circuit inputs</h2><p>Use the one-way cable length. The circuit factor below accounts for the return path in DC/single-phase or the √3 relationship in balanced three-phase.</p></div>
+<div class="body">
+<div class="segment">
+<label class="seg active"><input type="radio" name="system" value="dc" checked>DC</label>
+<label class="seg"><input type="radio" name="system" value="single">1-phase AC</label>
+<label class="seg"><input type="radio" name="system" value="three">3-phase AC</label>
+</div>
+<div class="grid2">
+<div class="field"><label for="voltage">Supply voltage (V)</label><input id="voltage" type="number" min="0" step="any" value="48"><small>For 3-phase, enter line-to-line voltage.</small></div>
+<div class="field"><label for="current">Load current (A)</label><input id="current" type="number" min="0" step="any" value="20"></div>
+<div class="field"><label for="length">One-way cable length</label><input id="length" type="number" min="0" step="any" value="30"></div>
+<div class="field"><label for="lengthUnit">Length unit</label><select id="lengthUnit"><option value="m">metres (m)</option><option value="ft">feet (ft)</option></select></div>
+<div class="field"><label for="material">Conductor material</label><select id="material"><option value="copper">Copper</option><option value="aluminum">Aluminum</option></select></div>
+<div class="field"><label for="sizeSystem">Conductor size system</label><select id="sizeSystem"><option value="mm2">Metric (mm²)</option><option value="awg">AWG</option></select></div>
+<div class="field" id="metricSizeWrap"><label for="metricSize">Conductor cross-section (mm²)</label><select id="metricSize"></select></div>
+<div class="field" id="awgSizeWrap" style="display:none"><label for="awgSize">Conductor size</label><select id="awgSize"></select></div>
+<div class="field"><label for="target">Target voltage drop (%)</label><input id="target" type="number" min="0" max="100" step="0.1" value="3"><small>Used for the maximum-length and required-area calculations.</small></div>
+<div class="field"><label for="hours">Operating hours per day (optional)</label><input id="hours" type="number" min="0" step="0.1" value="0"><small>Used only to estimate daily energy lost in the conductor.</small></div>
+</div>
+<div class="choiceRow" style="margin-top:11px">
+<label class="choice active"><input type="radio" name="resMode" value="standard" checked>Standard resistivity</label>
+<label class="choice"><input type="radio" name="resMode" value="custom">Custom resistivity</label>
+</div>
+<div id="customWrap" class="field" style="display:none"><label for="rho">Resistivity ρ (Ω·m)</label><input id="rho" type="number" min="0" step="any" placeholder="e.g. 1.724e-8"><small>Use a verified material/datasheet value at the conductor temperature you need. Standard defaults are referenced to 20°C.</small></div>
+<div id="error" class="error"></div>
+<div class="help"><strong>Scope:</strong> this is a resistance-based voltage-drop model. It does not calculate ampacity, breaker sizing, temperature derating, conduit effects or AC inductive reactance. Treat the result as an engineering/planning estimate and verify the installation against the applicable code and the cable manufacturer's data.</div>
+</div>
+</section>
+
+<aside class="card">
+<div class="resultTop"><small>Live result</small><h2 id="resultTitle">Enter circuit values</h2></div>
+<div class="results">
+<div class="metric primary"><span>Voltage drop</span><b id="dropV">—</b><small>V</small></div>
+<div class="metric primary"><span>Drop</span><b id="dropPct">—</b><small>%</small></div>
+<div class="metric"><span>Load-end voltage</span><b id="loadV">—</b><small>V</small></div>
+<div class="metric"><span>Resistance</span><b id="rPerM">—</b><small>Ω/m · one conductor</small></div>
+<div class="metric"><span>Conductor loss</span><b id="lossW">—</b><small>W</small></div>
+<div class="metric"><span>Daily energy loss</span><b id="lossKwh">—</b><small>kWh/day</small></div>
+<div class="metric"><span>Max length</span><b id="maxLen">—</b><small>one-way at target</small></div>
+<div class="metric"><span>Required area</span><b id="minArea">—</b><small>mm² at target</small></div>
+</div>
+<div class="breakdown"><h3>Calculation breakdown</h3><div id="breakRows"></div></div>
+<div class="modebar">
+<button class="mode active" data-action="drop">Voltage drop</button>
+<button class="mode" data-action="length">Max length</button>
+<button class="mode" data-action="area">Required area</button>
+</div>
+<div class="note" style="padding:0 13px 13px;color:#65766f;font-size:10px">Numbers are rounded for display; calculations use the underlying values. “Required area” is only the cross-section needed to satisfy the selected voltage-drop target—it is not an ampacity or final cable-size recommendation.</div>
+</aside>
+</div>
+
+<section class="card article">
+<h2>Voltage Drop Formula</h2>
+<p>ToolVault first converts the conductor size to square millimetres and the distance to metres. It then calculates the resistance of one conductor from resistivity and cross-sectional area.</p>
+<div class="formula"><code>R = ρ × L ÷ A</code></div>
+<div class="formula"><code>DC / 1-phase: ΔV = 2 × I × R</code></div>
+<div class="formula"><code>Balanced 3-phase: ΔV = √3 × I × R</code></div>
+<div class="formula"><code>Drop % = ΔV ÷ V<sub>source</sub> × 100</code></div>
+<div class="formula"><code>Load-end voltage = V<sub>source</sub> − ΔV</code></div>
+<div class="formula"><code>P<sub>loss</sub> = I × ΔV</code></div>
+<h3>What the calculation includes</h3>
+<ul><li>Conductor material resistivity and cross-sectional area.</li><li>One-way cable length with the correct DC/single-phase or balanced-three-phase circuit factor.</li><li>Voltage drop, percentage drop, receiving-end voltage and conductor I²R loss.</li></ul>
+<h3>What it does not include</h3>
+<p>Real installations can have conductor temperature changes, AC inductive reactance, power factor, conduit/cable arrangement, terminal resistance and code-specific correction factors. Those effects can matter, especially on larger AC conductors and long runs. Use manufacturer resistance/impedance data and the applicable electrical standard for final design.</p>
+<h3>Metric and AWG sizes</h3>
+<p>AWG is a conductor sizing system in which a larger gauge number means a smaller conductor. The AWG area relation used here follows the standard diameter relation; metric mode uses the entered cross-sectional area directly.</p>
+<h3>Related ToolVault tools</h3>
+<div class="related">
+<a class="rel" href="/engineering/"><strong>Engineering</strong><span>Explore the growing engineering calculator library.</span></a>
+<a class="rel" href="/construction/"><strong>Construction</strong><span>Material quantity and estimating tools.</span></a>
+<a class="rel" href="/solar/"><strong>Solar & Energy</strong><span>PV, battery, inverter and generation tools.</span></a>
+<a class="rel" href="/calculators/"><strong>All Calculators</strong><span>Browse the broader ToolVault library.</span></a>
+</div>
+</section>
+</main>
+<footer><div class="wrap">© 2026 ToolVault · Free practical tools for the web. Planning calculations must be checked against installation specifications, manufacturer data and applicable electrical requirements.</div></footer>
+
+<script type="module">
+import {calculateVoltageDrop,maxLengthForDrop,minimumAreaForDrop,awgAreaMm2,awgCircularMils,METRIC_SIZES_MM2,AWG_SIZES,RHO_OHM_M} from './voltage-drop-engine.js';
+
+const $=id=>document.getElementById(id);
+const metricSize=$('metricSize'),awgSize=$('awgSize');
+METRIC_SIZES_MM2.forEach(v=>metricSize.add(new Option(String(v),String(v))));
+AWG_SIZES.forEach(v=>awgSize.add(new Option(v.label,String(v.n))));
+metricSize.value='6';awgSize.value='12';
+let activeAction='drop';
+
+function num(v){const n=Number(v);return Number.isFinite(n)?Math.max(0,n):0}
+function fixed(n,d=2){return Number(n).toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d})}
+function lengthM(){const L=num($('length').value);return $('lengthUnit').value==='ft'?L*0.3048:L}
+function areaMm2(){return $('sizeSystem').value==='mm2'?num(metricSize.value):awgAreaMm2(Number(awgSize.value))}
+function rho(){return document.querySelector('input[name="resMode"]:checked').value==='custom'?num($('rho').value):RHO_OHM_M[$('material').value]}
+function selectedSizeLabel(){return $('sizeSystem').value==='mm2'?fixed(areaMm2(),3)+' mm²':$('awgSize').options[$('awgSize').selectedIndex].text}
+function toggleUI(){
+  $('metricSizeWrap').style.display=$('sizeSystem').value==='mm2'?'block':'none';
+  $('awgSizeWrap').style.display=$('sizeSystem').value==='awg'?'block':'none';
+  const custom=document.querySelector('input[name="resMode"]:checked').value==='custom';
+  $('customWrap').style.display=custom?'block':'none';
+  document.querySelectorAll('.seg').forEach(x=>x.classList.toggle('active',x.querySelector('input').checked));
+  document.querySelectorAll('.choice').forEach(x=>x.classList.toggle('active',x.querySelector('input').checked));
+}
+function render(){
+  $('error').style.display='none';$('error').textContent='';
+  const sourceV=num($('voltage').value),I=num($('current').value),L=lengthM(),A=areaMm2(),RHO=rho(),target=num($('target').value),hours=num($('hours').value);
+  if(!(sourceV>0&&I>0&&L>0&&A>0&&RHO>0)){ $('error').style.display='block';$('error').textContent='Enter positive voltage, current, length, conductor size and resistivity.';return; }
+  const system=document.querySelector('input[name="system"]:checked').value,material=$('material').value;
+  const result=calculateVoltageDrop({system,material,currentA:I,lengthM:L,areaMm2:A,sourceV,rhoOverride:document.querySelector('input[name="resMode"]:checked').value==='custom'?RHO:null});
+  $('dropV').textContent=fixed(result.volts,3);
+  $('dropPct').textContent=fixed(result.percent,3);
+  $('loadV').textContent=fixed(result.loadV,3);
+  $('rPerM').textContent=result.rPerM.toExponential(4);
+  $('lossW').textContent=fixed(result.powerLossW,2);
+  $('lossKwh').textContent=hours>0?fixed(result.energyLossKWhPerDay,3):'—';
+  const maxL=maxLengthForDrop({sourceV,targetPercent:target,currentA:I,areaMm2:A,material,system,rhoOverride:document.querySelector('input[name="resMode"]:checked').value==='custom'?RHO:null});
+  const minA=minimumAreaForDrop({sourceV,targetPercent:target,currentA:I,lengthM:L,material,system,rhoOverride:document.querySelector('input[name="resMode"]:checked').value==='custom'?RHO:null});
+  const maxDisplay=$('lengthUnit').value==='ft'?fixed(maxL/0.3048,1)+' ft':fixed(maxL,1)+' m';
+  $('maxLen').textContent=maxDisplay;
+  $('minArea').textContent=fixed(minA,3);
+  $('resultTitle').textContent=fixed(result.percent,2)+'% voltage drop';
+  const targetV=sourceV*target/100;
+  const factor=result.factor;
+  $('breakRows').innerHTML=[
+    ['System factor',factor===Math.sqrt(3)?'√3 = 1.732':factor+' × one-way path'],
+    ['Conductor',''+material+' · '+selectedSizeLabel()],
+    ['One-conductor resistance',result.rPerM.toExponential(4)+' Ω/m'],
+    ['Maximum drop at target',fixed(targetV,3)+' V'],
+    ['Target',fixed(target,2)+'%']
+  ].map(r=>'<div class="breakRow"><span>'+r[0]+'</span><span>'+r[1]+'</span></div>').join('');
+  if(result.percent>target && target>0)$('dropPct').style.textDecoration='underline';
+}
+document.querySelectorAll('input[name="system"]').forEach(x=>x.addEventListener('change',()=>{toggleUI();render()}));
+document.querySelectorAll('input[name="resMode"]').forEach(x=>x.addEventListener('change',()=>{toggleUI();render()}));
+$('sizeSystem').addEventListener('change',()=>{toggleUI();render()});
+['voltage','current','length','lengthUnit','material','metricSize','awgSize','target','hours','rho'].forEach(id=>$(id).addEventListener('input',render));
+$('priceUnit')?.addEventListener('input',render);
+document.querySelectorAll('.mode').forEach(b=>b.addEventListener('click',()=>{activeAction=b.dataset.action;document.querySelectorAll('.mode').forEach(x=>x.classList.toggle('active',x===b));document.querySelector('.results').scrollIntoView({behavior:'smooth',block:'nearest'})}));
+toggleUI();render();
+</script>
+</body>
+</html>
