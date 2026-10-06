@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Concrete Calculator — Volume, Weight, Bags & Cost | ToolVault</title>
+<meta name="description" content="Free concrete calculator for slabs, footings, walls, columns and circular forms. Calculate concrete volume in cubic metres, yards and feet, plus weight, bag count and optional cost using metric or imperial inputs.">
+<link rel="canonical" href="https://toolvault.aftabjordan1.workers.dev/construction/concrete-calculator.html">
+<meta property="og:title" content="Concrete Calculator — Volume, Weight, Bags & Cost | ToolVault">
+<meta property="og:description" content="Calculate concrete volume for slabs, footings, walls and round forms with clear metric or imperial inputs, waste allowance, weight, bag yield and cost.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://toolvault.aftabjordan1.workers.dev/construction/concrete-calculator.html">
+<style>
+:root{--bg:#f5faf8;--card:#fff;--ink:#10231f;--muted:#64766f;--line:#dce8e3;--brand:#0b8f78;--brand2:#086c5b;--soft:#e4f6f0;--dark:#0d3029;--warnbg:#fff8e7;--warn:#7b5b17;--badbg:#fff4f4;--bad:#9d3e3e;--shadow:0 10px 30px rgba(16,35,31,.06)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.6}a{text-decoration:none;color:inherit}.wrap{max-width:1120px;margin:auto;padding:0 20px}
+header{background:#fff;border-bottom:1px solid var(--line)}.nav{min-height:68px;display:flex;align-items:center;justify-content:space-between;gap:15px}.logo{font-size:23px;font-weight:900}.logo span{color:var(--brand)}.nav a{font-size:13px;color:var(--brand2);font-weight:800}
+main{padding:24px 0 55px}.crumb{font-size:13px;color:var(--muted);margin-bottom:16px}.crumb a{color:var(--brand2);font-weight:800}
+.hero{background:linear-gradient(135deg,#e8f8f3,#f9fcfb 58%,#fff);border:1px solid var(--line);border-radius:22px;padding:35px;box-shadow:var(--shadow)}.badge{display:inline-flex;gap:8px;align-items:center;padding:7px 11px;border-radius:999px;background:var(--soft);color:var(--brand2);font-size:12px;font-weight:850}.hero h1{font-size:clamp(34px,5vw,54px);line-height:1.03;letter-spacing:-2px;margin:14px 0 10px}.hero p{margin:0;max-width:880px;color:var(--muted);font-size:16px}
+.layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr);gap:18px;margin-top:18px}.card{background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:0 7px 24px rgba(16,35,31,.04);overflow:hidden}.head{padding:22px 24px;border-bottom:1px solid var(--line)}.head h2{margin:0;font-size:24px;letter-spacing:-.7px}.head p{margin:6px 0 0;color:var(--muted);font-size:13px}.body{padding:20px 24px}
+.unitbar{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:15px}.unitChoice{position:relative;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fbfdfc;cursor:pointer}.unitChoice.active{border-color:#9bcfc2;background:var(--soft);color:var(--brand2)}.unitChoice input{position:absolute;opacity:0;width:1px;height:1px}.unitChoice strong{display:block;font-size:13px}.unitChoice span{display:block;color:var(--muted);font-size:10px;margin-top:2px}.unitChoice.active span{color:#4e756c}
+.elementList{display:grid;gap:12px}.element{border:1px solid var(--line);border-radius:14px;background:#fbfdfc;padding:14px}.elementTop{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.elementTop strong{font-size:13px}.remove{border:1px solid #eccbcb;background:#fff7f7;color:#9d3e3e;border-radius:8px;padding:5px 9px;font-size:11px;font-weight:850;cursor:pointer}
+.shapeRow{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:11px}.shape{border:1px solid var(--line);border-radius:10px;padding:9px 7px;background:#fff;text-align:center;cursor:pointer;font-size:11px;font-weight:800}.shape.active{border-color:#9bcfc2;background:var(--soft);color:var(--brand2)}.shape input{display:none}
+.fields{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.field.full{grid-column:1/-1}.field label,.field .label{display:block;font-size:11px;font-weight:850;margin-bottom:6px}.field input,.field select{width:100%;border:1px solid #cbdcd6;border-radius:9px;padding:10px 10px;font-size:13px;background:#fff;outline:none}.field input:focus,.field select:focus{border-color:#7dbfb1;box-shadow:0 0 0 3px rgba(11,143,120,.08)}.field small{display:block;margin-top:5px;color:#8a9893;font-size:10px;line-height:1.45}
+.metricOnly{display:block}.imperialOnly{display:none}.pair{display:grid;grid-template-columns:1fr auto 1fr auto;gap:6px;align-items:center}.pair input{min-width:0}.suffix{font-size:10px;color:var(--muted);font-weight:850}
+.addBtn{margin-top:11px;width:100%;height:41px;border:1px dashed #9ccbc0;border-radius:10px;background:#f6fcfa;color:var(--brand2);font-weight:850;cursor:pointer}.notes{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:13px}
+.help{padding:12px;background:var(--warnbg);border:1px solid #eedfb6;border-radius:12px;color:var(--warn);font-size:11px;line-height:1.55}.validation{display:none;padding:11px 12px;background:var(--badbg);border:1px solid #efcaca;border-radius:10px;color:var(--bad);font-size:11px;line-height:1.5;margin-bottom:11px}
+.resultTop{background:linear-gradient(135deg,#0d3029,#087f6b);color:#fff;padding:19px}.resultTop small{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;opacity:.72;font-weight:850}.resultTop h2{font-size:20px;line-height:1.25;margin:5px 0 0}.results{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:12px}.metric{border:1px solid var(--line);border-radius:12px;padding:11px;background:#fbfdfc}.metric.primary{background:var(--soft);border-color:#c7e9df}.metric span{display:block;color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}.metric b{display:block;font-size:19px;margin-top:4px}.metric small{color:var(--muted);font-size:10px}.cost{margin:0 12px 12px;padding:12px;border:1px solid #d9e7e2;border-radius:12px;background:#f8fbfa}.cost strong{display:block;font-size:11px;color:var(--brand2)}.cost span{display:block;font-size:18px;font-weight:900;margin-top:2px}.breakdown{border-top:1px solid var(--line);padding:13px}.breakdown h3{font-size:13px;margin:0 0 8px}.breakRow{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed #dbe7e2;font-size:11px}.breakRow:last-child{border-bottom:0}.breakRow span:last-child{font-weight:850;text-align:right}.note{padding:0 13px 13px;color:var(--muted);font-size:10px;line-height:1.55}
+.article{margin-top:18px;padding:26px}.article h2{font-size:24px;margin:0 0 8px}.article h3{font-size:17px;margin:24px 0 7px}.article p,.article li{color:#566760;font-size:14px}.formula{padding:13px 15px;background:var(--soft);border:1px solid #c8e9df;border-radius:12px;color:#255c51;font-weight:800;margin:13px 0}.formula code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}.related{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}.rel{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff}.rel strong{display:block;font-size:12px;margin-bottom:3px}.rel span{color:var(--muted);font-size:11px}
+footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-size:12px}
+@media(max-width:860px){.layout{grid-template-columns:1fr}.shapeRow{grid-template-columns:repeat(3,1fr)}.related{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.wrap{padding:0 14px}.hero{padding:27px 20px}.fields,.notes,.results{grid-template-columns:1fr}.field.full{grid-column:auto}.shapeRow{grid-template-columns:1fr 1fr}.unitbar{grid-template-columns:1fr}.related{grid-template-columns:1fr}.pair{grid-template-columns:1fr auto 1fr auto}}
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"WebApplication","@id":"https://toolvault.aftabjordan1.workers.dev/construction/concrete-calculator.html#app","name":"Concrete Calculator","url":"https://toolvault.aftabjordan1.workers.dev/construction/concrete-calculator.html","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires a modern web browser","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
+{"@type":"WebPage","@id":"https://toolvault.aftabjordan1.workers.dev/construction/concrete-calculator.html#page","url":"https://toolvault.aftabjordan1.workers.dev/construction/concrete-calculator.html","name":"Concrete Calculator — Volume, Weight, Bags & Cost","isPartOf":{"@type":"WebSite","name":"ToolVault","url":"https://toolvault.aftabjordan1.workers.dev/"}},
+{"@type":"BreadcrumbList","itemListElement":[
+{"@type":"ListItem","position":1,"name":"ToolVault","item":"https://toolvault.aftabjordan1.workers.dev/"},
+{"@type":"ListItem","position":2,"name":"Construction","item":"https://toolvault.aftabjordan1.workers.dev/construction/"},
+{"@type":"ListItem","position":3,"name":"Concrete Calculator","item":"https://toolvault.aftabjordan1.workers.dev/construction/concrete-calculator.html"}]}
+]}
+</script>
+</head>
+<body>
+<header><div class="wrap nav"><a class="logo" href="/">Tool<span>Vault</span></a><a href="/construction/">← Construction tools</a></div></header>
+<main class="wrap">
+<div class="crumb"><a href="/">ToolVault</a> / <a href="/construction/">Construction</a> / Concrete Calculator</div>
+<section class="hero"><span class="badge">🧱 Free construction quantity tool</span><h1>Concrete Calculator</h1><p>Calculate concrete volume for slabs, pads, rectangular footings, walls, columns and circular forms. Use clear metric or imperial inputs, add multiple elements, then see net volume, order quantity after waste, cubic yards, cubic feet, weight, optional bag count and cost.</p></section>
+
+<div class="layout">
+<section class="card">
+<div class="head"><h2>Project inputs</h2><p>Choose one measurement system. Add separate elements when a project has different sizes or shapes.</p></div>
+<div class="body">
+<div class="unitbar" id="unitBar">
+<label class="unitChoice active"><input type="radio" name="unitSystem" value="metric" checked><strong>Metric</strong><span>Length & width in meters · thickness/height in centimeters</span></label>
+<label class="unitChoice"><input type="radio" name="unitSystem" value="imperial"><strong>Imperial</strong><span>Length & width in feet + inches · depth/height in inches</span></label>
+</div>
+<div id="validation" class="validation"></div>
+<div class="elementList" id="elements"></div>
+<button class="addBtn" id="addElement" type="button">＋ Add another concrete element</button>
+<div class="notes">
+<div class="field"><label for="waste">Waste / extra allowance (%)</label><input id="waste" type="number" min="0" max="100" step="1" value="10"><small>Applied only after the geometric volume. This is an adjustable planning allowance, not a geometry factor.</small></div>
+<div class="field"><label for="density">Concrete density (kg/m³)</label><input id="density" type="number" min="0" step="1" value="2400"><small>Editable assumption for weight only. Use the supplier's stated density when available.</small></div>
+<div class="field"><label for="price">Optional price per unit volume</label><input id="price" type="number" min="0" step="0.01" placeholder="e.g. 150"></div>
+<div class="field"><label for="priceUnit">Price basis</label><select id="priceUnit"><option value="m3">per m³</option><option value="yd3">per yd³</option></select></div>
+<div class="field"><label for="currency">Currency symbol / code</label><input id="currency" maxlength="8" value="$" placeholder="USD, $, €, £"></div>
+<div class="field"><label for="bagYield">Optional bag yield</label><input id="bagYield" type="number" min="0" step="0.001" placeholder="e.g. 0.45"><small>Use the bag manufacturer's stated yield, not bag weight. Select its unit below.</small></div>
+<div class="field"><label for="bagYieldUnit">Bag yield unit</label><select id="bagYieldUnit"><option value="ft3">ft³ per bag</option><option value="m3">m³ per bag</option><option value="yd3">yd³ per bag</option></select></div>
+</div>
+<div class="help" style="margin-top:13px"><strong>Important:</strong> concrete mix design and structural strength are separate engineering questions. This calculator determines geometric volume and optional planning quantities; it does not design a structural mix or verify a code-required strength.</div>
+</div>
+</section>
+
+<aside class="card">
+<div class="resultTop"><small>Live estimate</small><h2 id="resultTitle">Enter project dimensions</h2></div>
+<div class="results">
+<div class="metric primary"><span>Net volume</span><b id="netM3">—</b><small>m³</small></div>
+<div class="metric primary"><span>Order volume</span><b id="grossM3">—</b><small>m³ incl. waste</small></div>
+<div class="metric"><span>Volume</span><b id="yd3">—</b><small>yd³</small></div>
+<div class="metric"><span>Volume</span><b id="ft3">—</b><small>ft³</small></div>
+<div class="metric"><span>Weight</span><b id="tons">—</b><small>metric tonnes</small></div>
+<div class="metric"><span>Weight</span><b id="kg">—</b><small>kg</small></div>
+<div class="metric"><span>Bag count</span><b id="bags">—</b><small id="bagsNote">enter manufacturer yield</small></div>
+<div class="metric"><span>Elements</span><b id="elementCount">0</b><small>included</small></div>
+</div>
+<div class="cost"><strong>Estimated material cost</strong><span id="cost">Add a price to estimate cost</span></div>
+<div class="breakdown"><h3>Calculation breakdown</h3><div id="breakdownRows"><div class="breakRow"><span>No elements yet</span><span>—</span></div></div></div>
+<div class="note">The displayed numbers are rounded for readability; calculations use the underlying unrounded values. Bag counts use ceiling to a whole bag only after using the entered manufacturer yield.</div>
+</aside>
+</div>
+
+<section class="card article">
+<h2>Concrete Calculator Formulas</h2>
+<p>Every element is converted to metres first. Geometry is calculated from the corresponding shape formula, the individual element quantities are added, and the waste allowance is applied once to the combined net volume.</p>
+<div class="formula"><code>Rectangular volume = Length × Width × Depth × Quantity</code></div>
+<div class="formula"><code>Round volume = π × (Diameter ÷ 2)² × Height × Quantity</code></div>
+<div class="formula"><code>Ring volume = π ÷ 4 × (Outer Diameter² − Inner Diameter²) × Height × Quantity</code></div>
+<div class="formula"><code>Order volume = Net volume × (1 + Waste % ÷ 100)</code></div>
+<div class="formula"><code>Weight = Order volume × Density</code></div>
+<div class="formula"><code>Cubic yards = Cubic metres × 1.3079506193</code> &nbsp; and &nbsp; <code>Cubic feet = Cubic metres × 35.3146667215</code></div>
+
+<h3>Supported shapes</h3>
+<ul><li><strong>Slab / pad:</strong> rectangular length × width × thickness.</li><li><strong>Rectangular footing:</strong> rectangular length × width × depth.</li><li><strong>Wall:</strong> length × height × thickness.</li><li><strong>Column / round footing:</strong> circular area × height.</li><li><strong>Circular ring / pipe form:</strong> annular area × height, with inner diameter not greater than outer diameter.</li></ul>
+
+<h3>Why bag count is optional</h3>
+<p>A bag's stated yield depends on the product and packaging. ToolVault therefore does not pretend that a fixed bag weight universally equals a fixed finished-concrete volume. Enter the manufacturer's published yield and the calculator rounds the resulting bag count up to a whole bag.</p>
+
+<h3>Related ToolVault tools</h3>
+<div class="related">
+<a class="rel" href="/construction/gravel-calculator.html"><strong>Gravel Calculator</strong><span>Estimate gravel volume, weight, bags and cost.</span></a>
+<a class="rel" href="/construction/"><strong>Construction Tools</strong><span>Explore the growing construction calculator library.</span></a>
+<a class="rel" href="/engineering/"><strong>Engineering Tools</strong><span>Explore civil, electrical and technical utilities.</span></a>
+<a class="rel" href="/calculators/"><strong>All Calculators</strong><span>Browse the broader ToolVault calculator collection.</span></a>
+</div>
+</section>
+</main>
+<footer><div class="wrap">© 2026 ToolVault · Free practical tools for the web. Results are planning estimates and should be checked against project specifications and supplier information.</div></footer>
+
+<script type="module">
+import {calculateProject,imperialPairToM,metresToImperialPair,roundForDisplay} from './concrete-engine.js';
+
+const elementsEl=document.getElementById('elements');
+const validationEl=document.getElementById('validation');
+let nextId=1;
+let unitSystem='metric';
+
+function n(v){const x=Number(v);return Number.isFinite(x)?Math.max(0,x):0}
+function inputNum(cls,value=''){return '<input class="'+cls+'" type="number" min="0" step="any" value="'+value+'">'}
+function elementTemplate(id){
+  const el=document.createElement('div');
+  el.className='element';el.dataset.id=id;el.dataset.shape='slab';
+  el.innerHTML=
+  '<div class="elementTop"><strong>Element '+id+'</strong><button class="remove" type="button">Remove</button></div>'+
+  '<div class="shapeRow">'+
+    '<label class="shape active"><input type="radio" name="shape-'+id+'" value="slab" checked>Slab / Pad</label>'+
+    '<label class="shape"><input type="radio" name="shape-'+id+'" value="footing">Footing</label>'+
+    '<label class="shape"><input type="radio" name="shape-'+id+'" value="wall">Wall</label>'+
+    '<label class="shape"><input type="radio" name="shape-'+id+'" value="round">Round</label>'+
+    '<label class="shape"><input type="radio" name="shape-'+id+'" value="ring">Ring</label>'+
+  '</div>'+
+  '<div class="fields">'+
+    '<div class="field"><span class="label">Quantity</span>'+inputNum('qty',1)+'</div>'+
+    '<div class="field rectOnly"><span class="label">Length</span><div class="metricOnly">'+inputNum('lengthM',5)+'</div><div class="imperialOnly pair">'+inputNum('lengthFt',16)+'<span class="suffix">ft</span>'+inputNum('lengthIn',4)+'<span class="suffix">in</span></div><small class="metricOnly">Enter metres (m)</small><small class="imperialOnly">Enter feet + inches</small></div>'+
+    '<div class="field rectOnly"><span class="label">Width</span><div class="metricOnly">'+inputNum('widthM',4)+'</div><div class="imperialOnly pair">'+inputNum('widthFt',13)+'<span class="suffix">ft</span>'+inputNum('widthIn',1.5)+'<span class="suffix">in</span></div><small class="metricOnly">Enter metres (m)</small><small class="imperialOnly">Enter feet + inches</small></div>'+
+    '<div class="field rectOnly"><span class="label heightLabel">Depth / thickness</span><div class="metricOnly">'+inputNum('heightM',0.10)+'</div><div class="imperialOnly">'+inputNum('heightIn',4)+'</div><small class="metricOnly">Enter metres (m)</small><small class="imperialOnly">Use metres here; 0.10 m = 10 cm</small><small class="imperialOnly heightHint">Enter inches (in)</small></div>'+
+    '<div class="field roundOnly"><span class="label">Diameter</span><div class="metricOnly">'+inputNum('diameterM',0.30)+'</div><div class="imperialOnly pair">'+inputNum('diameterFt',0)+'<span class="suffix">ft</span>'+inputNum('diameterIn',12)+'<span class="suffix">in</span></div><small class="metricOnly">Enter metres (m)</small><small class="imperialOnly">Enter feet + inches</small></div>'+
+    '<div class="field ringOnly"><span class="label">Outer diameter</span><div class="metricOnly">'+inputNum('outerDiameterM',0.40)+'</div><div class="imperialOnly pair">'+inputNum('outerDiameterFt',1)+'<span class="suffix">ft</span>'+inputNum('outerDiameterIn',3.75)+'<span class="suffix">in</span></div><small class="metricOnly">Enter metres (m)</small><small class="imperialOnly">Enter feet + inches</small></div>'+
+    '<div class="field ringOnly"><span class="label">Inner diameter</span><div class="metricOnly">'+inputNum('innerDiameterM',0.20)+'</div><div class="imperialOnly pair">'+inputNum('innerDiameterFt',0)+'<span class="suffix">ft</span>'+inputNum('innerDiameterIn',7.875)+'<span class="suffix">in</span></div><small class="metricOnly">Enter metres (m)</small><small class="imperialOnly">Enter feet + inches</small></div>'+
+    '<div class="field ringOnly"><span class="label">Height</span><div class="metricOnly">'+inputNum('ringHeightCm',50)+'</div><div class="imperialOnly">'+inputNum('ringHeightIn',20)+'</div><small class="metricOnly">Enter centimeters (cm)</small><small class="imperialOnly">Enter inches (in)</small></div>'+
+  '</div>';
+  el.querySelector('.remove').addEventListener('click',()=>{el.remove();calculate()});
+  el.querySelectorAll('input[type=radio]').forEach(r=>r.addEventListener('change',()=>{
+    el.dataset.shape=r.value;
+    el.querySelectorAll('.shape').forEach(s=>s.classList.toggle('active',s.querySelector('input').checked));
+    applyShape(el);calculate();
+  }));
+  el.querySelectorAll('input[type=number]').forEach(i=>i.addEventListener('input',calculate));
+  return el;
+}
+function applyShape(el){
+  ['rectOnly','roundOnly','ringOnly'].forEach(cls=>el.querySelectorAll('.'+cls).forEach(node=>{
+    const show=(cls==='rectOnly'&&['slab','footing','wall'].includes(el.dataset.shape))||(cls==='roundOnly'&&el.dataset.shape==='round')||(cls==='ringOnly'&&el.dataset.shape==='ring');
+    node.style.display=show?'block':'none';
+  }));
+  el.querySelector('.fields .rectOnly .imperialOnly')?.classList.add('pair');
+  applyUnitUI();
+}
+function addElement(){
+  const el=elementTemplate(nextId++);
+  elementsEl.appendChild(el);applyShape(el);calculate();
+}
+function applyUnitUI(){
+  document.querySelectorAll('.metricOnly').forEach(x=>x.style.display=unitSystem==='metric'?'block':'none');
+  document.querySelectorAll('.imperialOnly').forEach(x=>{
+    const show=unitSystem==='imperial';
+    x.style.display=show?(x.classList.contains('pair')?'grid':'block'):'none';
+  });
+  document.querySelectorAll('.unitChoice').forEach(c=>c.classList.toggle('active',c.querySelector('input').checked));
+  document.querySelectorAll('.element').forEach(el=>{
+    const shape=el.dataset.shape;
+    const rect=shape==='slab'||shape==='footing'||shape==='wall';
+    el.querySelectorAll('.rectOnly').forEach(x=>x.style.display=rect?'block':'none');
+    el.querySelectorAll('.roundOnly').forEach(x=>x.style.display=shape==='round'?'block':'none');
+    el.querySelectorAll('.ringOnly').forEach(x=>x.style.display=shape==='ring'?'block':'none');
+  });
+}
+function toM(el,base){
+  return unitSystem==='metric'?n(el.querySelector('.'+base+'M')?.value):(n(el.querySelector('.'+base+'Ft')?.value)+n(el.querySelector('.'+base+'In')?.value)/12)*0.3048;
+}
+function toHeightM(el,base='height'){
+  return unitSystem==='metric'?n(el.querySelector('.'+base+'Cm')?.value)/100:n(el.querySelector('.'+base+'In')?.value)*0.0254;
+}
+function elementData(el){
+  const shape=el.dataset.shape,q=n(el.querySelector('.qty')?.value)||0;
+  if(shape==='round') return {shape,quantity:q,diameterM:toM(el,'diameter'),heightM:toHeightM(el,'height')};
+  if(shape==='ring') return {shape,quantity:q,outerDiameterM:toM(el,'outerDiameter'),innerDiameterM:toM(el,'innerDiameter'),heightM:toHeightM(el,'ringHeight')};
+  return {shape,quantity:q,lengthM:toM(el,'length'),widthM:toM(el,'width'),depthM:toHeightM(el,'height')};
+}
+function convertFields(from,to){
+  document.querySelectorAll('.element').forEach(el=>{
+    const fields=['length','width','diameter','outerDiameter','innerDiameter'];
+    fields.forEach(base=>{
+      const metric=el.querySelector('.'+base+'M');
+      const ft=el.querySelector('.'+base+'Ft');
+      const inch=el.querySelector('.'+base+'In');
+      if(!metric||!ft||!inch)return;
+      const m=from==='metric'?n(metric.value):(n(ft.value)+n(inch.value)/12)*0.3048;
+      if(to==='metric'){metric.value=m.toFixed(3)}
+      else{const p=metresToImperialPair(m);ft.value=p.ft;inch.value=p.inches.toFixed(1)}
+    });
+    ['height','ringHeight'].forEach(base=>{
+      const metric=el.querySelector('.'+base+'Cm'), inch=el.querySelector('.'+base+'In');
+      if(!metric||!inch)return;
+      const m=from==='metric'?n(metric.value)/100:n(inch.value)*0.0254;
+      if(to==='metric')metric.value=(m*100).toFixed(1);else inch.value=(m/0.0254).toFixed(1);
+    });
+  });
+}
+document.querySelectorAll('input[name="unitSystem"]').forEach(r=>r.addEventListener('change',()=>{
+  const next=r.value;if(next===unitSystem)return;
+  convertFields(unitSystem,next);unitSystem=next;applyUnitUI();calculate();
+}));
+['waste','density','price','priceUnit','currency','bagYield','bagYieldUnit'].forEach(id=>document.getElementById(id).addEventListener('input',calculate));
+document.getElementById('priceUnit').addEventListener('change',calculate);
+document.getElementById('bagYieldUnit').addEventListener('change',calculate);
+document.getElementById('addElement').addEventListener('click',addElement);
+
+function labelShape(shape){return ({slab:'Slab / Pad',footing:'Rectangular Footing',wall:'Wall',round:'Round Column / Footing',ring:'Circular Ring / Pipe Form'})[shape]||shape}
+function calculate(){
+  validationEl.style.display='none';validationEl.textContent='';
+  const els=[...document.querySelectorAll('.element')].map(elementData);
+  if(!els.length){renderEmpty();return}
+  let result;
+  try{
+    result=calculateProject(els,{
+      wastePercent:n(document.getElementById('waste').value),
+      densityKgM3:n(document.getElementById('density').value),
+      price:n(document.getElementById('price').value),
+      priceUnit:document.getElementById('priceUnit').value,
+      bagYield:n(document.getElementById('bagYield').value),
+      bagYieldUnit:document.getElementById('bagYieldUnit').value
+    });
+  }catch(e){validationEl.style.display='block';validationEl.textContent=e.message;return}
+  if(!(result.netM3>0)){validationEl.style.display='block';validationEl.textContent='Enter positive dimensions for at least one element.'}
+  document.getElementById('netM3').textContent=result.netM3>0?roundForDisplay(result.netM3,3):'—';
+  document.getElementById('grossM3').textContent=result.grossM3>0?roundForDisplay(result.grossM3,3):'—';
+  document.getElementById('yd3').textContent=result.yd3>0?roundForDisplay(result.yd3,3):'—';
+  document.getElementById('ft3').textContent=result.ft3>0?roundForDisplay(result.ft3,2):'—';
+  document.getElementById('tons').textContent=result.weightTonnes>0?roundForDisplay(result.weightTonnes,3):'—';
+  document.getElementById('kg').textContent=result.weightKg>0?roundForDisplay(result.weightKg,1):'—';
+  document.getElementById('bags').textContent=result.bags?result.bags:'—';
+  document.getElementById('bagsNote').textContent=result.bags?'whole bags, rounded up':'enter manufacturer yield';
+  document.getElementById('elementCount').textContent=els.length;
+  document.getElementById('resultTitle').textContent=result.grossM3>0?roundForDisplay(result.grossM3,2)+' m³ order quantity':'Enter project dimensions';
+  const price=n(document.getElementById('price').value),cur=(document.getElementById('currency').value||'$').trim(),basis=document.getElementById('priceUnit').value==='yd3'?'yd³':'m³';
+  document.getElementById('cost').textContent=result.cost!==null?cur+' '+roundForDisplay(result.cost,2)+' ('+basis+' rate)':'Add a price to estimate cost';
+  document.getElementById('breakdownRows').innerHTML=els.map((e,i)=>{
+    const v=calculateProject([e],{wastePercent:0,densityKgM3:n(document.getElementById('density').value)}).netM3;
+    return '<div class="breakRow"><span>'+labelShape(e.shape)+' × '+e.quantity+'</span><span>'+roundForDisplay(v,3)+' m³</span></div>';
+  }).join('');
+}
+function renderEmpty(){
+  ['netM3','grossM3','yd3','ft3','tons','kg','bags'].forEach(id=>document.getElementById(id).textContent='—');
+  document.getElementById('elementCount').textContent='0';document.getElementById('cost').textContent='Add a price to estimate cost';document.getElementById('resultTitle').textContent='Enter project dimensions';document.getElementById('breakdownRows').innerHTML='<div class="breakRow"><span>No elements yet</span><span>—</span></div>';
+}
+addElement();
+applyUnitUI();
+</script>
+</body>
+</html>
