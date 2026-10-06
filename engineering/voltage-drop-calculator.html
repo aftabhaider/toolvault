@@ -6,6 +6,12 @@
 <title>Voltage Drop Calculator — DC, 1-Phase & 3-Phase | ToolVault</title>
 <meta name="description" content="Free voltage drop calculator for DC, single-phase and three-phase circuits. Calculate voltage drop, percentage, load-end voltage, power loss, maximum cable length and required conductor area using metric or AWG sizes.">
 <link rel="canonical" href="https://toolvault.aftabjordan1.workers.dev/engineering/voltage-drop-calculator.html">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="theme-color" content="#0b8f78">
+<meta property="og:site_name" content="ToolVault">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Voltage Drop Calculator — DC, 1-Phase &amp; 3-Phase | ToolVault">
+<meta name="twitter:description" content="Free voltage drop calculator for DC, single-phase and three-phase circuits. Calculate voltage drop, percentage, load-end voltage, power loss, maximum cable length and required conductor area using metric or AWG sizes.">
 <meta property="og:title" content="Voltage Drop Calculator — DC, 1-Phase & 3-Phase | ToolVault">
 <meta property="og:description" content="Calculate conductor voltage drop with clear metric or AWG inputs, copper or aluminum, one-way cable length, voltage, current and transparent formulas.">
 <meta property="og:type" content="website">
@@ -28,6 +34,18 @@ main{padding:24px 0 55px}.crumb{font-size:13px;color:var(--muted);margin-bottom:
 footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-size:12px}
 @media(max-width:860px){.layout{grid-template-columns:1fr}.related{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.wrap{padding:0 14px}.hero{padding:27px 20px}.grid2,.sizeRow,.choiceRow,.results{grid-template-columns:1fr}.segment,.modebar{grid-template-columns:1fr}.related{grid-template-columns:1fr}}
+
+/* ToolVault UX + SEO presentation layer */
+.seo-details{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:0 7px 24px rgba(16,35,31,.04);overflow:hidden}
+.seo-details>summary,.advanced-details>summary,.advanced-fields>summary{cursor:pointer;list-style:none;padding:15px 18px;font-size:13px;font-weight:900;color:var(--brand2);background:#fbfdfc}
+.seo-details>summary::-webkit-details-marker,.advanced-details>summary::-webkit-details-marker,.advanced-fields>summary::-webkit-details-marker{display:none}
+.seo-details>summary:before,.advanced-details>summary:before,.advanced-fields>summary:before{content:'+';display:inline-grid;place-items:center;width:21px;height:21px;border-radius:7px;margin-right:8px;background:var(--soft);font-size:15px;line-height:1}
+.seo-details[open]>summary:before,.advanced-details[open]>summary:before,.advanced-fields[open]>summary:before{content:'−'}
+.seo-details-content{margin-top:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:22px 24px 25px!important}
+.advanced-details{grid-column:1/-1;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+.advanced-fields{grid-column:1/-1;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+.advanced-inner{display:grid;grid-template-columns:1fr 1fr;gap:15px;padding:14px}
+@media(max-width:560px){.advanced-inner{grid-template-columns:1fr}.seo-details-content{padding:18px 16px 20px!important}}
 </style>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
@@ -64,14 +82,14 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
 <div class="field"><label for="sizeSystem">Conductor size system</label><select id="sizeSystem"><option value="mm2">Metric (mm²)</option><option value="awg">AWG</option></select></div>
 <div class="field" id="metricSizeWrap"><label for="metricSize">Conductor cross-section (mm²)</label><select id="metricSize"></select></div>
 <div class="field" id="awgSizeWrap" style="display:none"><label for="awgSize">Conductor size</label><select id="awgSize"></select></div>
-<div class="field"><label for="target">Target voltage drop (%)</label><input id="target" type="number" min="0" max="100" step="0.1" value="3"><small>Used for the maximum-length and required-area calculations.</small></div>
-<div class="field"><label for="hours">Operating hours per day (optional)</label><input id="hours" type="number" min="0" step="0.1" value="0"><small>Used only to estimate daily energy lost in the conductor.</small></div>
 </div>
+<details class="advanced-details"><summary>Advanced settings: target drop, energy loss & custom resistivity</summary><div class="advanced-inner"><div class="field"><label for="target">Target voltage drop (%)</label><input id="target" type="number" min="0" max="100" step="0.1" value="3"><small>Used for the maximum-length and required-area calculations.</small></div><div class="field"><label for="hours">Operating hours per day (optional)</label><input id="hours" type="number" min="0" step="0.1" value="0"><small>Used only to estimate daily energy lost in the conductor.</small></div></div>
 <div class="choiceRow" style="margin-top:11px">
 <label class="choice active"><input type="radio" name="resMode" value="standard" checked>Standard resistivity</label>
 <label class="choice"><input type="radio" name="resMode" value="custom">Custom resistivity</label>
 </div>
 <div id="customWrap" class="field" style="display:none"><label for="rho">Resistivity ρ (Ω·m)</label><input id="rho" type="number" min="0" step="any" placeholder="e.g. 1.724e-8"><small>Use a verified material/datasheet value at the conductor temperature you need. Standard defaults are referenced to 20°C.</small></div>
+</details>
 <div id="error" class="error"></div>
 <div class="help"><strong>Scope:</strong> this is a resistance-based voltage-drop model. It does not calculate ampacity, breaker sizing, temperature derating, conduit effects or AC inductive reactance. Treat the result as an engineering/planning estimate and verify the installation against the applicable code and the cable manufacturer's data.</div>
 </div>
@@ -94,7 +112,7 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
 </aside>
 </div>
 
-<section class="card article">
+<details class="seo-details"><summary>How to use, formulas, worked example, FAQs & related calculators</summary><section class="card article seo-details-content">
 <h2>How to Use the Voltage Drop Calculator</h2>
 <p>Choose DC, single-phase AC or balanced three-phase AC. Enter the source voltage, load current, one-way cable length, conductor material and conductor size. The tool reports voltage drop, percentage drop, load-end voltage, conductor loss, maximum one-way length at the selected drop target and the theoretical conductor area needed to meet that target.</p>
 
@@ -149,8 +167,7 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
 <a class="rel" href="/solar/"><strong>Solar & Energy</strong><span>PV, battery, inverter and generation tools.</span></a>
 <a class="rel" href="/calculators/"><strong>All Calculators</strong><span>Browse the broader ToolVault library.</span></a>
 </div>
-</section>>
-</main>
+</section></details>
 <footer><div class="wrap">© 2026 ToolVault · Free practical tools for the web. Planning calculations must be checked against installation specifications, manufacturer data and applicable electrical requirements.</div></footer>
 
 <script type="module">
