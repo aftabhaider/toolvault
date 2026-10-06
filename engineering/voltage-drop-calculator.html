@@ -95,28 +95,61 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
 </div>
 
 <section class="card article">
+<h2>How to Use the Voltage Drop Calculator</h2>
+<p>Choose DC, single-phase AC or balanced three-phase AC. Enter the source voltage, load current, one-way cable length, conductor material and conductor size. The tool reports voltage drop, percentage drop, load-end voltage, conductor loss, maximum one-way length at the selected drop target and the theoretical conductor area needed to meet that target.</p>
+
 <h2>Voltage Drop Formula</h2>
-<p>ToolVault first converts the conductor size to square millimetres and the distance to metres. It then calculates the resistance of one conductor from resistivity and cross-sectional area.</p>
+<p>ToolVault uses a resistance-based conductor model. First, resistance per metre is calculated from resistivity and cross-sectional area:</p>
 <div class="formula"><code>R = ρ × L ÷ A</code></div>
-<div class="formula"><code>DC / 1-phase: ΔV = 2 × I × R</code></div>
-<div class="formula"><code>Balanced 3-phase: ΔV = √3 × I × R</code></div>
-<div class="formula"><code>Drop % = ΔV ÷ V<sub>source</sub> × 100</code></div>
-<div class="formula"><code>Load-end voltage = V<sub>source</sub> − ΔV</code></div>
-<div class="formula"><code>P<sub>loss</sub> = I × ΔV</code></div>
-<h3>What the calculation includes</h3>
-<ul><li>Conductor material resistivity and cross-sectional area.</li><li>One-way cable length with the correct DC/single-phase or balanced-three-phase circuit factor.</li><li>Voltage drop, percentage drop, receiving-end voltage and conductor I²R loss.</li></ul>
-<h3>What it does not include</h3>
-<p>Real installations can have conductor temperature changes, AC inductive reactance, power factor, conduit/cable arrangement, terminal resistance and code-specific correction factors. Those effects can matter, especially on larger AC conductors and long runs. Use manufacturer resistance/impedance data and the applicable electrical standard for final design.</p>
-<h3>Metric and AWG sizes</h3>
-<p>AWG is a conductor sizing system in which a larger gauge number means a smaller conductor. The AWG area relation used here follows the standard diameter relation; metric mode uses the entered cross-sectional area directly.</p>
-<h3>Related ToolVault tools</h3>
+<p>For DC and single-phase circuits, the outgoing and return paths produce the factor of 2:</p>
+<div class="formula"><code>ΔV = 2 × I × R</code></div>
+<p>For a balanced three-phase circuit using line-to-line voltage:</p>
+<div class="formula"><code>ΔV = √3 × I × R</code></div>
+<p>The percentage and load-end voltage are:</p>
+<div class="formula"><code>Drop % = ΔV ÷ Vsource × 100</code> &nbsp; • &nbsp; <code>Vload = Vsource − ΔV</code></div>
+
+<h2>Worked Example: 48 V DC Circuit</h2>
+<p>Assume a 48 V DC circuit carries 20 A over a 30 m one-way run using 6 mm² copper. With copper resistivity of 1.724 × 10⁻⁸ Ω·m:</p>
+<p><strong>Resistance per metre ≈ 0.002873 Ω/m</strong>.</p>
+<p>Using the DC factor of 2, the estimated drop is approximately <strong>3.448 V</strong>. The percentage drop is about <strong>7.18%</strong>, so the approximate load-end voltage is <strong>44.55 V</strong>.</p>
+<p>This example demonstrates the resistance-only model used by the calculator. For final cable selection, manufacturer resistance/impedance data and the applicable electrical standard should be checked.</p>
+
+<h2>What Is Voltage Drop?</h2>
+<p>Voltage drop is the reduction in voltage between the source and load caused by the impedance of the conductors and connections. As cable length increases, current increases or conductor cross-sectional area decreases, voltage drop generally increases in a resistance-dominated model.</p>
+
+<h2>One-Way Cable Length</h2>
+<p>Enter the physical distance from the supply to the load. The calculator applies the appropriate circuit factor internally. For DC and single-phase, this represents the outbound plus return conductor path; for balanced three-phase, the √3 relationship is used with the entered line-to-line voltage.</p>
+
+<h2>AWG and mm²</h2>
+<p>AWG and metric cross-sectional area are different labeling systems. The AWG selection is converted to an equivalent cross-sectional area for the resistance calculation. Metric mode uses the entered mm² value directly. A larger conductor area generally produces lower resistance and lower voltage drop for the same material, current and length.</p>
+
+<h2>Maximum Cable Length and Required Area</h2>
+<p>The inverse calculations answer two different questions. Maximum length finds how far the selected conductor can run while staying below the target voltage-drop percentage. Required area finds the theoretical cross-sectional area that satisfies the same target under the same resistance model.</p>
+<div class="formula"><code>Lmax = Vmax ÷ (Factor × I × R per metre)</code></div>
+<div class="formula"><code>Amin = Factor × I × L × ρ ÷ Vmax</code></div>
+<p>These are voltage-drop constraints only. They do not prove that a conductor is suitable for ampacity, short-circuit withstand, temperature, installation method or code compliance.</p>
+
+<h2>Important Accuracy and Scope Notes</h2>
+<p>The default resistivity values are reference values at approximately 20°C. Actual conductor resistance changes with temperature. AC circuits can also have inductive reactance and power-factor effects, while terminals and connections add resistance. For a final design, use the cable manufacturer's resistance/impedance data and applicable electrical requirements.</p>
+
+<h2>Frequently Asked Questions</h2>
+<h3>What is an acceptable voltage drop?</h3>
+<p>The permitted or recommended value depends on the electrical standard, system type, installation and design objective. Use the target percentage in this calculator as a design input, then verify against the applicable requirements.</p>
+<h3>Does longer cable increase voltage drop?</h3>
+<p>Yes, in the resistance-based model, voltage drop is directly proportional to one-way length when current, conductor area and material remain constant.</p>
+<h3>Does thicker cable reduce voltage drop?</h3>
+<p>Yes. Increasing conductor cross-sectional area lowers resistance, which reduces voltage drop for the same current and length.</p>
+<h3>Is this a complete wire-size calculator?</h3>
+<p>No. It calculates voltage-drop-related conductor area and length. Final wire or cable sizing must also consider ampacity, protection, installation conditions, temperature correction, fault current and the applicable electrical code.</p>
+
+<h2>Related ToolVault Engineering Calculators</h2>
 <div class="related">
-<a class="rel" href="/engineering/"><strong>Engineering</strong><span>Explore the growing engineering calculator library.</span></a>
-<a class="rel" href="/construction/"><strong>Construction</strong><span>Material quantity and estimating tools.</span></a>
+<a class="rel" href="/engineering/"><strong>Engineering</strong><span>Explore the engineering calculator library.</span></a>
+<a class="rel" href="/construction/"><strong>Construction</strong><span>Quantity and material estimation tools.</span></a>
 <a class="rel" href="/solar/"><strong>Solar & Energy</strong><span>PV, battery, inverter and generation tools.</span></a>
 <a class="rel" href="/calculators/"><strong>All Calculators</strong><span>Browse the broader ToolVault library.</span></a>
 </div>
-</section>
+</section>>
 </main>
 <footer><div class="wrap">© 2026 ToolVault · Free practical tools for the web. Planning calculations must be checked against installation specifications, manufacturer data and applicable electrical requirements.</div></footer>
 
