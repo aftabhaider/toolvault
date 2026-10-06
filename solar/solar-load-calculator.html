@@ -6,6 +6,12 @@
 <title>Solar Load Calculator — PV, Inverter & Battery Sizing | ToolVault</title>
 <meta name="description" content="Free solar load calculator for appliance energy use, daily kWh, PV capacity, inverter sizing and 12V, 24V or 48V battery capacity.">
  <link rel="canonical" href="https://toolvault.aftabjordan1.workers.dev/solar/solar-load-calculator.html">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="theme-color" content="#0b8f78">
+<meta property="og:site_name" content="ToolVault">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Solar Load Calculator — PV, Inverter &amp; Battery Sizing | ToolVault">
+<meta name="twitter:description" content="Free solar load calculator for appliance energy use, daily kWh, PV capacity, inverter sizing and 12V, 24V or 48V battery capacity.">
 <style>
 :root{
  --green:#087443;--green2:#12a05a;--teal:#087f73;--lime:#a3e635;--sun:#f6b73c;
@@ -81,6 +87,18 @@ body{margin:0;background:
 footer{text-align:center;color:#80918a;font-size:11px;padding:28px}
 @media(max-width:900px){.layout{grid-template-columns:1fr}.summary{position:relative}.hero{align-items:start;flex-direction:column}.hero-badge{width:100%}.result-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:620px){.page,.topbar-inner{width:min(100% - 22px,1180px)}.hero{padding:28px 0 20px}.card-head,.card-body{padding:14px}.table-wrap{overflow-x:auto}.load-table{min-width:650px}.settings{grid-template-columns:1fr}.result-grid{grid-template-columns:1fr}.mini-grid{padding-left:14px;padding-right:14px}.battery-list{padding-left:14px;padding-right:14px}}
+
+/* ToolVault UX + SEO presentation layer */
+.seo-details{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:0 7px 24px rgba(16,35,31,.04);overflow:hidden}
+.seo-details>summary,.advanced-details>summary,.advanced-fields>summary{cursor:pointer;list-style:none;padding:15px 18px;font-size:13px;font-weight:900;color:var(--brand2);background:#fbfdfc}
+.seo-details>summary::-webkit-details-marker,.advanced-details>summary::-webkit-details-marker,.advanced-fields>summary::-webkit-details-marker{display:none}
+.seo-details>summary:before,.advanced-details>summary:before,.advanced-fields>summary:before{content:'+';display:inline-grid;place-items:center;width:21px;height:21px;border-radius:7px;margin-right:8px;background:var(--soft);font-size:15px;line-height:1}
+.seo-details[open]>summary:before,.advanced-details[open]>summary:before,.advanced-fields[open]>summary:before{content:'−'}
+.seo-details-content{margin-top:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:22px 24px 25px!important}
+.advanced-details{grid-column:1/-1;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+.advanced-fields{grid-column:1/-1;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+.advanced-inner{display:grid;grid-template-columns:1fr 1fr;gap:15px;padding:14px}
+@media(max-width:560px){.advanced-inner{grid-template-columns:1fr}.seo-details-content{padding:18px 16px 20px!important}}
 </style>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
@@ -131,10 +149,10 @@ footer{text-align:center;color:#80918a;font-size:11px;padding:28px}
 <section class="card full">
 <div class="card-head"><div class="step">02</div><div><h2>Solar Settings</h2><p>Set the local solar resource and planning losses.</p></div></div>
 <div class="card-body">
-<div class="settings">
+<details class="advanced-details"><summary>Advanced solar settings: peak sun hours & system losses</summary><div class="settings">
 <div class="field"><label>Peak sun hours / day</label><input id="sunHours" class="control" type="number" min="1" max="12" step=".1" value="5"><small>Typical planning input: 4–6 hours.</small></div>
 <div class="field"><label>System losses</label><input id="losses" class="control" type="number" min="0" max="50" step="1" value="20"><small>Accounts for wiring, temperature, dust and other losses.</small></div>
-</div>
+</div></details>
 </div>
 </section>
 
@@ -142,10 +160,10 @@ footer{text-align:center;color:#80918a;font-size:11px;padding:28px}
 <div class="card-head"><div class="step">03</div><div><h2>Battery Backup</h2><p>Only enter the backup load and required backup time.</p></div></div>
 <div class="card-body">
 <div class="backup"><div class="backup-title">⚡ Simple battery sizing</div><div style="font-size:11px;color:#657870;line-height:1.55">Choose the load you want to keep running during an outage and the number of hours you need. The calculator automatically shows equivalent 12V, 24V and 48V capacities.</div></div>
-<div class="settings" style="margin-top:12px">
+<details class="advanced-details" style="margin-top:12px"><summary>Backup settings: load & required hours</summary><div class="settings" style="margin-top:0">
 <div class="field"><label>Backup load (Watts)</label><input id="backupLoad" class="control" type="number" min="0" step="10" value="500"></div>
 <div class="field"><label>Desired backup time (hours)</label><input id="backupHours" class="control" type="number" min=".5" step=".5" value="4"></div>
-</div>
+</div></details>
 <button id="calculate" class="calculate" type="button">Calculate Solar System <span>→</span></button>
 <div class="live">Planning estimate • No fixed panel wattage assumption</div>
 </div>
@@ -171,7 +189,7 @@ footer{text-align:center;color:#80918a;font-size:11px;padding:28px}
 <div class="note"><b>Planning assumptions:</b> 25% inverter headroom and 80% usable battery energy. PV capacity is a power rating (kW/W), while kWh is used only for energy consumption. PV capacity is calculated from daily kWh ÷ peak-sun-hours ÷ (1 − losses). Battery capacity is rounded upward to the next practical module size for each system voltage. Actual system design should consider battery chemistry, manufacturer specifications, starting currents, temperature, shading and site conditions.</div>
 </section>
 
-<section class="card info">
+<details class="seo-details"><summary>How to use, formulas, worked example, FAQs & related solar tools</summary><section class="card info seo-details-content">
   <h2>How to Use the Solar Load Calculator</h2>
   <p>Start by listing the appliances or electrical loads you want to include. Enter the quantity, rated power in watts and average hours of operation per day. Then set peak sun hours, system losses and the backup load/time if you need battery sizing. The results estimate connected load, daily energy consumption, PV capacity, inverter capacity and equivalent battery capacity.</p>
 
@@ -224,8 +242,7 @@ footer{text-align:center;color:#80918a;font-size:11px;padding:28px}
     ·
     <a href="/solar/how-to-calculate-solar-system-size.html">How to Calculate Solar System Size</a>
   </p>
-</section>
-</main>
+</section></details>
 <footer>© 2026 ToolVault · Practical tools for renewable energy planning</footer>
 
 <script>
