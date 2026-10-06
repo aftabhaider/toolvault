@@ -3,8 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://api.open-meteo.com">
+<link rel="dns-prefetch" href="//api.open-meteo.com">
+<link rel="preconnect" href="https://geocoding-api.open-meteo.com">
 <meta name="description" content="Free solar energy generation calculator for PV systems. Estimate daily and multi-day solar output in kWh from panel count, panel wattage, location, weather, solar radiation, tilt, azimuth and system losses.">
 <link rel="canonical" href="https://toolvault.aftabjordan1.workers.dev/solar/solar-energy-generation-calculator.html">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="theme-color" content="#0b8f78">
+<meta property="og:site_name" content="ToolVault">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Solar Energy Generation Calculator — Daily PV Output, kWh &amp; Weather | ToolVault">
+<meta name="twitter:description" content="Free solar energy generation calculator for PV systems. Estimate daily and multi-day solar output in kWh from panel count, panel wattage, location, weather, solar radiation, tilt, azimuth and system losses.">
 <title>Solar Energy Generation Calculator — Daily PV Output, kWh & Weather | ToolVault</title>
 <style>
 :root{--bg:#f4faf8;--card:#fff;--ink:#10231f;--muted:#64736f;--line:#dce8e4;--brand:#0b8f78;--brand2:#086c5b;--soft:#e4f6f0;--danger:#b64b4b;--shadow:0 12px 35px rgba(16,35,31,.08)}
@@ -118,6 +127,18 @@ footer{border-top:1px solid var(--line);padding:16px 0;color:var(--muted);font-s
 #tvWeatherWidget .tvw-selected b{font-size:14px !important}
 #tvWeatherWidget .tvw-update{padding:6px 10px;font-size:8px}
 @media(max-width:850px){.layout{grid-template-columns:1fr}}
+
+/* ToolVault UX + SEO presentation layer */
+.seo-details{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:0 7px 24px rgba(16,35,31,.04);overflow:hidden}
+.seo-details>summary,.advanced-details>summary,.advanced-fields>summary{cursor:pointer;list-style:none;padding:15px 18px;font-size:13px;font-weight:900;color:var(--brand2);background:#fbfdfc}
+.seo-details>summary::-webkit-details-marker,.advanced-details>summary::-webkit-details-marker,.advanced-fields>summary::-webkit-details-marker{display:none}
+.seo-details>summary:before,.advanced-details>summary:before,.advanced-fields>summary:before{content:'+';display:inline-grid;place-items:center;width:21px;height:21px;border-radius:7px;margin-right:8px;background:var(--soft);font-size:15px;line-height:1}
+.seo-details[open]>summary:before,.advanced-details[open]>summary:before,.advanced-fields[open]>summary:before{content:'−'}
+.seo-details-content{margin-top:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:22px 24px 25px!important}
+.advanced-details{grid-column:1/-1;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+.advanced-fields{grid-column:1/-1;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+.advanced-inner{display:grid;grid-template-columns:1fr 1fr;gap:15px;padding:14px}
+@media(max-width:560px){.advanced-inner{grid-template-columns:1fr}.seo-details-content{padding:18px 16px 20px!important}}
 </style>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
@@ -155,11 +176,7 @@ footer{border-top:1px solid var(--line);padding:16px 0;color:var(--muted);font-s
 <div class="field"><label for="panelCount">Number of panels</label><input id="panelCount" type="number" min="1" step="1" value="8"></div>
 <div class="field"><label for="panelWatt">Panel capacity (watts)</label><input id="panelWatt" type="number" min="50" step="1" value="625"></div>
 
-<div class="field"><label for="losses">System losses (%)</label><input id="losses" type="number" min="0" max="40" step="1" value="14"><div class="hint">Inverter, wiring, temperature, mismatch and other system losses.</div></div>
-<div class="field"><label for="period">Forecast period</label><select id="period"><option value="1">Today</option><option value="7" selected>Next 7 days</option><option value="30">Next 30 days</option></select></div>
-
-<div class="field"><label for="tilt">Panel tilt (°)</label><input id="tilt" type="number" min="0" max="90" step="1" value="30"><div class="hint">Used for Global Tilted Irradiance (GTI).</div></div>
-<div class="field"><label for="azimuth">Panel azimuth (°)</label><input id="azimuth" type="number" min="-180" max="180" step="1" value="0"><div class="hint">0° = South, -90° = East, 90° = West, ±180° = North.</div></div>
+<details class="advanced-fields"><summary>Advanced settings: losses, forecast period, tilt & azimuth</summary><div class="advanced-inner"><div class="field"><label for="losses">System losses (%)</label><input id="losses" type="number" min="0" max="40" step="1" value="14"><div class="hint">Inverter, wiring, temperature, mismatch and other system losses.</div></div><div class="field"><label for="period">Forecast period</label><select id="period"><option value="1">Today</option><option value="7" selected>Next 7 days</option><option value="30">Next 30 days</option></select></div><div class="field"><label for="tilt">Panel tilt (°)</label><input id="tilt" type="number" min="0" max="90" step="1" value="30"><div class="hint">Used for Global Tilted Irradiance (GTI).</div></div><div class="field"><label for="azimuth">Panel azimuth (°)</label><input id="azimuth" type="number" min="-180" max="180" step="1" value="0"><div class="hint">0° = South, -90° = East, 90° = West, ±180° = North.</div></div></div></details>
 </div>
 <div class="actions"><button class="btn" id="calc">Calculate generation</button><button class="btn secondary" id="refresh">Refresh live data</button></div>
 <p class="note">Generation is an estimate, not a guarantee. Weather forecasts and solar-radiation models can differ from actual inverter production. The estimate uses GTI where available, scaled by your installed PV capacity and system-loss assumption.</p>
@@ -275,7 +292,7 @@ footer{border-top:1px solid var(--line);padding:16px 0;color:var(--muted);font-s
     &nbsp; · &nbsp;
     <a href="/solar/how-to-calculate-solar-system-size.html" style="color:#086c5b;font-weight:700;">How to Calculate Solar System Size →</a>
   </p>
-</section>>
+</section>
  
 </main>
 <footer><div class="wrap">© 2026 ToolVault · Practical tools for renewable energy planning.</div></footer>
