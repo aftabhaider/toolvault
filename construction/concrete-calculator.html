@@ -6,6 +6,12 @@
 <title>Concrete Calculator — Volume, Weight, Bags & Cost | ToolVault</title>
 <meta name="description" content="Free concrete calculator for slabs, footings, walls, columns and circular forms. Calculate concrete volume in cubic metres, yards and feet, plus weight, bag count and optional cost using metric or imperial inputs.">
 <link rel="canonical" href="https://toolvault.aftabjordan1.workers.dev/construction/concrete-calculator.html">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="theme-color" content="#0b8f78">
+<meta property="og:site_name" content="ToolVault">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Concrete Calculator — Volume, Weight, Bags &amp; Cost | ToolVault">
+<meta name="twitter:description" content="Free concrete calculator for slabs, footings, walls, columns and circular forms. Calculate concrete volume in cubic metres, yards and feet, plus weight, bag count and optional cost using metric or imperial inputs.">
 <meta property="og:title" content="Concrete Calculator — Volume, Weight, Bags & Cost | ToolVault">
 <meta property="og:description" content="Calculate concrete volume for slabs, footings, walls and round forms with clear metric or imperial inputs, waste allowance, weight, bag yield and cost.">
 <meta property="og:type" content="website">
@@ -29,6 +35,18 @@ main{padding:24px 0 55px}.crumb{font-size:13px;color:var(--muted);margin-bottom:
 footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-size:12px}
 @media(max-width:860px){.layout{grid-template-columns:1fr}.shapeRow{grid-template-columns:repeat(3,1fr)}.related{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.wrap{padding:0 14px}.hero{padding:27px 20px}.fields,.notes,.results{grid-template-columns:1fr}.field.full{grid-column:auto}.shapeRow{grid-template-columns:1fr 1fr}.unitbar{grid-template-columns:1fr}.related{grid-template-columns:1fr}.pair{grid-template-columns:1fr auto 1fr auto}}
+
+/* ToolVault UX + SEO presentation layer */
+.seo-details{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:0 7px 24px rgba(16,35,31,.04);overflow:hidden}
+.seo-details>summary,.advanced-details>summary,.advanced-fields>summary{cursor:pointer;list-style:none;padding:15px 18px;font-size:13px;font-weight:900;color:var(--brand2);background:#fbfdfc}
+.seo-details>summary::-webkit-details-marker,.advanced-details>summary::-webkit-details-marker,.advanced-fields>summary::-webkit-details-marker{display:none}
+.seo-details>summary:before,.advanced-details>summary:before,.advanced-fields>summary:before{content:'+';display:inline-grid;place-items:center;width:21px;height:21px;border-radius:7px;margin-right:8px;background:var(--soft);font-size:15px;line-height:1}
+.seo-details[open]>summary:before,.advanced-details[open]>summary:before,.advanced-fields[open]>summary:before{content:'−'}
+.seo-details-content{margin-top:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:22px 24px 25px!important}
+.advanced-details{grid-column:1/-1;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+.advanced-fields{grid-column:1/-1;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+.advanced-inner{display:grid;grid-template-columns:1fr 1fr;gap:15px;padding:14px}
+@media(max-width:560px){.advanced-inner{grid-template-columns:1fr}.seo-details-content{padding:18px 16px 20px!important}}
 </style>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
@@ -58,7 +76,7 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
 <div id="validation" class="validation"></div>
 <div class="elementList" id="elements"></div>
 <button class="addBtn" id="addElement" type="button">＋ Add another concrete element</button>
-<div class="notes">
+<details class="advanced-details"><summary>Optional settings: waste, density, price and bag yield</summary><div class="notes">
 <div class="field"><label for="waste">Waste / extra allowance (%)</label><input id="waste" type="number" min="0" max="100" step="1" value="10"><small>Applied only after the geometric volume. This is an adjustable planning allowance, not a geometry factor.</small></div>
 <div class="field"><label for="density">Concrete density (kg/m³)</label><input id="density" type="number" min="0" step="1" value="2400"><small>Editable assumption for weight only. Use the supplier's stated density when available.</small></div>
 <div class="field"><label for="price">Optional price per unit volume</label><input id="price" type="number" min="0" step="0.01" placeholder="e.g. 150"></div>
@@ -66,7 +84,7 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
 <div class="field"><label for="currency">Currency symbol / code</label><input id="currency" maxlength="8" value="$" placeholder="USD, $, €, £"></div>
 <div class="field"><label for="bagYield">Optional bag yield</label><input id="bagYield" type="number" min="0" step="0.001" placeholder="e.g. 0.45"><small>Use the bag manufacturer's stated yield, not bag weight. Select its unit below.</small></div>
 <div class="field"><label for="bagYieldUnit">Bag yield unit</label><select id="bagYieldUnit"><option value="ft3">ft³ per bag</option><option value="m3">m³ per bag</option><option value="yd3">yd³ per bag</option></select></div>
-</div>
+</div></details>
 <div class="help" style="margin-top:13px"><strong>Important:</strong> concrete mix design and structural strength are separate engineering questions. This calculator determines geometric volume and optional planning quantities; it does not design a structural mix or verify a code-required strength.</div>
 </div>
 </section>
@@ -89,7 +107,7 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
 </aside>
 </div>
 
-<section class="card article">
+<details class="seo-details"><summary>How to use, formulas, worked example, FAQs & related calculators</summary><section class="card article seo-details-content">
 <h2>How to Use the Concrete Calculator</h2>
 <p>Select the concrete element you are measuring, choose metric or imperial units, enter its dimensions and quantity, then add more elements when a project contains different sizes. Use the waste field only after the geometric quantities are correct.</p>
 
@@ -140,8 +158,7 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
 <a class="rel" href="/engineering/"><strong>Engineering Tools</strong><span>Explore technical engineering utilities.</span></a>
 <a class="rel" href="/calculators/"><strong>All Calculators</strong><span>Browse the wider ToolVault library.</span></a>
 </div>
-</section>>
-</main>
+</section></details>
 <footer><div class="wrap">© 2026 ToolVault · Free practical tools for the web. Results are planning estimates and should be checked against project specifications and supplier information.</div></footer>
 
 <script type="module">
