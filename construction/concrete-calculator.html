@@ -52,7 +52,7 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
 <div class="head"><h2>Project inputs</h2><p>Choose one measurement system. Add separate elements when a project has different sizes or shapes.</p></div>
 <div class="body">
 <div class="unitbar" id="unitBar">
-<label class="unitChoice active"><input type="radio" name="unitSystem" value="metric" checked><strong>Metric</strong><span>Length & width in meters · depth/height in centimeters</span></label>
+<label class="unitChoice active"><input type="radio" name="unitSystem" value="metric" checked><strong>Metric</strong><span>Length & width in meters · thickness/height in centimeters</span></label>
 <label class="unitChoice"><input type="radio" name="unitSystem" value="imperial"><strong>Imperial</strong><span>Length & width in feet + inches · depth/height in inches</span></label>
 </div>
 <div id="validation" class="validation"></div>
@@ -146,7 +146,7 @@ function elementTemplate(id){
     '<div class="field roundOnly"><span class="label">Diameter</span><div class="metricOnly">'+inputNum('diameterM',0.30)+'</div><div class="imperialOnly pair">'+inputNum('diameterFt',0)+'<span class="suffix">ft</span>'+inputNum('diameterIn',12)+'<span class="suffix">in</span></div><small class="metricOnly">Enter metres (m)</small><small class="imperialOnly">Enter feet + inches</small></div>'+
     '<div class="field ringOnly"><span class="label">Outer diameter</span><div class="metricOnly">'+inputNum('outerDiameterM',0.40)+'</div><div class="imperialOnly pair">'+inputNum('outerDiameterFt',1)+'<span class="suffix">ft</span>'+inputNum('outerDiameterIn',3.75)+'<span class="suffix">in</span></div><small class="metricOnly">Enter metres (m)</small><small class="imperialOnly">Enter feet + inches</small></div>'+
     '<div class="field ringOnly"><span class="label">Inner diameter</span><div class="metricOnly">'+inputNum('innerDiameterM',0.20)+'</div><div class="imperialOnly pair">'+inputNum('innerDiameterFt',0)+'<span class="suffix">ft</span>'+inputNum('innerDiameterIn',7.875)+'<span class="suffix">in</span></div><small class="metricOnly">Enter metres (m)</small><small class="imperialOnly">Enter feet + inches</small></div>'+
-    '<div class="field ringOnly"><span class="label">Height</span><div class="metricOnly">'+inputNum('ringHeightM',0.50)+'</div><div class="imperialOnly">'+inputNum('ringHeightIn',20)+'</div><small class="metricOnly">Enter metres (m)</small><small class="imperialOnly">Enter inches (in)</small></div>'+
+    '<div class="field ringOnly"><span class="label">Height</span><div class="metricOnly">'+inputNum('ringHeightCm',50)+'</div><div class="imperialOnly">'+inputNum('ringHeightIn',20)+'</div><small class="metricOnly">Enter centimeters (cm)</small><small class="imperialOnly">Enter inches (in)</small></div>'+
   '</div>';
   el.querySelector('.remove').addEventListener('click',()=>{el.remove();calculate()});
   el.querySelectorAll('input[type=radio]').forEach(r=>r.addEventListener('change',()=>{
@@ -188,7 +188,7 @@ function toM(el,base){
   return unitSystem==='metric'?n(el.querySelector('.'+base+'M')?.value):(n(el.querySelector('.'+base+'Ft')?.value)+n(el.querySelector('.'+base+'In')?.value)/12)*0.3048;
 }
 function toHeightM(el,base='height'){
-  return unitSystem==='metric'?n(el.querySelector('.'+base+'M')?.value):n(el.querySelector('.'+base+'In')?.value)*0.0254;
+  return unitSystem==='metric'?n(el.querySelector('.'+base+'Cm')?.value)/100:n(el.querySelector('.'+base+'In')?.value)*0.0254;
 }
 function elementData(el){
   const shape=el.dataset.shape,q=n(el.querySelector('.qty')?.value)||0;
@@ -209,10 +209,10 @@ function convertFields(from,to){
       else{const p=metresToImperialPair(m);ft.value=p.ft;inch.value=p.inches.toFixed(1)}
     });
     ['height','ringHeight'].forEach(base=>{
-      const metric=el.querySelector('.'+base+'M'), inch=el.querySelector('.'+base+'In');
+      const metric=el.querySelector('.'+base+'Cm'), inch=el.querySelector('.'+base+'In');
       if(!metric||!inch)return;
-      const m=from==='metric'?n(metric.value):n(inch.value)*0.0254;
-      if(to==='metric')metric.value=m.toFixed(3);else inch.value=(m/0.0254).toFixed(1);
+      const m=from==='metric'?n(metric.value)/100:n(inch.value)*0.0254;
+      if(to==='metric')metric.value=(m*100).toFixed(1);else inch.value=(m/0.0254).toFixed(1);
     });
   });
 }
