@@ -87,7 +87,8 @@ footer{border-top:1px solid var(--line);background:#fff;padding:25px 0;color:#74
 <div class="field"><label for="extra">Additional paintable area</label><input id="extra" type="number" min="0" step="any" value="0"><div class="hint">Useful for feature walls or other measured surfaces.</div></div>
 <div class="field"><label for="waste">Extra allowance (%)</label><input id="waste" type="number" min="0" max="100" step="1" value="5"></div>
 <div class="field"><label for="canSize">Can size (litres)</label><input id="canSize" type="number" min="0" step="any" placeholder="e.g. 4"></div>
-<div class="field"><label for="price">Price per litre</label><input id="price" type="number" min="0" step="any" placeholder="Optional"></div>
+<div class="field"><label for="price" id="priceLabel">Price per litre</label><input id="price" type="number" min="0" step="any" placeholder="Optional"></div>
+<div class="field"><label for="currency">Currency</label><input id="currency" type="text" maxlength="8" value="$" placeholder="$, €, £, Rs"></div>
 </div>
 <label class="checkrow"><input id="ceiling" type="checkbox"> Include the ceiling</label>
 </div>
@@ -130,7 +131,7 @@ footer{border-top:1px solid var(--line);background:#fff;padding:25px 0;color:#74
 <div class="formula">Purchase paint = Paint needed × (1 + Allowance% ÷ 100)</div>
 
 <h2>Paint Coverage Calculator</h2>
-<p>Paint coverage is normally stated by the manufacturer for a particular product and surface. ToolVault therefore lets you replace the default planning value with the coverage printed on your paint product. A rough or porous surface, color change, application method and product type can change the actual coverage. Product instructions should take priority over generic rules of thumb. citeturn418975search12turn418975search4</p>
+<p>Paint coverage is normally stated by the manufacturer for a particular product and surface. ToolVault therefore lets you replace the default planning value with the coverage printed on your paint product. A rough or porous surface, color change, application method and product type can change the actual coverage. Product instructions should take priority over generic rules of thumb.</p>
 
 <h2>Wall Paint Calculator and Paint Calculator in Square Feet</h2>
 <p>For a wall-only job, use Room dimensions for a rectangular room or I know the area when the total wall surface is already measured. Switch to Imperial mode for feet and square feet. The same calculation can be viewed in litres and US gallons so the result is useful across common measurement systems.</p>
@@ -152,7 +153,7 @@ footer{border-top:1px solid var(--line);background:#fff;padding:25px 0;color:#74
 <p>Because paint products are sold in product-specific container sizes, a whole-can result is only shown when you enter the actual can size. This avoids assuming that every “gallon” or tin has the same usable volume.</p>
 
 <h2>How Accurate Is a Paint Estimate?</h2>
-<p>The geometry is deterministic for the dimensions entered. The uncertainty comes mainly from product coverage, surface condition, application method, number of coats and waste. A paint calculator is therefore best treated as a planning and purchasing estimate, not a guarantee of final consumption. Manufacturers such as Dulux explicitly note that actual paint requirements vary with the product and surface. citeturn418975search12</p>
+<p>The geometry is deterministic for the dimensions entered. The uncertainty comes mainly from product coverage, surface condition, application method, number of coats and waste. A paint calculator is therefore best treated as a planning and purchasing estimate, not a guarantee of final consumption. Manufacturers also note that actual paint requirements can vary with the selected product and surface.</p>
 
 <h2>Frequently Asked Questions</h2>
 <h3>How much paint do I need for a room?</h3>
@@ -187,79 +188,122 @@ import {calculatePaint,conversions} from './paint-engine.js';
 const $=id=>document.getElementById(id);
 let unit="metric", mode="room";
 
-const els={length:$("length"),width:$("width"),height:$("height"),coats:$("coats"),knownArea:$("knownArea"),areaCoats:$("areaCoats"),coverage:$("coverage"),opening:$("opening"),extra:$("extra"),waste:$("waste"),canSize:$("canSize"),price:$("price"),ceiling:$("ceiling"),roomFields:$("roomFields"),areaFields:$("areaFields"),coverageHint:$("coverageHint")};
+const els={
+ length:$("length"),width:$("width"),height:$("height"),coats:$("coats"),
+ knownArea:$("knownArea"),areaCoats:$("areaCoats"),coverage:$("coverage"),
+ opening:$("opening"),extra:$("extra"),waste:$("waste"),canSize:$("canSize"),
+ price:$("price"),currency:$("currency"),ceiling:$("ceiling"),
+ roomFields:$("roomFields"),areaFields:$("areaFields"),coverageHint:$("coverageHint"),
+ priceLabel:$("priceLabel")
+};
 
 function num(v,f=0){const n=Number(v);return Number.isFinite(n)?Math.max(0,n):f}
 function fmt(v,max=2){return new Intl.NumberFormat("en-US",{minimumFractionDigits:0,maximumFractionDigits:max}).format(v)}
+function setUnitButton(active){
+  document.querySelectorAll(".unit").forEach(x=>x.classList.toggle("active",x.dataset.unit===active));
+}
+function setModeButton(){
+  document.querySelectorAll(".seg").forEach(x=>{
+    const radio=x.querySelector("input");
+    x.classList.toggle("active",radio?.value===mode);
+  });
+}
+function updateLabels(){
+  if(unit==="metric"){
+    els.coverageHint.textContent="m² per litre per coat. Use the product label for best accuracy.";
+    els.priceLabel.textContent="Price per litre";
+  }else{
+    els.coverageHint.textContent="ft² per US gallon per coat. Use the product label for best accuracy.";
+    els.priceLabel.textContent="Price per US gallon";
+  }
+}
+function switchUnit(next){
+  if(next===unit)return;
+  const old=unit;
+  const areaFactor=old==="metric" ? 10.7639104167 : 0.09290304;
+  // Preserve the user's measurements instead of replacing them with defaults.
+  if(mode==="room"){
+    if(old==="metric"){
+      els.length.value=(num(els.length.value)*3.280839895).toFixed(4);
+      els.width.value=(num(els.width.value)*3.280839895).toFixed(4);
+      els.height.value=(num(els.height.value)*3.280839895).toFixed(4);
+    }else{
+      els.length.value=(num(els.length.value)*0.3048).toFixed(4);
+      els.width.value=(num(els.width.value)*0.3048).toFixed(4);
+      els.height.value=(num(els.height.value)*0.3048).toFixed(4);
+    }
+  }
+  els.knownArea.value=(num(els.knownArea.value)*areaFactor).toFixed(3);
+  els.opening.value=(num(els.opening.value)*areaFactor).toFixed(3);
+  els.extra.value=(num(els.extra.value)*areaFactor).toFixed(3);
+
+  const coverageFactor=old==="metric" ? (3.785411784/0.09290304) : (0.09290304/3.785411784);
+  els.coverage.value=(num(els.coverage.value)*coverageFactor).toFixed(old==="metric"?0:3);
+
+  const priceFactor=old==="metric" ? 3.785411784 : 0.2641720524;
+  els.price.value=(num(els.price.value)*priceFactor).toFixed(2);
+
+  unit=next;setUnitButton(unit);updateLabels();calculate();
+}
 function syncMode(){
   els.roomFields.style.display=mode==="room"?"grid":"none";
   els.areaFields.style.display=mode==="area"?"grid":"none";
   els.opening.disabled=mode==="area";
   els.ceiling.disabled=mode==="area";
+  setModeButton();
   if(mode==="area"){els.opening.value=0;els.ceiling.checked=false}
   calculate();
 }
-function syncUnit(){
-  const values=unit==="metric"
-    ? {length:4,width:3,height:2.7,area:50,coverage:10,coverageHint:"m² per litre per coat. Use the product label for best accuracy."}
-    : {length:13.1234,width:9.8425,height:8.8583,area:538.196,coverage:350,coverageHint:"ft² per US gallon per coat. Use the product label for best accuracy."};
-  els.length.value=values.length;els.width.value=values.width;els.height.value=values.height;els.knownArea.value=values.area;els.coverage.value=values.coverage;els.coverageHint.textContent=values.coverageHint;
-  const opening=els.opening.value;els.opening.value=opening;
-  calculate();
-}
 function collect(){
-  const factor=0.09290304;
+  const ft2ToM2=0.09290304;
   if(unit==="metric"){
     return {
       mode,roomLengthM:num(els.length.value),roomWidthM:num(els.width.value),wallHeightM:num(els.height.value),
       knownAreaM2:num(els.knownArea.value),openingAreaM2:num(els.opening.value),extraAreaM2:num(els.extra.value),
       coats:mode==="room"?num(els.coats.value,2):num(els.areaCoats.value,2),
-      coverageM2PerL:num(els.coverage.value,10),
-      wastePercent:num(els.waste.value,5),includeCeiling:els.ceiling.checked,canSizeL:num(els.canSize.value),pricePerLiter:num(els.price.value)
+      coverageM2PerL:num(els.coverage.value,10),wastePercent:num(els.waste.value,5),
+      includeCeiling:els.ceiling.checked,canSizeL:num(els.canSize.value)
+      ,pricePerLiter:num(els.price.value)
     };
   }
-  const coverageM2PerL=num(els.coverage.value,350)/(1/factor/3.785411784); // overwritten below
-  const ft2ToM2=factor;
-  const ft2PerGal=num(els.coverage.value,350);
-  const coverageMetric=(ft2PerGal*ft2ToM2)/3.785411784;
   return {
-    mode,roomLengthM:num(els.length.value)*0.3048,roomWidthM:num(els.width.value)*0.3048,wallHeightM:num(els.height.value)*0.3048,
+    mode,
+    roomLengthM:num(els.length.value)*0.3048,roomWidthM:num(els.width.value)*0.3048,wallHeightM:num(els.height.value)*0.3048,
     knownAreaM2:num(els.knownArea.value)*ft2ToM2,openingAreaM2:num(els.opening.value)*ft2ToM2,extraAreaM2:num(els.extra.value)*ft2ToM2,
     coats:mode==="room"?num(els.coats.value,2):num(els.areaCoats.value,2),
-    coverageM2PerL:coverageMetric,wastePercent:num(els.waste.value,5),includeCeiling:els.ceiling.checked,
-    canSizeL:num(els.canSize.value),pricePerLiter:num(els.price.value)/3.785411784
+    coverageM2PerL:num(els.coverage.value)*(ft2ToM2/3.785411784),
+    wastePercent:num(els.waste.value,5),includeCeiling:els.ceiling.checked,canSizeL:num(els.canSize.value),
+    pricePerLiter:num(els.price.value)/3.785411784
   };
 }
 function calculate(){
   const r=calculatePaint(collect());
   const surface=unit==="metric"?r.netSurfaceArea:conversions.m2ToFt2(r.netSurfaceArea);
   const coated=unit==="metric"?r.coatedArea:conversions.m2ToFt2(r.coatedArea);
-  const cov=unit==="metric"?r.coverage:r.coverage*3.785411784/conversions.ft2ToM2(1);
+  const currency=(els.currency.value||"$").trim();
+  const displayCost= r.cost==null ? "" : (unit==="metric"?fmt(r.cost,2):fmt(r.cost*3.785411784,2));
   $("resultTitle").textContent=r.netSurfaceArea>0?"Paint quantity estimate":"Enter your project details";
   $("paintL").textContent=fmt(r.purchaseLiters,2)+" L";
   $("paintGal").textContent=fmt(r.gallons,2);
-  $("surfaceM2").textContent=fmt(surface,2);
-  $("surfaceUnit").textContent=unit==="metric"?"m²":"ft²";
-  $("coatedM2").textContent=fmt(coated,2);
-  $("coatedUnit").textContent=unit==="metric"?"m²":"ft²";
+  $("surfaceM2").textContent=fmt(surface,2);$("surfaceUnit").textContent=unit==="metric"?"m²":"ft²";
+  $("coatedM2").textContent=fmt(coated,2);$("coatedUnit").textContent=unit==="metric"?"m²":"ft²";
   $("cans").textContent=r.canCount==null?"—":fmt(r.canCount,0);
-  $("canNote").textContent=r.canCount==null?"enter can size":unit==="metric"?fmt(r.canSize,2)+" L each":"uses litre size entered";
+  $("canNote").textContent=r.canCount==null?"enter can size":fmt(r.canSize,2)+" L each";
   $("coverageOut").textContent=unit==="metric"?fmt(r.coverage,2):fmt(r.coverage*3.785411784/0.09290304,0);
   $("coverageOutUnit").textContent=unit==="metric"?"m²/L":"ft²/US gal";
-  $("cost").textContent=r.cost==null?(unit==="metric"?"Add an optional price per litre":"Add an optional price per US gallon"):(unit==="metric"?fmt(r.cost,2):"$"+fmt(r.cost*3.785411784,2));
+  $("cost").textContent=r.cost==null?(unit==="metric"?"Add an optional price per litre":"Add an optional price per US gallon"):(currency+" "+displayCost);
 }
 function reset(){
-  mode="room";unit="metric";document.querySelector('.seg input[value="room"]').checked=true;document.querySelectorAll(".seg").forEach((x,i)=>x.classList.toggle("active",i===0));
-  document.querySelectorAll(".unit").forEach((x,i)=>x.classList.toggle("active",i===0));
-  els.length.value=4;els.width.value=3;els.height.value=2.7;els.coats.value=2;els.knownArea.value=50;els.areaCoats.value=2;els.coverage.value=10;els.opening.value=0;els.extra.value=0;els.waste.value=5;els.canSize.value="";els.price.value="";els.ceiling.checked=false;els.coverageHint.textContent="m² per litre per coat. Use the product label for best accuracy.";
-  syncMode();
+  mode="room";unit="metric";
+  els.length.value=4;els.width.value=3;els.height.value=2.7;els.coats.value=2;els.knownArea.value=50;els.areaCoats.value=2;
+  els.coverage.value=10;els.opening.value=0;els.extra.value=0;els.waste.value=5;els.canSize.value="";els.price.value="";els.currency.value="$";els.ceiling.checked=false;
+  setUnitButton(unit);updateLabels();syncMode();
 }
 document.querySelectorAll('input[name="mode"]').forEach(x=>x.addEventListener("change",()=>{mode=x.value;syncMode()}));
-document.querySelectorAll(".seg").forEach(label=>label.addEventListener("click",()=>document.querySelector('input[name="mode"]:checked')?.dispatchEvent(new Event("change"))));
-document.querySelectorAll(".unit").forEach(btn=>btn.addEventListener("click",()=>{unit=btn.dataset.unit;document.querySelectorAll(".unit").forEach(x=>x.classList.toggle("active",x===btn));syncUnit()}));
+document.querySelectorAll(".unit").forEach(btn=>btn.addEventListener("click",()=>switchUnit(btn.dataset.unit)));
 Object.values(els).forEach(x=>{if(x&&["INPUT","SELECT"].includes(x.tagName)){x.addEventListener("input",calculate);x.addEventListener("change",calculate)}});
 $("calculate").addEventListener("click",calculate);$("reset").addEventListener("click",reset);
-syncMode();
+updateLabels();syncMode();
 </script>
 </body>
 </html>
