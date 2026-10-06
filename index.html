@@ -44,6 +44,15 @@ section{padding:58px 0}.section-head{display:flex;justify-content:space-between;
 footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-size:13px}.foot{display:flex;justify-content:space-between;gap:18px}.foot a{margin-left:18px}
 @media(max-width:950px){.hero-grid,.feature-grid{grid-template-columns:1fr}.grid,.audience{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.wrap{padding:0 15px}.hero{padding:50px 0 42px}h1{font-size:42px;letter-spacing:-2px}.search{flex-direction:column}.grid,.audience,.tools{grid-template-columns:1fr}.feature-list{grid-template-columns:1fr}.section-head{display:block}.foot{display:block}.foot a{margin:0 16px 0 0}}
+
+/* ToolVault visual hierarchy: page background → working cards → selectable tiles → active controls */
+body{background:#edf5f2!important}
+.card,.panel,.article,.explain,.info,.seo-details,.quick-card{background:#fff}
+.grid .card,a.card,.related .rel,.related a{background:#f8fcfa;border-color:#cfe3dd}
+.grid .card:hover,a.card:hover,.related .rel:hover,.related a:hover{background:#eff9f5;border-color:#9ccfc1;box-shadow:0 10px 28px rgba(18,54,48,.09)}
+input,select,.control{background:#fbfefd;border-color:#c9ddd7}
+.unitChoice,.shape,.seg,.choice{background:#f7fcfa}
+.unitChoice.active,.shape.active,.seg.active,.choice.active{background:#e3f6f0;border-color:#99cdbf;color:#086c5b}
 </style>
 <script type="application/ld+json">
 {
