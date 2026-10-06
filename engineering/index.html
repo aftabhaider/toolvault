@@ -26,6 +26,15 @@ section{margin-top:20px}.card{background:var(--card);border:1px solid var(--line
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.mini{background:#f8fbfa;border:1px solid var(--line);border-radius:14px;padding:17px}.mini p{margin:0;color:var(--muted);font-size:13px}.examples{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:17px}.example{border:1px solid var(--line);border-radius:12px;padding:13px 15px;background:#fff;font-size:13px}.example b{display:block;margin-bottom:2px}.band{background:var(--dark);color:#fff;border-radius:20px;padding:28px}.band p{color:#c4d7d2;margin:7px 0 0;font-size:14px}.band-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.pillrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:17px}.pill{padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);font-size:12px}
 footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-size:12px}
 @media(max-width:760px){.grid,.band-grid{grid-template-columns:1fr}.examples{grid-template-columns:1fr}.hero{padding:27px 21px}}
+
+/* ToolVault visual hierarchy: page background → working cards → selectable tiles → active controls */
+body{background:#edf5f2!important}
+.card,.panel,.article,.explain,.info,.seo-details,.quick-card{background:#fff}
+.grid .card,a.card,.related .rel,.related a{background:#f8fcfa;border-color:#cfe3dd}
+.grid .card:hover,a.card:hover,.related .rel:hover,.related a:hover{background:#eff9f5;border-color:#9ccfc1;box-shadow:0 10px 28px rgba(18,54,48,.09)}
+input,select,.control{background:#fbfefd;border-color:#c9ddd7}
+.unitChoice,.shape,.seg,.choice{background:#f7fcfa}
+.unitChoice.active,.shape.active,.seg.active,.choice.active{background:#e3f6f0;border-color:#99cdbf;color:#086c5b}
 </style>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"CollectionPage","url":"https://toolvault.aftabjordan1.workers.dev/engineering/","name":"Engineering | ToolVault","description":"Technical calculators for electrical, mechanical, civil, structural, energy and engineering design support.","isPartOf":{"@type":"WebSite","name":"ToolVault","url":"https://toolvault.aftabjordan1.workers.dev/"}}
