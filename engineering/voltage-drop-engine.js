@@ -35,15 +35,6 @@ export function resistanceOhmPerMeter({material,areaMm2,rhoOverride=null}){
   return rho/(area*1e-6);
 }
 
-export function voltageDrop({system,material,currentA,lengthM,areaMm2,rhoOverride=null}){
-  const I=positive(currentA),L=positive(lengthM),A=positive(areaMm2);
-  const factor=PHASE_FACTOR[system];
-  if(!factor) throw new Error("Unsupported circuit system.");
-  const rPerM=resistanceOhmPerMeter({material,areaMm2:A,rhoOverride});
-  const volts=factor*I*L*rPerM;
-  return {volts,percent:volts/positive(arguments[0].sourceV)*100,rPerM,factor};
-}
-
 export function calculateVoltageDrop(input){
   const sourceV=positive(input.sourceV);
   if(!(sourceV>0)) throw new Error("Supply voltage must be greater than zero.");
