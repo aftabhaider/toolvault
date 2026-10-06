@@ -6,6 +6,12 @@
 <title>Solar Panel Area Calculator — Roof Space & Panel Surface Area | ToolVault</title>
 <meta name="description" content="Free solar panel area calculator to estimate panel surface area, total PV capacity and practical roof or installation space in square meters and square feet from panel dimensions and layout spacing.">
 <link rel="canonical" href="https://toolvault.aftabjordan1.workers.dev/solar/solar-panel-area-calculator.html">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="theme-color" content="#0b8f78">
+<meta property="og:site_name" content="ToolVault">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Solar Panel Area Calculator — Roof Space &amp; Panel Surface Area | ToolVault">
+<meta name="twitter:description" content="Free solar panel area calculator to estimate panel surface area, total PV capacity and practical roof or installation space in square meters and square feet from panel dimensions and layout spacing.">
 <style>
 :root{--bg:#f4f8f7;--card:#fff;--ink:#17312f;--muted:#667774;--line:#dbe7e4;--green:#087f6b;--green2:#0ca98d;--soft:#e8f7f3}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,sans-serif}.header{background:#fff;border-bottom:1px solid var(--line)}
@@ -23,6 +29,18 @@ input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:
 .related{margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:15px}.rel{padding:19px;background:#fff;border:1px solid var(--line);border-radius:15px}.rel strong{display:block;margin-bottom:5px}.rel span{font-size:13px;color:var(--muted)}
 .footer{text-align:center;color:var(--muted);font-size:12px;margin-top:30px}
 @media(max-width:800px){.hero,.grid{grid-template-columns:1fr}h1{font-size:31px}.formgrid,.results,.related{grid-template-columns:1fr}.full{grid-column:auto}.wrap{padding:20px 14px 40px}}
+
+/* ToolVault UX + SEO presentation layer */
+.seo-details{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:0 7px 24px rgba(16,35,31,.04);overflow:hidden}
+.seo-details>summary,.advanced-details>summary,.advanced-fields>summary{cursor:pointer;list-style:none;padding:15px 18px;font-size:13px;font-weight:900;color:var(--brand2);background:#fbfdfc}
+.seo-details>summary::-webkit-details-marker,.advanced-details>summary::-webkit-details-marker,.advanced-fields>summary::-webkit-details-marker{display:none}
+.seo-details>summary:before,.advanced-details>summary:before,.advanced-fields>summary:before{content:'+';display:inline-grid;place-items:center;width:21px;height:21px;border-radius:7px;margin-right:8px;background:var(--soft);font-size:15px;line-height:1}
+.seo-details[open]>summary:before,.advanced-details[open]>summary:before,.advanced-fields[open]>summary:before{content:'−'}
+.seo-details-content{margin-top:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:22px 24px 25px!important}
+.advanced-details{grid-column:1/-1;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+.advanced-fields{grid-column:1/-1;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+.advanced-inner{display:grid;grid-template-columns:1fr 1fr;gap:15px;padding:14px}
+@media(max-width:560px){.advanced-inner{grid-template-columns:1fr}.seo-details-content{padding:18px 16px 20px!important}}
 </style>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
@@ -65,15 +83,14 @@ input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:
 <div class="field"><label for="watt">Panel Wattage (W)</label><input id="watt" type="number" min="1" step="1" value="625"></div>
 <div class="field"><label for="length">Panel Length (mm)</label><input id="length" type="number" min="1" step="1" value="2382"></div>
 <div class="field"><label for="width">Panel Width (mm)</label><input id="width" type="number" min="1" step="1" value="1134"></div>
-<div class="field"><label for="spacing">Spacing / Layout Factor</label>
+<details class="advanced-fields"><summary>Advanced layout options: spacing factor & display unit</summary><div class="advanced-inner"><div class="field"><label for="spacing">Spacing / Layout Factor</label>
 <select id="spacing">
 <option value="1.10">1.10 × — Tight</option><option value="1.15">1.15 × — Compact</option>
 <option value="1.20" selected>1.20 × — Practical</option><option value="1.25">1.25 × — More access</option>
 <option value="1.30">1.30 × — Generous</option>
 </select>
-<div class="note">Adds an allowance for practical gaps and access.</div></div>
-<div class="field"><label for="unit">Display Unit</label>
-<select id="unit"><option value="both" selected>m² and ft²</option><option value="m2">m² only</option><option value="ft2">ft² only</option></select></div>
+<div class="note">Adds an allowance for practical gaps and access.</div></div><div class="field"><label for="unit">Display Unit</label>
+<select id="unit"><option value="both" selected>m² and ft²</option><option value="m2">m² only</option><option value="ft2">ft² only</option></select></div></div></details>
 </div>
 </div>
 
@@ -89,7 +106,7 @@ input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:
 </div>
 </section>
 
-<section class="card explain">
+<details class="seo-details"><summary>How to use, formulas, worked example, FAQs & roof-space notes</summary><section class="card explain seo-details-content">
 <h2>How to Use the Solar Panel Area Calculator</h2>
 <p>Enter the number of panels, panel wattage, physical panel length and width, then choose the layout or spacing factor. The calculator reports one-panel area, total panel surface, practical installation area, square feet and total system capacity.</p>
 
@@ -138,9 +155,7 @@ input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:
 &nbsp; · &nbsp;
 <a href="/solar/solar-energy-generation-calculator.html">Solar Energy Generation Calculator →</a>
 </p>
-</section>>
-
-<section class="related">
+</section></details>
 <a href="/solar/solar-load-calculator.html"><div class="rel"><strong>Solar Load Calculator →</strong><span>Estimate energy use, PV capacity, inverter and battery requirements.</span></div></a>
 <a href="/solar/solar-energy-generation-calculator.html"><div class="rel"><strong>Solar Energy Generation Calculator →</strong><span>Estimate solar generation using location, panel quantity and wattage.</span></div></a>
 </section>
