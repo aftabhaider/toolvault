@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Free Solar Energy Generation Calculator using panel quantity, panel wattage and live location-based solar weather data.">
+<meta name="description" content="Free solar energy generation calculator for PV systems. Estimate daily and multi-day solar output in kWh from panel count, panel wattage, location, weather, solar radiation, tilt, azimuth and system losses.">
 <link rel="canonical" href="https://toolvault.aftabjordan1.workers.dev/solar/solar-energy-generation-calculator.html">
-<title>Solar Energy Generation Calculator — ToolVault</title>
+<title>Solar Energy Generation Calculator — Daily PV Output, kWh & Weather | ToolVault</title>
 <style>
 :root{--bg:#f4faf8;--card:#fff;--ink:#10231f;--muted:#64736f;--line:#dce8e4;--brand:#0b8f78;--brand2:#086c5b;--soft:#e4f6f0;--danger:#b64b4b;--shadow:0 12px 35px rgba(16,35,31,.08)}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
@@ -220,29 +220,52 @@ footer{border-top:1px solid var(--line);padding:16px 0;color:var(--muted);font-s
 </section>
 
 <section class="card" style="margin-top:20px">
-  <h2>How the Solar Energy Generation Calculator Works</h2>
-  <p>This solar energy generation calculator estimates how much electricity a solar PV system can produce based on your location, number of panels, panel wattage, system losses, panel tilt and azimuth. It uses location-based weather and solar-radiation forecast data to estimate expected energy generation.</p>
+  <h2>How to Use the Solar Energy Generation Calculator</h2>
+  <p>Enter a city or location, the number of solar panels, panel wattage, system losses, panel tilt and azimuth. Select the forecast period, then review the estimated solar electricity generation. The tool uses location-based weather and solar-radiation forecast data rather than a fixed generic sunlight value.</p>
 
-  <h2>How Much Energy Can Solar Panels Generate?</h2>
-  <p>Solar panel energy generation depends on the installed PV capacity, available sunlight, weather conditions, panel orientation, tilt and system losses. Enter your panel quantity and wattage to calculate the total solar capacity, then select your location to see an estimated generation forecast.</p>
+  <h2>Solar PV Capacity Formula</h2>
+  <p>The installed DC capacity is calculated directly from panel count and panel wattage:</p>
+  <p><strong>PV capacity (kWp) = Number of panels × Panel wattage (W) ÷ 1,000</strong></p>
+  <p>For example, 8 panels × 625 W = <strong>5.00 kWp</strong>.</p>
 
-  <h2>Solar Generation Calculation</h2>
-  <p>The estimated PV capacity is calculated from the number of solar panels multiplied by the wattage of each panel. Expected generation is then estimated using solar irradiation data and the selected system-loss assumption.</p>
+  <h2>How Solar Generation Is Calculated</h2>
+  <p>For each hourly forecast value, ToolVault uses Global Tilted Irradiance (GTI) with the installed PV capacity and the selected system-loss factor:</p>
+  <p><strong>Hourly generation (kWh) = GTI (W/m²) × PV capacity (kWp) ÷ 1,000 × [1 − losses/100]</strong></p>
+  <p>The calculator sums those hourly values for the selected forecast period and then reports total generation and an average daily value. Because the underlying data are weather and solar-radiation forecasts, the result is an estimate rather than a production guarantee.</p>
 
-  <h2>What Affects Solar Power Generation?</h2>
-  <p>Solar output can vary with cloud cover, temperature, solar radiation, panel orientation, tilt, shading, dust, wiring losses and inverter losses. Weather-based results are estimates and actual production can differ from the forecast.</p>
+  <h2>What Are System Losses?</h2>
+  <p>The loss input is a simple combined allowance for effects such as inverter losses, wiring losses, temperature, mismatch and other system-level reductions. The calculator applies that percentage to the GTI-based generation estimate. It does not model each loss mechanism separately.</p>
+
+  <h2>Does Panel Tilt and Azimuth Matter?</h2>
+  <p>Yes. Tilt and azimuth affect the irradiance available to a tilted PV surface. ToolVault passes these inputs to the weather/solar-radiation forecast request and uses the returned GTI for the hourly generation estimate. The azimuth convention shown by the calculator is 0° south, −90° east, 90° west and ±180° north.</p>
+
+  <h2>Worked Example: 5 kWp Solar System</h2>
+  <p>Assume 8 panels rated at 625 W, giving 5.00 kWp. If a simplified daily GTI-equivalent value were 4.0 kWh/m²/day and the selected system-loss assumption were 14%, a simplified daily estimate would be:</p>
+  <p><strong>5.00 × 4.0 × 0.86 = 17.2 kWh/day</strong>.</p>
+  <p>The live calculator does not replace the forecast with this simplified example; it uses the actual hourly GTI values returned for the selected location, tilt, azimuth and dates.</p>
+
+  <h2>How Accurate Is a Weather-Based Solar Generation Estimate?</h2>
+  <p>Forecast-based solar output can differ from actual inverter production because clouds, aerosols, shading, panel temperature, soiling, equipment efficiency, availability and other site effects vary. Use the result for planning and comparison, not as a guarantee of delivered energy.</p>
+
+  <h2>Frequently Asked Questions</h2>
+  <h3>How many kWh does a 1 kW solar system generate?</h3>
+  <p>There is no single worldwide value. Daily generation depends on the available solar resource, weather, orientation, losses and location. This calculator estimates it from location-based solar data instead of assuming one fixed value.</p>
+  <h3>What is GTI in solar energy?</h3>
+  <p>GTI is Global Tilted Irradiance—the solar irradiance on a plane at the selected tilt and azimuth. It is useful for estimating PV output because panels are normally installed on a tilted surface rather than a horizontal sensor plane.</p>
+  <h3>Can I calculate solar production for a specific city?</h3>
+  <p>Yes. Enter the city or area, let the calculator find the location, then select the forecast period. The location is used for the forecast query.</p>
+  <h3>Is this the same as actual inverter output?</h3>
+  <p>No. It is a forecast-based estimate. Actual generation can be higher or lower because the real site and equipment will not match the forecast model perfectly.</p>
 
   <h2>Related Solar Calculators</h2>
   <p>
-    <a href="solar-load-calculator.html" style="color:#086c5b;font-weight:700;">
-      Solar Load Calculator →
-    </a>
+    <a href="/solar/solar-load-calculator.html" style="color:#086c5b;font-weight:700;">Solar Load Calculator →</a>
     &nbsp; · &nbsp;
-    <a href="solar-panel-area-calculator.html" style="color:#086c5b;font-weight:700;">
-      Solar Panel Area Calculator →
-    </a>
+    <a href="/solar/solar-panel-area-calculator.html" style="color:#086c5b;font-weight:700;">Solar Panel Area Calculator →</a>
+    &nbsp; · &nbsp;
+    <a href="/solar/how-to-calculate-solar-system-size.html" style="color:#086c5b;font-weight:700;">How to Calculate Solar System Size →</a>
   </p>
-</section>
+</section>>
  
 </main>
 <footer><div class="wrap">© 2026 ToolVault · Practical tools for renewable energy planning.</div></footer>
