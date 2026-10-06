@@ -85,3 +85,17 @@ Do not use a fake “AI SEO” layer or hidden keyword text. Strong people-first
 ## Content quality gate
 
 A calculator is not considered complete until the tool, mathematics, explanation, examples, SEO metadata, internal links and sitemap all agree with one another.
+
+
+## 2026 UX + SEO presentation standard
+
+- Keep the primary calculation task compact and understandable for a non-expert above the fold.
+- Keep optional inputs such as waste, density, target thresholds, forecast controls and display preferences behind clearly labeled Advanced Settings panels when they are not essential to the first calculation.
+- Keep the calculator itself as the main content. Put formulas, worked examples, assumptions, FAQs and related searches below the task in accessible expandable sections where that improves usability.
+- Use natural topic coverage rather than a meta-keyword list or keyword stuffing. Important query variants should appear where they are genuinely useful: page title, H1, concise introduction, relevant H2s, formulas, examples, FAQ questions and contextual internal links.
+- Do not add a `meta keywords` tag as an SEO tactic.
+- FAQ content may remain useful for users and answer-engine retrieval, but do not depend on FAQPage rich results; Google deprecated FAQ rich results in May 2026.
+- Use canonical URLs, index/follow robots directives, crawlable HTML links, XML sitemaps with accurate `lastmod` values, descriptive titles/meta descriptions, Open Graph/Twitter metadata, and appropriate BreadcrumbList/WebPage/WebApplication/Article structured data.
+- Structured data describes the page; it does not guarantee a rich result or ranking improvement. Validate markup after changes.
+- Favor people-first, original utility content over word-count targets. There is no preferred SEO word count.
+- Do not change calculation formulas or rounding behavior merely to add SEO text. The calculation engine remains the source of truth.
