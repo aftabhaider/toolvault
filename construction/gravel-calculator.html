@@ -82,23 +82,54 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
 </div>
 
 <section class="card article">
-<h2>How the Gravel Calculator Works</h2>
-<p>For each project area, ToolVault calculates the geometric volume from the shape and dimensions, adds the waste allowance, and estimates weight using the density you enter. Multiple areas can be combined into one project.</p>
-<div class="formula">Volume = Area × Depth &nbsp; • &nbsp; Volume with waste = Volume × (1 + waste ÷ 100) &nbsp; • &nbsp; Weight = Volume with waste × density</div>
-<h3>Why the density matters</h3>
-<p>Gravel can be sold by tonnes, kilograms, cubic yards, cubic metres or bags. Density varies by aggregate type and condition, so using the supplier's stated density will usually give a better purchasing estimate.</p>
-<h3>Where can you use it?</h3>
-<ul><li>Driveways, parking areas and paths</li><li>Drainage, landscaping and decorative gravel</li><li>Sub-base and foundation planning</li><li>Projects with several separate areas</li></ul>
-<h3>Metric vs. imperial inputs</h3>
-<p>Metric mode uses metres for length and width and centimetres for depth. Imperial mode uses feet plus optional inches for length and width, and inches for depth. Results are also shown in cubic metres, cubic yards and cubic feet.</p>
+<h2>How to Use the Gravel Calculator</h2>
+<p>Choose metric or imperial units, select the shape of each area, enter the dimensions and depth, then add another area when a project has multiple sections. You can also enter a material density, waste allowance, price per tonne and bag weight to extend the estimate.</p>
 
-<h3>Related ToolVault construction tools</h3>
+<h2>Gravel Calculator Formula</h2>
+<p>For a rectangular area:</p>
+<div class="formula">Volume = Length × Width × Depth</div>
+<p>For a circular area:</p>
+<div class="formula">Area = π × (Diameter ÷ 2)² &nbsp; • &nbsp; Volume = Area × Depth</div>
+<p>ToolVault sums all project areas before applying waste:</p>
+<div class="formula">Order volume = Net volume × (1 + Waste% ÷ 100)</div>
+<p>Estimated material weight is then:</p>
+<div class="formula">Weight = Order volume × Density</div>
+
+<h2>How Much Gravel Do I Need?</h2>
+<p>Gravel quantity depends mainly on the covered area, depth and the material's bulk density. The calculator reports cubic metres, cubic yards and cubic feet so you can compare your result with a supplier's quoted unit. Because aggregate density varies with rock type, moisture and compaction, the density input should be replaced with supplier data when available.</p>
+
+<h2>Worked Example: Gravel for a Rectangular Driveway</h2>
+<p>Suppose a driveway is 10 m long, 5 m wide and 10 cm deep. The geometric volume is:</p>
+<p><strong>10 × 5 × 0.10 = 5.00 m³</strong>.</p>
+<p>With a 10% waste allowance, the order volume is <strong>5.50 m³</strong>. At an assumed density of 1.60 t/m³, the estimated weight is <strong>8.80 tonnes</strong>. The calculator keeps these steps separate so changing the waste allowance or density does not change the underlying geometry.</p>
+
+<h2>Metric and Imperial Gravel Measurements</h2>
+<p>Metric mode uses metres for length and width and centimetres for depth. Imperial mode uses feet plus inches for length and width and inches for depth. Switching between systems converts the entered measurements instead of replacing them with unrelated defaults.</p>
+
+<h2>Gravel Coverage and Waste</h2>
+<p>Waste is a planning allowance for factors such as uneven ground, settlement, handling and small purchasing differences. It should not be confused with an increase in geometric depth. For a measured project, set the waste percentage according to the conditions and supplier guidance.</p>
+
+<h2>Bag Calculation</h2>
+<p>This calculator treats bag count as a product-specific quantity. When you enter the actual bag weight, the tool estimates how many bags correspond to the calculated material mass. Because bag contents and material density vary, the supplier's stated coverage or yield is preferable for packaged products.</p>
+
+<h2>Frequently Asked Questions</h2>
+<h3>How do I calculate gravel volume?</h3>
+<p>Multiply the covered area by the required depth. For a rectangular area, multiply length × width × depth. For a circular area, calculate the circle's area first, then multiply by depth.</p>
+<h3>How deep should gravel be?</h3>
+<p>There is no single correct depth for every project. Driveways, walkways, drainage layers and decorative beds can require different depths based on design and site conditions.</p>
+<h3>How much does 1 cubic metre of gravel weigh?</h3>
+<p>It depends on the gravel type and condition. Use a supplier-provided bulk density whenever possible rather than relying on one universal number.</p>
+<h3>Should I add 10% waste?</h3>
+<p>Ten percent is a convenient planning example, not a universal rule. The correct allowance depends on project conditions, measurement accuracy and purchasing practice.</p>
+
+<h2>Related ToolVault Construction Calculators</h2>
 <div class="related">
-<a class="rel" href="/construction/"><strong>Construction Tools</strong><span>Explore the construction calculator and estimating library.</span></a>
-<a class="rel" href="/calculators/"><strong>All Calculators</strong><span>Browse ToolVault's broader calculator library.</span></a>
-<a class="rel" href="/engineering/"><strong>Engineering Tools</strong><span>Explore electrical, civil, mechanical and technical tools.</span></a>
+<a class="rel" href="/construction/concrete-calculator.html"><strong>Concrete Calculator</strong><span>Calculate concrete volume for slabs, footings, walls and round forms.</span></a>
+<a class="rel" href="/construction/"><strong>Construction Tools</strong><span>Explore quantity, material and estimating tools.</span></a>
+<a class="rel" href="/engineering/"><strong>Engineering Tools</strong><span>Explore technical engineering calculators.</span></a>
+<a class="rel" href="/calculators/"><strong>All Calculators</strong><span>Browse the wider ToolVault calculation library.</span></a>
 </div>
-</section>
+</section>>
 </main>
 <footer><div class="wrap">© 2026 ToolVault · Free practical tools for the web. Planning estimates should be checked against project specifications and supplier data.</div></footer>
 

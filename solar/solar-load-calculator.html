@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Solar Load Calculator – Solar Panel, Inverter & Battery Sizing</title>
-<meta name="description" content="Free solar load calculator to estimate energy consumption, solar panel capacity, inverter size, and 12V, 24V or 48V battery requirements from your appliance load.">
+<title>Solar Load Calculator — PV, Inverter & Battery Sizing | ToolVault</title>
+<meta name="description" content="Free solar load calculator for appliance energy use, daily kWh, PV capacity, inverter sizing and 12V, 24V or 48V battery capacity.">
  <link rel="canonical" href="https://toolvault.aftabjordan1.workers.dev/solar/solar-load-calculator.html">
 <style>
 :root{
@@ -82,6 +82,16 @@ footer{text-align:center;color:#80918a;font-size:11px;padding:28px}
 @media(max-width:900px){.layout{grid-template-columns:1fr}.summary{position:relative}.hero{align-items:start;flex-direction:column}.hero-badge{width:100%}.result-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:620px){.page,.topbar-inner{width:min(100% - 22px,1180px)}.hero{padding:28px 0 20px}.card-head,.card-body{padding:14px}.table-wrap{overflow-x:auto}.load-table{min-width:650px}.settings{grid-template-columns:1fr}.result-grid{grid-template-columns:1fr}.mini-grid{padding-left:14px;padding-right:14px}.battery-list{padding-left:14px;padding-right:14px}}
 </style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"WebApplication","name":"Solar Load Calculator","url":"https://toolvault.aftabjordan1.workers.dev/solar/solar-load-calculator.html","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
+{"@type":"WebPage","name":"Solar Load Calculator — PV, Inverter & Battery Sizing","url":"https://toolvault.aftabjordan1.workers.dev/solar/solar-load-calculator.html","isPartOf":{"@type":"WebSite","name":"ToolVault","url":"https://toolvault.aftabjordan1.workers.dev/"}},
+{"@type":"BreadcrumbList","itemListElement":[
+{"@type":"ListItem","position":1,"name":"ToolVault","item":"https://toolvault.aftabjordan1.workers.dev/"},
+{"@type":"ListItem","position":2,"name":"Solar & Energy","item":"https://toolvault.aftabjordan1.workers.dev/solar/"},
+{"@type":"ListItem","position":3,"name":"Solar Load Calculator","item":"https://toolvault.aftabjordan1.workers.dev/solar/solar-load-calculator.html"}]}
+]}
+</script>
 </head>
 <body>
 <header class="topbar"><div class="topbar-inner"><div class="logo"><a href="./" style="color:inherit;text-decoration:none;"><span class="logo-icon">☀</span>ToolVault</a></div><div class="top-status"><a href="./" style="color:inherit;text-decoration:none;">☀ Solar Tools</a></div></div></header>
@@ -163,22 +173,56 @@ footer{text-align:center;color:#80918a;font-size:11px;padding:28px}
 
 <section class="card info">
   <h2>How to Use the Solar Load Calculator</h2>
-  <p>Enter your appliances, quantity, power consumption and average daily operating hours. The calculator estimates your connected load, daily energy consumption, required solar PV capacity, inverter size and battery capacity.</p>
-
-  <h2>What Does a Solar Load Calculator Calculate?</h2>
-  <p>A solar load calculation helps estimate how much energy your appliances use each day and what size solar system may be suitable. ToolVault uses daily energy consumption, peak sun hours and system losses to estimate PV capacity, while inverter sizing includes practical operating headroom.</p>
-
-  <h2>Solar Panel, Inverter and Battery Sizing</h2>
-  <p>The calculator provides estimated PV capacity in watts and kilowatts, recommended inverter capacity, and equivalent battery capacity for 12V, 24V and 48V systems. These results are planning estimates and should be checked against actual site conditions and equipment specifications before installation.</p>
+  <p>Start by listing the appliances or electrical loads you want to include. Enter the quantity, rated power in watts and average hours of operation per day. Then set peak sun hours, system losses and the backup load/time if you need battery sizing. The results estimate connected load, daily energy consumption, PV capacity, inverter capacity and equivalent battery capacity.</p>
 
   <h2>Solar Load Calculation Formula</h2>
-  <p>Daily energy = Quantity × Watts × Hours per day. Estimated PV capacity is based on daily energy divided by peak sun hours and the usable solar factor after system losses.</p>
+  <p>The basic energy calculation is applied to each appliance and then summed:</p>
+  <p><strong>Daily energy (Wh) = Quantity × Power (W) × Operating time (h/day)</strong></p>
+  <p>The calculator also derives monthly consumption from 30 days and annual consumption from 365 days. These are planning conversions rather than calendar-billing statements.</p>
+
+  <h2>How Solar Panel Capacity Is Calculated</h2>
+  <p>ToolVault converts daily energy into a PV power estimate using your peak-sun-hours and system-loss assumptions:</p>
+  <p><strong>PV power (W) = Daily energy (Wh/day) ÷ [Peak sun hours × (1 − losses/100)]</strong></p>
+  <p>The result is rounded upward to the nearest 10 W in the interface. This method treats peak sun hours as an equivalent daily solar-resource input; actual PV production also depends on orientation, temperature, shading, soiling and equipment performance.</p>
+
+  <h2>How Inverter Size Is Estimated</h2>
+  <p>The connected appliance load is multiplied by a 25% planning headroom factor, then rounded upward in 0.1 kW steps:</p>
+  <p><strong>Inverter estimate (kW) = ceil[(Connected load × 1.25) / 100] ÷ 10</strong></p>
+  <p>This is a simple connected-load estimate. Motor starting current, surge power, inverter efficiency and the inverter manufacturer's continuous/peak ratings can require a different final selection.</p>
+
+  <h2>How Battery Capacity Is Calculated</h2>
+  <p>The battery section starts with the backup load and required backup time:</p>
+  <p><strong>Backup energy (Wh) = Backup load (W) × Backup time (h)</strong></p>
+  <p>ToolVault then divides by the 80% usable-energy assumption and converts the resulting nominal watt-hours into amp-hours for 12 V, 24 V and 48 V systems:</p>
+  <p><strong>Nominal battery energy = Backup energy ÷ 0.80</strong><br><strong>Battery capacity (Ah) = Nominal battery energy (Wh) ÷ System voltage (V)</strong></p>
+  <p>The displayed capacity is then rounded upward to the next practical module value available in the calculator. Battery chemistry, inverter efficiency, temperature, ageing and manufacturer limits are not included in this simplified estimate.</p>
+
+  <h2>Worked Example: Solar Load to PV and Battery</h2>
+  <p>Suppose a small system has 5 LED bulbs at 10 W for 6 hours, 3 fans at 70 W for 8 hours and one 100 W TV for 5 hours.</p>
+  <p><strong>Daily energy:</strong> (5 × 10 × 6) + (3 × 70 × 8) + (1 × 100 × 5) = <strong>2,480 Wh/day</strong> = <strong>2.48 kWh/day</strong>.</p>
+  <p>With 5 peak sun hours and 20% system losses, PV power = 2,480 ÷ [5 × 0.80] = <strong>620 W</strong>. If the connected load is 360 W, the 25% headroom calculation gives 450 W, which rounds to a <strong>0.5 kW inverter estimate</strong>.</p>
+  <p>For a 500 W backup load for 4 hours, backup energy = 2,000 Wh. With 80% usable energy, nominal battery energy = 2,500 Wh; at 48 V this is about <strong>52.1 Ah</strong>, after which the calculator selects the next practical 48 V module value.</p>
+
+  <h2>What Does the Solar Load Calculator Include?</h2>
+  <p>The calculator covers appliance load estimation, daily/monthly/annual energy use, PV sizing from peak sun hours, a simple inverter headroom estimate and 12 V / 24 V / 48 V battery-capacity planning. It is intended for preliminary solar system sizing, not final electrical design.</p>
+
+  <h2>Frequently Asked Questions</h2>
+  <h3>How do I calculate solar load?</h3>
+  <p>Multiply each appliance's quantity, wattage and average daily operating hours to find its daily watt-hours, then add all appliances together.</p>
+  <h3>How many solar panels do I need?</h3>
+  <p>This calculator deliberately reports the required PV capacity rather than forcing one panel wattage. After choosing the panel wattage you plan to use, divide the required PV watts by that panel wattage and round up to a practical number of panels.</p>
+  <h3>What are peak sun hours?</h3>
+  <p>Peak sun hours are an equivalent daily solar-resource measure. They are not simply the number of daylight hours and should be selected from a reasonable site or location estimate.</p>
+  <h3>Is the battery result a complete battery design?</h3>
+  <p>No. It is an energy-based planning estimate. Final battery selection should also consider chemistry, depth-of-discharge limits, temperature, ageing, efficiency and the manufacturer's specifications.</p>
 
   <h2>Related Solar Calculators</h2>
   <p>
     <a href="/solar/solar-energy-generation-calculator.html">Solar Energy Generation Calculator</a>
     ·
     <a href="/solar/solar-panel-area-calculator.html">Solar Panel Area Calculator</a>
+    ·
+    <a href="/solar/how-to-calculate-solar-system-size.html">How to Calculate Solar System Size</a>
   </p>
 </section>
 </main>

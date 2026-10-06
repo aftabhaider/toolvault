@@ -90,29 +90,57 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
 </div>
 
 <section class="card article">
-<h2>Concrete Calculator Formulas</h2>
-<p>Every element is converted to metres first. Geometry is calculated from the corresponding shape formula, the individual element quantities are added, and the waste allowance is applied once to the combined net volume.</p>
-<div class="formula"><code>Rectangular volume = Length × Width × Depth × Quantity</code></div>
-<div class="formula"><code>Round volume = π × (Diameter ÷ 2)² × Height × Quantity</code></div>
-<div class="formula"><code>Ring volume = π ÷ 4 × (Outer Diameter² − Inner Diameter²) × Height × Quantity</code></div>
-<div class="formula"><code>Order volume = Net volume × (1 + Waste % ÷ 100)</code></div>
+<h2>How to Use the Concrete Calculator</h2>
+<p>Select the concrete element you are measuring, choose metric or imperial units, enter its dimensions and quantity, then add more elements when a project contains different sizes. Use the waste field only after the geometric quantities are correct.</p>
+
+<h2>Concrete Volume Formulas</h2>
+<p>For slabs, pads, rectangular footings and walls, ToolVault uses:</p>
+<div class="formula"><code>Volume = Length × Width × Depth × Quantity</code></div>
+<p>For a round column or round footing:</p>
+<div class="formula"><code>Volume = π × (Diameter ÷ 2)² × Height × Quantity</code></div>
+<p>For a circular ring or pipe form:</p>
+<div class="formula"><code>Volume = π ÷ 4 × (Outer Diameter² − Inner Diameter²) × Height × Quantity</code></div>
+<p>The project order quantity is calculated separately:</p>
+<div class="formula"><code>Order volume = Net volume × (1 + Waste% ÷ 100)</code></div>
+
+<h2>How Much Concrete Do I Need?</h2>
+<p>Concrete quantity is determined by the volume of the element you are filling. Convert every dimension to one internal unit system, calculate each element, add the elements together and then apply any practical waste allowance. This is why ToolVault lets you calculate multiple slabs, footings, walls and circular forms in one project.</p>
+
+<h2>Worked Example: Concrete Slab</h2>
+<p>Consider a slab that is 20 ft long, 30 ft wide and 4 in thick. Convert the thickness to feet: 4 ÷ 12 = 0.333333 ft.</p>
+<p>Volume = 20 × 30 × 0.333333 = <strong>200 ft³</strong>.</p>
+<p>Because 1 yd³ = 27 ft³, the volume is approximately <strong>7.407407 yd³</strong>. In metric units this is approximately <strong>5.663369 m³</strong>.</p>
+<p>With a 10% allowance, the order quantity becomes <strong>220 ft³</strong>, or approximately <strong>8.148148 yd³</strong>. Actual purchasing should follow the supplier's ordering conventions and the project's specifications.</p>
+
+<h2>Concrete Density and Weight</h2>
+<p>ToolVault treats density as an editable assumption because concrete density varies by mix and aggregate. The weight result is therefore:</p>
 <div class="formula"><code>Weight = Order volume × Density</code></div>
-<div class="formula"><code>Cubic yards = Cubic metres × 1.3079506193</code> &nbsp; and &nbsp; <code>Cubic feet = Cubic metres × 35.3146667215</code></div>
+<p>At an illustrative density of 2,400 kg/m³, 5.663369 m³ of concrete would correspond to about 13,592 kg before any waste allowance; the calculator applies waste before reporting its planning weight.</p>
 
-<h3>Supported shapes</h3>
-<ul><li><strong>Slab / pad:</strong> rectangular length × width × thickness.</li><li><strong>Rectangular footing:</strong> rectangular length × width × depth.</li><li><strong>Wall:</strong> length × height × thickness.</li><li><strong>Column / round footing:</strong> circular area × height.</li><li><strong>Circular ring / pipe form:</strong> annular area × height, with inner diameter not greater than outer diameter.</li></ul>
+<h2>Concrete Bags</h2>
+<p>Packaged concrete products have product-specific yields. The calculator therefore asks for the manufacturer's published yield per bag and then divides the order volume by that yield, rounding up to a whole bag. A fixed “bag weight = fixed concrete volume” rule is not reliable across products.</p>
 
-<h3>Why bag count is optional</h3>
-<p>A bag's stated yield depends on the product and packaging. ToolVault therefore does not pretend that a fixed bag weight universally equals a fixed finished-concrete volume. Enter the manufacturer's published yield and the calculator rounds the resulting bag count up to a whole bag.</p>
+<h2>Important: Quantity Is Not Mix Design</h2>
+<p>This calculator determines geometric quantity. It does not select cement, aggregate and water proportions, concrete grade, compressive strength, reinforcement, structural dimensions or code requirements. Those are separate design and specification questions.</p>
 
-<h3>Related ToolVault tools</h3>
+<h2>Frequently Asked Questions</h2>
+<h3>How do I calculate concrete for a slab?</h3>
+<p>Multiply slab length × width × thickness, using consistent units. Convert the resulting volume into the supplier's preferred unit, then add a practical allowance when appropriate.</p>
+<h3>How many cubic yards are in a cubic metre?</h3>
+<p>One cubic metre equals approximately 1.3079506193 cubic yards. ToolVault uses the full conversion internally and rounds the displayed result.</p>
+<h3>How much concrete should I order?</h3>
+<p>Start from the geometric volume, then add a project-appropriate allowance for waste and placement conditions. Confirm the final order quantity with the concrete supplier and project specifications.</p>
+<h3>Can I calculate footings and columns together?</h3>
+<p>Yes. Add separate elements for different shapes and dimensions, and the calculator combines their volumes into one project total.</p>
+
+<h2>Related ToolVault Construction Calculators</h2>
 <div class="related">
 <a class="rel" href="/construction/gravel-calculator.html"><strong>Gravel Calculator</strong><span>Estimate gravel volume, weight, bags and cost.</span></a>
-<a class="rel" href="/construction/"><strong>Construction Tools</strong><span>Explore the growing construction calculator library.</span></a>
-<a class="rel" href="/engineering/"><strong>Engineering Tools</strong><span>Explore civil, electrical and technical utilities.</span></a>
-<a class="rel" href="/calculators/"><strong>All Calculators</strong><span>Browse the broader ToolVault calculator collection.</span></a>
+<a class="rel" href="/construction/how-to-calculate-concrete.html"><strong>Concrete Calculation Guide</strong><span>Learn the formulas and work through concrete volume examples.</span></a><a class="rel" href="/construction/"><strong>Construction Tools</strong><span>Explore the construction calculator library.</span></a>
+<a class="rel" href="/engineering/"><strong>Engineering Tools</strong><span>Explore technical engineering utilities.</span></a>
+<a class="rel" href="/calculators/"><strong>All Calculators</strong><span>Browse the wider ToolVault library.</span></a>
 </div>
-</section>
+</section>>
 </main>
 <footer><div class="wrap">© 2026 ToolVault · Free practical tools for the web. Results are planning estimates and should be checked against project specifications and supplier information.</div></footer>
 
