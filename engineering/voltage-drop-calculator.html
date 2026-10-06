@@ -90,11 +90,6 @@ footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-s
 <div class="metric"><span>Required area</span><b id="minArea">—</b><small>mm² at target</small></div>
 </div>
 <div class="breakdown"><h3>Calculation breakdown</h3><div id="breakRows"></div></div>
-<div class="modebar">
-<button class="mode active" data-action="drop">Voltage drop</button>
-<button class="mode" data-action="length">Max length</button>
-<button class="mode" data-action="area">Required area</button>
-</div>
 <div class="note" style="padding:0 13px 13px;color:#65766f;font-size:10px">Numbers are rounded for display; calculations use the underlying values. “Required area” is only the cross-section needed to satisfy the selected voltage-drop target—it is not an ampacity or final cable-size recommendation.</div>
 </aside>
 </div>
@@ -133,8 +128,6 @@ const metricSize=$('metricSize'),awgSize=$('awgSize');
 METRIC_SIZES_MM2.forEach(v=>metricSize.add(new Option(String(v),String(v))));
 AWG_SIZES.forEach(v=>awgSize.add(new Option(v.label,String(v.n))));
 metricSize.value='6';awgSize.value='12';
-let activeAction='drop';
-
 function num(v){const n=Number(v);return Number.isFinite(n)?Math.max(0,n):0}
 function fixed(n,d=2){return Number(n).toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d})}
 function lengthM(){const L=num($('length').value);return $('lengthUnit').value==='ft'?L*0.3048:L}
@@ -183,7 +176,6 @@ document.querySelectorAll('input[name="resMode"]').forEach(x=>x.addEventListener
 $('sizeSystem').addEventListener('change',()=>{toggleUI();render()});
 ['voltage','current','length','lengthUnit','material','metricSize','awgSize','target','hours','rho'].forEach(id=>$(id).addEventListener('input',render));
 $('priceUnit')?.addEventListener('input',render);
-document.querySelectorAll('.mode').forEach(b=>b.addEventListener('click',()=>{activeAction=b.dataset.action;document.querySelectorAll('.mode').forEach(x=>x.classList.toggle('active',x===b));document.querySelector('.results').scrollIntoView({behavior:'smooth',block:'nearest'})}));
 toggleUI();render();
 </script>
 </body>
