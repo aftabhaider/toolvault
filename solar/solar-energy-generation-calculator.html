@@ -139,6 +139,15 @@ footer{border-top:1px solid var(--line);padding:16px 0;color:var(--muted);font-s
 .advanced-fields{grid-column:1/-1;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
 .advanced-inner{display:grid;grid-template-columns:1fr 1fr;gap:15px;padding:14px}
 @media(max-width:560px){.advanced-inner{grid-template-columns:1fr}.seo-details-content{padding:18px 16px 20px!important}}
+
+/* ToolVault visual hierarchy */
+body{background:#edf5f2!important}
+.card,.panel,.article,.explain,.info,.seo-details,.quick-card{background:#fff}
+.grid .card,a.card,.related .rel,.related a{background:#f8fcfa;border-color:#cfe3dd}
+.grid .card:hover,a.card:hover,.related .rel:hover,.related a:hover{background:#eff9f5;border-color:#9ccfc1;box-shadow:0 10px 28px rgba(18,54,48,.09)}
+input,select,.control{background:#fbfefd;border-color:#c9ddd7}
+.unitChoice,.shape,.seg,.choice{background:#f7fcfa}
+.unitChoice.active,.shape.active,.seg.active,.choice.active{background:#e3f6f0;border-color:#99cdbf;color:#086c5b}
 </style>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
