@@ -197,13 +197,13 @@ function coverageM2L(){return num(els.coverage.value)*COVERAGE[els.coverageUnit.
 function toL(value,unitId){return value*VOL[$(unitId).value]}
 function pricePerL(){return num(els.price.value)/(els.priceUnit.value==="perGal"?3.785411784:1)}
 function setQuickSystem(next){
-  const target=next==="metric";
-  [[els.length,els.lengthUnit,"m"],[els.width,els.widthUnit,"m"],[els.height,els.heightUnit,"m"]].forEach(([i,s,u])=>{convertSelect(i,s,M);s.value=u;});
-  [[els.knownArea,els.knownAreaUnit,"m2"],[els.opening,els.openingUnit,"m2"],[els.extra,els.extraUnit,"m2"]].forEach(([i,s,u])=>{convertSelect(i,s,AREA);s.value=u;});
-  convertSelect(els.coverage,els.coverageUnit,target?"m2L":"ft2gal"=== "ft2gal"?"ft2gal":"ft2gal",COVERAGE);
-  const coverageTarget=target?"m2L":"ft2gal"; if(els.coverage.value){ const old=els.coverageUnit.dataset.prev||els.coverageUnit.value; els.coverage.value=String(Number((num(els.coverage.value)*COVERAGE[old]/COVERAGE[coverageTarget]).toFixed(4))); } els.coverageUnit.value=coverageTarget;els.coverageUnit.dataset.prev=coverageTarget;
-  const priceTarget=target?"perL":"perGal"; const p=num(els.price.value); const oldP=els.priceUnit.value; if(p>0){const perL=p/(oldP==="perGal"?3.785411784:1);els.price.value=String(Number((perL*(priceTarget==="perGal"?3.785411784:1)).toFixed(4)));} els.priceUnit.value=priceTarget;els.priceUnit.dataset.prev=priceTarget;
-  const canTarget=target?"L":"gal"; const cv=num(els.canSize.value); const oldC=els.canUnit.value; if(cv>0){const L=cv*(oldC==="gal"?3.785411784:1);els.canSize.value=String(Number((L/(canTarget==="gal"?3.785411784:1)).toFixed(4)));} els.canUnit.value=canTarget;els.canUnit.dataset.prev=canTarget;
+  const targetMetric=next==="metric";
+  const targets={length:targetMetric?"m":"ft",width:targetMetric?"m":"ft",height:targetMetric?"m":"ft"};
+  [["length",targets.length,M],["width",targets.width,M],["height",targets.height,M]].forEach(([id,nu,map])=>{const input=els[id],sel=els[id+"Unit"],old=sel.value,v=num(input.value);if(input.value.trim())input.value=String(Number((v*map[old]/map[nu]).toFixed(6)));sel.value=nu;sel.dataset.prev=nu;});
+  [["knownArea","m2"],["opening","m2"],["extra","m2"]].forEach(([id,nu])=>{const input=els[id],sel=els[id+"Unit"],old=sel.value,v=num(input.value);if(input.value.trim())input.value=String(Number((v*AREA[old]/AREA[nu]).toFixed(6)));sel.value=nu;sel.dataset.prev=nu;});
+  const coverageTarget=targetMetric?"m2L":"ft2gal",oldCov=els.coverageUnit.value,cv=num(els.coverage.value);if(cv>0)els.coverage.value=String(Number((cv*COVERAGE[oldCov]/COVERAGE[coverageTarget]).toFixed(6)));els.coverageUnit.value=coverageTarget;els.coverageUnit.dataset.prev=coverageTarget;
+  const priceTarget=targetMetric?"perL":"perGal",oldP=els.priceUnit.value,p=num(els.price.value);if(p>0){const perL=p/(oldP==="perGal"?3.785411784:1);els.price.value=String(Number((perL*(priceTarget==="perGal"?3.785411784:1)).toFixed(6)));}els.priceUnit.value=priceTarget;els.priceUnit.dataset.prev=priceTarget;
+  const canTarget=targetMetric?"L":"gal",oldC=els.canUnit.value,cv2=num(els.canSize.value);if(cv2>0){const litres=cv2*(oldC==="gal"?3.785411784:1);els.canSize.value=String(Number((litres/(canTarget==="gal"?3.785411784:1)).toFixed(6)));}els.canUnit.value=canTarget;els.canUnit.dataset.prev=canTarget;
   quickSystem=next;document.querySelectorAll(".unit").forEach(x=>x.classList.toggle("active",x.dataset.unit===next));calculate();
 }
 function syncMode(){els.roomFields.style.display=mode==="room"?"grid":"none";els.areaFields.style.display=mode==="area"?"grid":"none";els.opening.disabled=mode==="area";els.ceiling.disabled=mode==="area";setModeButton();if(mode==="area"){els.opening.value=0;els.ceiling.checked=false}calculate()}
