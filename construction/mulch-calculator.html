@@ -45,7 +45,7 @@ main{padding:24px 0 58px}.crumb{font-size:12px;color:var(--muted);margin-bottom:
 .result-head{padding:20px;background:linear-gradient(135deg,#0d3029,#087f6b);color:#fff}.result-head small{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;opacity:.72}.result-head h2{font-size:21px;margin:5px 0 0}.results{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:13px}.metric{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--surface2)}.metric.primary{background:var(--soft);border-color:#c3e7dd}.metric span{display:block;font-size:10px;color:var(--muted);font-weight:850;text-transform:uppercase;letter-spacing:.04em}.metric b{display:block;font-size:19px;margin-top:4px}.metric small{font-size:10px;color:var(--muted)}.compare{margin:0 13px 13px;padding:12px;border:1px solid var(--line);border-radius:11px;background:#fbfdfc}.compare strong{display:block;font-size:11px;color:var(--brand2)}.compare span{display:block;font-size:13px;font-weight:850;margin-top:3px}.note{padding:0 13px 15px;color:var(--muted);font-size:10px;line-height:1.5}
 .seo{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:17px;overflow:hidden;box-shadow:var(--shadow)}.seo summary{list-style:none;cursor:pointer;background:#f8fbfa;padding:15px 18px;color:var(--brand2);font-size:13px;font-weight:900}.seo summary::-webkit-details-marker{display:none}.seo summary:before{content:'+';display:inline-grid;place-items:center;width:21px;height:21px;border-radius:7px;background:var(--soft);margin-right:8px}.seo[open] summary:before{content:'−'}.seo-body{padding:23px}.seo-body h2{font-size:24px;letter-spacing:-.7px;margin:0 0 8px}.seo-body h2:not(:first-child){margin-top:27px}.seo-body h3{font-size:16px;margin:20px 0 6px}.seo-body p,.seo-body li{font-size:14px;color:#566760}.formula{padding:12px 14px;border-radius:11px;background:var(--soft);border:1px solid #c6e6dd;color:#245d52;font-weight:850;margin:11px 0}.example{padding:14px;border:1px solid var(--line);border-radius:11px;background:#fbfdfc}.related{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.rel{padding:13px;border:1px solid var(--line);border-radius:11px;background:#f7fbfa}.rel strong{display:block;font-size:12px;color:var(--brand2)}.rel span{font-size:10px;color:var(--muted)}
 footer{border-top:1px solid var(--line);padding:25px 0;background:#fff;color:#74807b;font-size:12px}@media(max-width:840px){.tool{grid-template-columns:1fr}.related{grid-template-columns:1fr 1fr}}@media(max-width:560px){.wrap{padding:0 14px}.hero{padding:23px 18px}.fields,.results,.related{grid-template-columns:1fr}.shape-row{grid-template-columns:1fr 1fr}.action-row{flex-direction:column}.simple-row{grid-template-columns:1fr}.full{grid-column:auto}}
-</style>
+.measure{display:grid;grid-template-columns:minmax(0,1fr) 82px}.measure input{border-radius:9px 0 0 9px}.measure select{border:1px solid #c8dad4;border-left:0;border-radius:0 9px 9px 0;padding:10px 6px;background:#f7fcfa;color:#086c5b;font-size:11px;font-weight:850;outline:none}.measure select:focus{border-color:#7bbcad;box-shadow:0 0 0 3px rgba(11,143,120,.08)}.unit-note{font-size:9px;color:#84918c;margin:-3px 0 12px}</style>
 </head>
 <body>
 <header><div class="wrap nav"><a class="logo" href="/">Tool<span>Vault</span></a><a href="/construction/">← Construction tools</a></div></header>
@@ -70,9 +70,9 @@ footer{border-top:1px solid var(--line);padding:25px 0;background:#fff;color:#74
 <summary>Advanced settings: existing mulch, waste, bags, weight & cost</summary>
 <div class="advanced-body">
 <div class="fields">
-<div class="field"><label for="existing">Existing mulch depth</label><input id="existing" type="number" min="0" step="0.1" value="0"><div class="hint" id="existingHint">Subtracts old settled mulch from the target depth.</div></div>
+<div class="field"><label for="existing">Existing mulch depth</label><div class="measure"><input id="existing" type="number" min="0" step="any" value="0"><select id="existingUnit" aria-label="Existing mulch depth unit"><option value="in" selected>in</option><option value="cm">cm</option><option value="mm">mm</option><option value="ft">ft</option><option value="m">m</option></select></div><div class="hint" id="existingHint">Subtracts old settled mulch from the target depth.</div></div>
 <div class="field"><label for="waste">Extra allowance (%)</label><input id="waste" type="number" min="0" max="100" step="1" value="5"></div>
-<div class="field"><label for="bagSize">Bag size (cubic feet)</label><input id="bagSize" type="number" min="0.1" step="0.1" value="2"></div>
+<div class="field"><label for="bagSize">Bag size</label><div class="measure"><input id="bagSize" type="number" min="0.001" step="any" value="2"><select id="bagUnit" aria-label="Bag size unit"><option value="ft3" selected>ft³</option><option value="m3">m³</option><option value="L">L</option></select></div></div>
 <div class="field"><label for="density">Material density (t/m³)</label><input id="density" type="number" min="0" step="0.01" placeholder="Optional"></div>
 <div class="field"><label for="bagPrice">Price per bag</label><input id="bagPrice" type="number" min="0" step="0.01" placeholder="Optional"></div>
 <div class="field"><label for="bulkPrice">Bulk price per cubic yard</label><input id="bulkPrice" type="number" min="0" step="0.01" placeholder="Optional"></div>
@@ -178,149 +178,58 @@ footer{border-top:1px solid var(--line);padding:25px 0;background:#fff;color:#74
 
 <script type="module">
 import {calculateMulch} from './mulch-engine.js';
-
-const $=id=>document.getElementById(id);
-let unit="imperial";
-let nextId=1;
-
+const $=id=>document.getElementById(id);let quickSystem="imperial",nextId=1;
+const M={mm:.001,cm:.01,m:1,in:.0254,ft:.3048},V={ft3:.028316846592,m3:1,L:.001};
 function num(v,f=0){const n=Number(v);return Number.isFinite(n)?Math.max(0,n):f}
 function fmt(v,max=2){return new Intl.NumberFormat("en-US",{minimumFractionDigits:0,maximumFractionDigits:max}).format(v)}
-function mFromDisplay(v,kind){
-  if(unit==="metric"){
-    return kind==="depth"?num(v)/100:num(v);
-  }
-  return kind==="depth"?num(v)*0.0254:num(v)*0.3048;
-}
-function displayFromM(v,kind){
-  if(unit==="metric")return kind==="depth"?v*100:v;
-  return kind==="depth"?v/0.0254:v/0.3048;
-}
-function placeholder(kind){
-  if(unit==="metric"){
-    return kind==="depth"?"cm":"m";
-  }
-  return kind==="depth"?"in":"ft";
-}
-function field(label,id,value,kind="dim",hint=""){
-  return '<div class="field"><label>'+label+'</label><input data-field="'+id+'" data-kind="'+kind+'" type="number" min="0" step="any" value="'+value+'">'+(hint?'<div class="hint">'+hint+'</div>':'')+'</div>';
-}
+function toMValue(v,u){return num(v)*M[u]}
+function fromMValue(m,u){return m/M[u]}
+function measure(label,key,value,defaultUnit,hint){const opts=["mm","cm","m","in","ft"].map(u=>'<option value="'+u+'" '+(u===defaultUnit?'selected':'')+'>'+u+'</option>').join("");return '<div class="field"><label>'+label+'</label><div class="measure"><input data-field="'+key+'" data-kind="length" type="number" min="0" step="any" value="'+value+'"><select class="row-unit" data-key-unit="'+key+'">'+opts+'</select></div>'+(hint?'<div class="hint">'+hint+'</div>':'')+'</div>'}
+function qtyField(value){return '<div class="field"><label>Quantity</label><input data-field="quantity" data-kind="qty" type="number" min="1" step="1" value="'+value+'"></div>'}
 function addBed(initial){
-  const box=document.createElement("div");
-  box.className="bed";
-  box.dataset.id=String(nextId++);
-  const shape=initial?.shape||"rectangle";
-  box.innerHTML=
-    '<div class="bed-top"><strong>Area '+box.dataset.id+'</strong><button class="remove" type="button">Remove</button></div>'+
-    '<div class="shape-row">'+
-      ['rectangle','circle','triangle','tree-ring'].map(s=>'<label class="shape '+(s===shape?'active':'')+'"><input type="radio" name="shape-'+box.dataset.id+'" value="'+s+'" '+(s===shape?'checked':'')+'>'+({rectangle:"Rectangle",circle:"Circle",triangle:"Triangle","tree-ring":"Tree ring"}[s])+'</label>').join('')+
-    '</div>'+
-    '<div class="fields" data-fields></div>';
+  const box=document.createElement("div");box.className="bed";box.dataset.id=String(nextId++);const shape=initial?.shape||"rectangle";
+  box.innerHTML='<div class="bed-top"><strong>Area '+box.dataset.id+'</strong><button class="remove" type="button">Remove</button></div><div class="shape-row">'+['rectangle','circle','triangle','tree-ring'].map(s=>'<label class="shape '+(s===shape?'active':'')+'"><input type="radio" name="shape-'+box.dataset.id+'" value="'+s+'" '+(s===shape?'checked':'')+'>'+({rectangle:"Rectangle",circle:"Circle",triangle:"Triangle","tree-ring":"Tree ring"}[s])+'</label>').join('')+'</div><div class="fields" data-fields></div>';
   document.getElementById("beds").appendChild(box);
-
   function rebuild(preserve=true){
-    const current={};
-    box.querySelectorAll("[data-field]").forEach(i=>current[i.dataset.field]=i.value);
-    const s=box.querySelector('input[name="shape-'+box.dataset.id+'"]:checked').value;
-    const f=box.querySelector("[data-fields]");
-    const vals=preserve?current:{};
-    const defaults=unit==="metric"?{length:6,width:3,diameter:4,base:5,height:3,outer:4,inner:0.6}:{length:20,width:10,diameter:10,base:10,height:8,outer:12,inner:2};
+    const current={};box.querySelectorAll("[data-field]").forEach(i=>current[i.dataset.field]=i.value);const units={};box.querySelectorAll(".row-unit").forEach(s=>units[s.dataset.keyUnit]=s.value);
+    const s=box.querySelector('input[name="shape-'+box.dataset.id+'"]:checked').value;const f=box.querySelector("[data-fields]");const defaults=quickSystem==="metric"?{length:6,width:3,diameter:4,base:5,height:3,outer:4,inner:.6}:{length:20,width:10,diameter:10,base:10,height:8,outer:12,inner:2};
+    const du=quickSystem==="metric"?"m":"ft";
     let h="";
-    if(s==="rectangle"){
-      h=field("Length","length",vals.length||defaults.length,"dim")+" "+field("Width","width",vals.width||defaults.width,"dim");
-    }else if(s==="circle"){
-      h=field("Diameter","diameter",vals.diameter||defaults.diameter,"dim");
-    }else if(s==="triangle"){
-      h=field("Base","base",vals.base||defaults.base,"dim")+" "+field("Height","height",vals.height||defaults.height,"dim");
-    }else{
-      h=field("Outer diameter","outer",vals.outer||defaults.outer,"dim")+" "+field("Inner diameter / trunk clearance","inner",vals.inner||defaults.inner,"dim");
-    }
-    h+=field("Quantity","quantity",vals.quantity||$("#quantity").value||1,"qty","Number of identical areas with these dimensions.");
-    f.innerHTML=h;
-    f.querySelectorAll("input").forEach(i=>{i.addEventListener("input",calculate);i.addEventListener("change",calculate)});
+    if(s==="rectangle")h=measure("Length","length",current.length||defaults.length,units.length||du)+measure("Width","width",current.width||defaults.width,units.width||du);
+    else if(s==="circle")h=measure("Diameter","diameter",current.diameter||defaults.diameter,units.diameter||du);
+    else if(s==="triangle")h=measure("Base","base",current.base||defaults.base,units.base||du)+measure("Height","height",current.height||defaults.height,units.height||du);
+    else h=measure("Outer diameter","outer",current.outer||defaults.outer,units.outer||du)+measure("Inner diameter / trunk clearance","inner",current.inner||defaults.inner,units.inner||du);
+    h+=qtyField(current.quantity||$("#quantity").value||1);f.innerHTML=h;
+    f.querySelectorAll("input").forEach(i=>i.addEventListener("input",calculate));
+    f.querySelectorAll("select.row-unit").forEach(sel=>{sel.dataset.prev=sel.value;sel.addEventListener("change",()=>{const key=sel.dataset.keyUnit,input=f.querySelector('[data-field="'+key+'"]'),old=sel.dataset.prev||sel.value,v=num(input.value);if(input.value.trim())input.value=String(Number(fromMValue(toMValue(v,old),sel.value).toFixed(6)));sel.dataset.prev=sel.value;calculate()})});
   }
-
-  box.querySelectorAll('input[name="shape-'+box.dataset.id+'"]').forEach(x=>x.addEventListener("change",()=>{
-    box.querySelectorAll(".shape").forEach(s=>s.classList.toggle("active",s.querySelector("input")===x));
-    rebuild(true);calculate();
-  }));
-  box.querySelector(".remove").addEventListener("click",()=>{box.remove();calculate()});
-  rebuild(false);
-  return box;
+  box.querySelectorAll('input[name="shape-'+box.dataset.id+'"]').forEach(x=>x.addEventListener("change",()=>{box.querySelectorAll(".shape").forEach(s=>s.classList.toggle("active",s.querySelector("input")===x));rebuild(true);calculate()}));
+  box.querySelector(".remove").addEventListener("click",()=>{box.remove();calculate()});rebuild(false);return box;
 }
+function depthM(id){return toMValue(num($(id).value),$(id+"Unit").value)}
 function collect(){
-  const beds=[];
-  document.querySelectorAll(".bed").forEach(box=>{
-    const s=box.querySelector('input[name="shape-'+box.dataset.id+'"]:checked').value;
-    const get=k=>num(box.querySelector('[data-field="'+k+'"]')?.value);
-    const bed={shape:s,quantity:Math.max(1,Math.floor(get("quantity")||1))};
-    if(s==="rectangle"){bed.lengthM=mFromDisplay(get("length"),"dim");bed.widthM=mFromDisplay(get("width"),"dim")}
-    if(s==="circle"){bed.diameterM=mFromDisplay(get("diameter"),"dim")}
-    if(s==="triangle"){bed.baseM=mFromDisplay(get("base"),"dim");bed.heightM=mFromDisplay(get("height"),"dim")}
-    if(s==="tree-ring"){bed.outerDiameterM=mFromDisplay(get("outer"),"dim");bed.innerDiameterM=mFromDisplay(get("inner"),"dim")}
-    beds.push(bed);
-  });
-  const depthM=mFromDisplay(num($("depth").value), "depth");
-  const existingM=mFromDisplay(num($("existing").value), "depth");
-  return {
-    beds,
-    targetDepthM:depthM,
-    existingDepthM:existingM,
-    wastePercent:num($("waste").value,5),
-    bagSizeFt3:num($("bagSize").value,2),
-    densityTPerM3:num($("density").value,0),
-    bagPrice:num($("bagPrice").value,0),
-    bulkPricePerYd3:num($("bulkPrice").value,0)
-  };
+ const beds=[];document.querySelectorAll(".bed").forEach(box=>{const s=box.querySelector('input[name="shape-'+box.dataset.id+'"]:checked').value;const get=k=>num(box.querySelector('[data-field="'+k+'"]')?.value);const u=k=>box.querySelector('[data-key-unit="'+k+'"]')?.value||"m";const bed={shape:s,quantity:Math.max(1,Math.floor(get("quantity")||1))};
+ if(s==="rectangle"){bed.lengthM=toMValue(get("length"),u("length"));bed.widthM=toMValue(get("width"),u("width"))}
+ if(s==="circle")bed.diameterM=toMValue(get("diameter"),u("diameter"));
+ if(s==="triangle"){bed.baseM=toMValue(get("base"),u("base"));bed.heightM=toMValue(get("height"),u("height"))}
+ if(s==="tree-ring"){bed.outerDiameterM=toMValue(get("outer"),u("outer"));bed.innerDiameterM=toMValue(get("inner"),u("inner"))}
+ beds.push(bed);});
+ return {beds,targetDepthM:depthM("depth"),existingDepthM:depthM("existing"),wastePercent:num($("waste").value,5),bagSizeFt3:toMValue(num($("bagSize").value),$("bagUnit").value)/V.ft3,densityTPerM3:num($("density").value,0),bagPrice:num($("bagPrice").value,0),bulkPricePerYd3:num($("bulkPrice").value,0)};
 }
 function calculate(){
-  const r=calculateMulch(collect());
-  const area=unit==="metric"?r.totalAreaM2:r.totalAreaM2*10.763910416709722;
-  const depth=displayFromM(r.appliedDepthM,"depth");
-  $("resultTitle").textContent=r.totalAreaM2>0?"Mulch quantity estimate":"Enter your project dimensions";
-  $("yd3").textContent=fmt(r.cubicYards,2);
-  $("bags").textContent=fmt(r.bags,0);
-  $("bagsNote").textContent=fmt(r.bagSizeFt3,1)+" ft³ bags";
-  $("ft3").textContent=fmt(r.cubicFeet,1);
-  $("area").textContent=fmt(area,1);
-  $("areaUnit").textContent=unit==="metric"?"m²":"ft²";
-  $("netYd3").textContent=fmt(r.netVolumeM3*1.307950619314392,2);
-  $("coverage").textContent=fmt(r.sqFtPerYardAtDepth,0);
-  $("weight").textContent=r.weightTonnes==null?"—":fmt(r.weightTonnes,2)+" t";
-  $("appliedDepth").textContent=fmt(depth,1);
-  $("appliedUnit").textContent=unit==="metric"?"cm":"in";
-  const bulk=r.bulkCost==null?null:fmt(r.bulkCost,2);
-  const bag=r.bagCost==null?null:fmt(r.bagCost,2);
-  $("costCompare").textContent=bulk==null&&bag==null?"Enter prices in Advanced settings":bulk!=null&&bag!=null?"Bulk: "+bulk+"  •  Bags: "+bag+"  •  Difference: "+fmt(r.costDifference,2):bulk!=null?"Bulk estimate: "+bulk: "Bag estimate: "+bag;
+ const r=calculateMulch(collect());const area=r.totalAreaM2; $("resultTitle").textContent=r.totalAreaM2>0?"Mulch quantity estimate":"Enter your project dimensions";$("yd3").textContent=fmt(r.cubicYards,2);$("bags").textContent=fmt(r.bags,0);$("bagsNote").textContent=fmt(r.bagSizeFt3,1)+" ft³ bags";$("ft3").textContent=fmt(r.cubicFeet,1);$("area").textContent=fmt(area,1);$("areaUnit").textContent="m²";$("netYd3").textContent=fmt(r.netVolumeM3*1.307950619314392,2);$("coverage").textContent=fmt(r.sqFtPerYardAtDepth,0);$("weight").textContent=r.weightTonnes==null?"—":fmt(r.weightTonnes,2)+" t";const du=$("depthUnit").value;$("appliedDepth").textContent=fmt(fromMValue(r.appliedDepthM,du),2);$("appliedUnit").textContent=du;$("costCompare").textContent=r.bulkCost==null&&r.bagCost==null?"Enter prices in Advanced settings":r.bulkCost!=null&&r.bagCost!=null?"Bulk: "+fmt(r.bulkCost,2)+"  •  Bags: "+fmt(r.bagCost,2)+"  •  Difference: "+fmt(r.costDifference,2):r.bulkCost!=null?"Bulk estimate: "+fmt(r.bulkCost,2):"Bag estimate: "+fmt(r.bagCost,2);
 }
-function convertAll(next){
-  if(next===unit)return;
-  document.querySelectorAll("[data-field]").forEach(input=>{
-    const kind=input.dataset.kind;
-    if(kind==="qty")return;
-    const m=mFromDisplay(num(input.value),kind);
-    input.value=fmt(displayFromM(m,kind),kind==="depth"?2:4).replace(/,/g,"");
-  });
-  const depthM=mFromDisplay(num($("depth").value),"depth");
-  const existingM=mFromDisplay(num($("existing").value),"depth");
-  unit=next;
-  $("depth").value=fmt(displayFromM(depthM,"depth"),1);
-  $("existing").value=fmt(displayFromM(existingM,"depth"),1);
-  document.querySelectorAll(".unit").forEach(x=>x.classList.toggle("active",x.dataset.unit===unit));
-  $("depthHint").textContent=unit==="metric"?"2–7.5 cm corresponds to about 0.8–3 in. Follow plant and product guidance.":"2–3 in is a common depth for planting areas.";
-  $("existingHint").textContent=unit==="metric"?"Subtracts old settled mulch from the target depth.":"Subtracts old settled mulch from the target depth.";
-  calculate();
+function setQuickSystem(next){
+ const target=next==="metric";
+ document.querySelectorAll(".bed").forEach(box=>{box.querySelectorAll(".row-unit").forEach(sel=>{const key=sel.dataset.keyUnit,input=box.querySelector('[data-field="'+key+'"]'),old=sel.value,nu=target?"m":"ft",v=num(input.value);if(input.value.trim()){input.value=String(Number(fromMValue(toMValue(v,old),nu).toFixed(6)));}sel.value=nu;sel.dataset.prev=nu;})});
+ ["depth","existing"].forEach(id=>{const input=$(id),sel=$(id+"Unit"),old=sel.value,nu=target?"cm":"in",v=num(input.value);if(input.value.trim())input.value=String(Number(fromMValue(toMValue(v,old),nu).toFixed(6)));sel.value=nu;sel.dataset.prev=nu;});
+ const bag=$("bagSize"),bagSel=$("bagUnit"),old=bagSel.value,bu=target?"m3":"ft3",bv=num(bag.value);if(bv>0)bag.value=String(Number(fromMValue(toMValue(bv,old),bu).toFixed(6)));bagSel.value=bu;bagSel.dataset.prev=bu;
+ quickSystem=next;document.querySelectorAll(".unit").forEach(x=>x.classList.toggle("active",x.dataset.unit===next));calculate();
 }
-function reset(){
-  document.getElementById("beds").innerHTML="";
-  nextId=1;unit="imperial";document.querySelectorAll(".unit").forEach(x=>x.classList.toggle("active",x.dataset.unit===unit));
-  $("depth").value=3;$("existing").value=0;$("waste").value=5;$("bagSize").value=2;$("density").value="";$("bagPrice").value="";$("bulkPrice").value="";$("quantity").value=1;
-  addBed({shape:"rectangle"});calculate();
-}
-document.querySelectorAll(".unit").forEach(x=>x.addEventListener("click",()=>convertAll(x.dataset.unit)));
-$("addBed").addEventListener("click",()=>{addBed({shape:"rectangle"});calculate()});
-["depth","existing","waste","bagSize","density","bagPrice","bulkPrice","quantity"].forEach(id=>$(id).addEventListener("input",calculate));
-$("calculate").addEventListener("click",calculate);$("reset").addEventListener("click",reset);
-addBed({shape:"rectangle"});calculate();
+function reset(){document.getElementById("beds").innerHTML="";nextId=1;quickSystem="imperial";$("depth").value=3;$("existing").value=0;$("waste").value=5;$("bagSize").value=2;$("density").value="";$("bagPrice").value="";$("bulkPrice").value="";$("quantity").value=1;document.querySelectorAll(".unit").forEach(x=>x.classList.toggle("active",x.dataset.unit==="imperial"));$("depthUnit").value="in";$("existingUnit").value="in";$("bagUnit").value="ft3";addBed({shape:"rectangle"});calculate();}
+document.querySelectorAll(".unit").forEach(x=>x.addEventListener("click",()=>setQuickSystem(x.dataset.unit)));$("addBed").addEventListener("click",()=>{addBed({shape:"rectangle"});calculate()});["depth","existing","waste","bagSize","density","bagPrice","bulkPrice","quantity"].forEach(id=>$(id).addEventListener("input",calculate));["depthUnit","existingUnit","bagUnit"].forEach(id=>$(id).addEventListener("change",calculate));$("calculate").addEventListener("click",calculate);$("reset").addEventListener("click",reset);addBed({shape:"rectangle"});calculate();
 </script>
+</body>
+</html>
 </body>
 </html>
