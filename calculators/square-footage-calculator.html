@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Square Footage Calculator — Calculate Square Feet & Square Meters | ToolVault</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="description" content="Free square footage calculator for rooms, floors and simple shapes. Enter length and width to calculate square feet, square meters and square yards, with support for multiple rooms, triangles and circles.">
+<link rel="canonical" href="https://toolvault.aftabjordan1.workers.dev/calculators/square-footage-calculator.html">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="theme-color" content="#0b8f78">
+<meta property="og:site_name" content="ToolVault">
+<meta property="og:title" content="Square Footage Calculator — Calculate Square Feet & Square Meters | ToolVault">
+<meta property="og:description" content="Calculate square feet, square meters and square yards for rooms, floors, triangles and circles using clear measurement inputs.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://toolvault.aftabjordan1.workers.dev/calculators/square-footage-calculator.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Square Footage Calculator">
+<meta name="twitter:description" content="Calculate square feet, square meters and square yards from room or area measurements.">
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"WebApplication","@id":"https://toolvault.aftabjordan1.workers.dev/calculators/square-footage-calculator.html#app","name":"Square Footage Calculator","url":"https://toolvault.aftabjordan1.workers.dev/calculators/square-footage-calculator.html","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
+{"@type":"WebPage","@id":"https://toolvault.aftabjordan1.workers.dev/calculators/square-footage-calculator.html#page","name":"Square Footage Calculator — Calculate Square Feet & Square Meters","url":"https://toolvault.aftabjordan1.workers.dev/calculators/square-footage-calculator.html","isPartOf":{"@type":"WebSite","name":"ToolVault","url":"https://toolvault.aftabjordan1.workers.dev/"}},
+{"@type":"BreadcrumbList","itemListElement":[
+{"@type":"ListItem","position":1,"name":"ToolVault","item":"https://toolvault.aftabjordan1.workers.dev/"},
+{"@type":"ListItem","position":2,"name":"Calculators","item":"https://toolvault.aftabjordan1.workers.dev/calculators/"},
+{"@type":"ListItem","position":3,"name":"Square Footage Calculator","item":"https://toolvault.aftabjordan1.workers.dev/calculators/square-footage-calculator.html"}]}
+]}
+</script>
+
+<style>
+:root{--page:#edf5f2;--surface:#fff;--surface2:#f7fbfa;--ink:#202927;--muted:#697672;--line:#d5e1dd;--brand:#0b8f78;--brand2:#086c5b;--soft:#e4f6f0;--dark:#0d3029;--shadow:0 8px 24px rgba(25,42,38,.07)}
+*{box-sizing:border-box}body{margin:0;background:var(--page);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.55}a{text-decoration:none;color:inherit}.wrap{max-width:1120px;margin:auto;padding:0 20px}
+header{background:rgba(255,255,255,.97);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20;backdrop-filter:blur(10px)}.nav{min-height:68px;display:flex;align-items:center;justify-content:space-between}.logo{font-size:24px;font-weight:950}.logo span{color:var(--brand)}.nav a{font-size:13px;color:var(--brand2);font-weight:850}
+main{padding:24px 0 58px}.crumb{font-size:12px;color:var(--muted);margin-bottom:14px}.crumb a{color:var(--brand2);font-weight:800}.hero{background:linear-gradient(135deg,#fff,#f5fbf9);border:1px solid var(--line);border-radius:21px;padding:29px;box-shadow:var(--shadow)}.eyebrow{display:inline-flex;background:#e9f1e9;color:#50724a;padding:7px 11px;border-radius:999px;font-size:11px;font-weight:900}.hero h1{font-size:clamp(35px,5vw,53px);line-height:1.03;letter-spacing:-2px;margin:13px 0 8px}.hero p{max-width:900px;color:var(--muted);font-size:15px;margin:0}
+.tool{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(340px,.92fr);gap:17px;margin-top:18px}.card{background:var(--surface);border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);overflow:hidden}.head{padding:19px 21px;border-bottom:1px solid var(--line)}.head h2{margin:0;font-size:20px}.head p{margin:5px 0 0;font-size:12px;color:var(--muted)}.body{padding:19px 21px}
+.quick{margin-bottom:13px;background:var(--dark);color:#fff;border-radius:17px;padding:20px}.quick small{display:block;text-transform:uppercase;letter-spacing:.08em;font-size:10px;opacity:.72}.quick h2{font-size:30px;margin:5px 0 2px}.quick p{margin:0;color:#c4d8d3;font-size:12px}
+.shapes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}.shape{border:1px solid var(--line);background:#f8fcfa;border-radius:11px;padding:11px;cursor:pointer;text-align:center}.shape strong{display:block;font-size:12px}.shape span{display:block;font-size:9px;color:var(--muted);margin-top:2px}.shape.active{background:var(--soft);border-color:#99cdbf;color:var(--brand2)}
+.quick-units{display:flex;gap:8px;margin-bottom:11px;flex-wrap:wrap}.quick-unit{border:1px solid var(--line);background:var(--surface2);color:#56645f;padding:9px 12px;border-radius:10px;font-size:11px;font-weight:900;cursor:pointer}.quick-unit.active{background:#24282a;border-color:#24282a;color:#fff}
+.measure{display:grid;grid-template-columns:minmax(0,1fr) 80px}.measure input{border-radius:9px 0 0 9px}.measure select{border:1px solid #c8dad4;border-left:0;border-radius:0 9px 9px 0;padding:10px 6px;background:#f4faf7;color:var(--brand2);font-size:11px;font-weight:850;outline:none}
+.field label{display:block;font-size:11px;font-weight:900;margin-bottom:5px}.field input,.field select{width:100%;border:1px solid #c8dad4;border-radius:9px;padding:10px;background:#fbfefd;color:var(--ink);font-size:12px;outline:none}.field input:focus,.field select:focus{border-color:#7bbcad;box-shadow:0 0 0 3px rgba(11,143,120,.08)}.hint{font-size:9px;color:#84918c;margin-top:4px;line-height:1.4}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.row{border:1px solid var(--line);background:#fbfdfc;border-radius:12px;padding:12px;margin-top:9px}.row-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.row-head strong{font-size:11px}.remove{border:0;background:#f1f4f3;color:#6e7874;border-radius:8px;padding:5px 8px;font-size:10px;font-weight:850;cursor:pointer}.add{margin-top:10px;border:1px dashed #aacbc1;background:#f8fcfa;color:var(--brand2);border-radius:10px;padding:10px 12px;font-size:11px;font-weight:900;cursor:pointer;width:100%}
+.action-row{display:flex;gap:8px;margin-top:15px}.primary{border:0;border-radius:10px;padding:12px 16px;background:var(--brand);color:#fff;font-weight:900;cursor:pointer}.secondary{border:1px solid var(--line);border-radius:10px;padding:12px 16px;background:#fff;color:var(--brand2);font-weight:900;cursor:pointer}
+.results{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:13px}.metric{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--surface2)}.metric.primary{background:var(--soft);border-color:#c3e7dd}.metric span{display:block;font-size:10px;color:var(--muted);font-weight:850;text-transform:uppercase;letter-spacing:.04em}.metric b{display:block;font-size:21px;margin-top:4px}.metric small{font-size:10px;color:var(--muted)}
+.breakdown{padding:0 13px 13px}.breakdown h3{font-size:13px;margin:0 0 7px}.breakrow{display:flex;justify-content:space-between;gap:15px;padding:8px 0;border-bottom:1px solid #edf1ef;font-size:11px}.breakrow span:last-child{font-weight:850}
+.seo{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:17px;overflow:hidden;box-shadow:var(--shadow)}.seo summary{list-style:none;cursor:pointer;background:#f8fbfa;padding:15px 18px;color:var(--brand2);font-size:13px;font-weight:900}.seo summary::-webkit-details-marker{display:none}.seo summary:before{content:'+';display:inline-grid;place-items:center;width:21px;height:21px;border-radius:7px;background:var(--soft);margin-right:8px}.seo[open] summary:before{content:'−'}.seo-body{padding:23px}.seo-body h2{font-size:24px;letter-spacing:-.7px;margin:0 0 8px}.seo-body h2:not(:first-child){margin-top:27px}.seo-body h3{font-size:16px;margin:20px 0 6px}.seo-body p,.seo-body li{font-size:14px;color:#566760}.formula{padding:12px 14px;border-radius:11px;background:var(--soft);border:1px solid #c6e6dd;color:#245d52;font-weight:850;margin:11px 0}.example{padding:14px;border:1px solid var(--line);border-radius:11px;background:#fbfdfc}.related{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.rel{padding:13px;border:1px solid var(--line);border-radius:11px;background:#f7fbfa}.rel strong{display:block;font-size:12px;color:var(--brand2)}.rel span{font-size:10px;color:var(--muted)}
+footer{border-top:1px solid var(--line);padding:25px 0;background:#fff;color:#74807b;font-size:12px}
+@media(max-width:900px){.tool{grid-template-columns:1fr}.related{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.wrap{padding:0 14px}.hero{padding:23px 18px}.grid2,.shapes,.results,.related{grid-template-columns:1fr}.action-row{flex-direction:column}}
+</style>
+</head>
+<body>
+<header><div class="wrap nav"><a class="logo" href="/">Tool<span>Vault</span></a><a href="/calculators/">← Calculators</a></div></header>
+<main class="wrap">
+<div class="crumb"><a href="/">ToolVault</a> / <a href="/calculators/">Calculators</a> / Square Footage Calculator</div>
+<section class="hero"><span class="eyebrow">📐 Area & floor-space calculation</span><h1>Square Footage Calculator</h1><p>Calculate the area of a room, floor, wall or simple shape. Enter the measurements you can actually take on site, and see the result in square feet, square meters and square yards.</p></section>
+
+<div class="tool">
+<section class="card">
+<div class="head"><h2>Measure the area</h2><p>For a room, measure wall to wall. Each measurement has its unit beside the number.</p></div>
+<div class="body">
+<div class="shapes">
+<button class="shape active" data-shape="rectangle" type="button"><strong>Rectangle</strong><span>Room, floor or wall</span></button>
+<button class="shape" data-shape="triangle" type="button"><strong>Triangle</strong><span>Base and height</span></button>
+<button class="shape" data-shape="circle" type="button"><strong>Circle</strong><span>Measure across it</span></button>
+</div>
+
+<div id="rectanglePanel">
+<div class="quick-units"><button class="quick-unit active" type="button" data-quick="ft">Quick set: feet</button><button class="quick-unit" type="button" data-quick="m">Quick set: metres</button></div>
+<div id="rectangleRows"></div>
+<button class="add" id="addRoom" type="button">＋ Add another room or area</button>
+</div>
+
+<div id="trianglePanel" hidden>
+<div class="grid2">
+<div class="field"><label for="base">Base — straight side across the bottom</label><div class="measure"><input id="base" type="number" min="0" step="any" value="10"><select id="baseUnit"><option value="ft" selected>ft</option><option value="m">m</option><option value="in">in</option><option value="cm">cm</option><option value="yd">yd</option></select></div><div class="hint">Measure the base of the triangle.</div></div>
+<div class="field"><label for="height">Height — straight up from the base</label><div class="measure"><input id="height" type="number" min="0" step="any" value="8"><select id="heightUnit"><option value="ft" selected>ft</option><option value="m">m</option><option value="in">in</option><option value="cm">cm</option><option value="yd">yd</option></select></div><div class="hint">Measure the perpendicular distance from the base to the opposite point.</div></div>
+</div>
+</div>
+
+<div id="circlePanel" hidden>
+<div class="field"><label for="diameter">Diameter — straight distance across the circle</label><div class="measure"><input id="diameter" type="number" min="0" step="any" value="10"><select id="diameterUnit"><option value="ft" selected>ft</option><option value="m">m</option><option value="in">in</option><option value="cm">cm</option><option value="yd">yd</option></select></div><div class="hint">Measure from one edge straight across the center to the opposite edge.</div></div>
+</div>
+
+<div class="action-row"><button class="primary" id="calculate" type="button">Calculate area</button><button class="secondary" id="reset" type="button">Reset</button></div>
+</div>
+</section>
+
+<section class="card">
+<div class="quick"><small>Total area</small><h2 id="primaryResult">—</h2><p id="resultNote">Enter measurements to calculate.</p></div>
+<div id="results" class="results"></div>
+<div id="breakdown" class="breakdown"></div>
+</section>
+</div>
+
+<details class="seo" open>
+<summary>How to calculate square footage, formulas, examples & FAQs</summary>
+<div class="seo-body">
+<h2>How to use the square footage calculator</h2>
+<ol><li>For a rectangular room, measure the inside length from wall to wall.</li><li>Measure the width from the other wall to the opposite wall.</li><li>Choose feet, metres or another unit that matches how you measured.</li><li>Add another rectangle when a floor plan has multiple simple rooms or sections.</li><li>For irregular shapes, split the area into simple rectangles or use the triangle/circle options where appropriate.</li></ol>
+
+<h2>Square footage formula</h2>
+<div class="formula">Rectangle area = length × width</div>
+<div class="formula">Triangle area = ½ × base × height</div>
+<div class="formula">Circle area = π × (diameter ÷ 2)²</div>
+<p>The calculator converts the finished area to square feet, square meters and square yards after calculating each shape in square metres internally.</p>
+
+<h2>Worked example</h2>
+<div class="example"><strong>Room: 12 ft × 10 ft</strong><br>Area = 12 × 10 = <strong>120 ft²</strong>.<br>That is approximately <strong>11.15 m²</strong> or <strong>13.33 yd²</strong>.</div>
+
+<h2>How to measure a room for square footage</h2>
+<p>Measure the usable inside dimensions where the floor actually extends. For a rectangular room, take the longest wall-to-wall distance as length and the other wall-to-wall distance as width. For a room that is not rectangular, split it into smaller rectangles, calculate each area, and add them together.</p>
+
+<h2>Square feet vs square meters</h2>
+<p>Square feet (ft²) and square meters (m²) are both units of area. ToolVault keeps the complete calculation precision internally and rounds only the displayed values.</p>
+<div class="formula">1 m² = 10.7639104167 ft²</div>
+<div class="formula">1 ft² = 0.09290304 m²</div>
+
+<h2>Accuracy and limitations</h2>
+<p>This calculator measures geometric area. It does not decide how much paint, flooring, tile, concrete or other material you should buy. Those products need their own coverage, waste, thickness or installation assumptions. For construction takeoffs, verify field measurements and project drawings before ordering materials.</p>
+
+<h2>Frequently asked questions</h2>
+<h3>How do I calculate the square footage of a room?</h3>
+<p>Measure the room length and width in the same units, then multiply length × width. If the room is irregular, divide it into simple sections and add their areas.</p>
+<h3>How many square feet are in a square meter?</h3>
+<p>One square meter equals 10.7639104167 square feet.</p>
+<h3>How do I calculate square footage from feet?</h3>
+<p>Multiply the length in feet by the width in feet. A 12 ft × 10 ft room is 120 square feet.</p>
+<h3>What if my room is not a rectangle?</h3>
+<p>Split the floor plan into rectangles, triangles or other simple shapes that you can measure, then add the areas.</p>
+<h3>Can I add multiple rooms?</h3>
+<p>Yes. The rectangle mode lets you add multiple rooms or areas and gives one combined total.</p>
+
+<h2>Related calculators</h2>
+<div class="related">
+<a class="rel" href="/construction/paint-calculator.html"><strong>Paint Calculator</strong><span>Estimate paint from area, coats and coverage.</span></a>
+<a class="rel" href="/construction/mulch-calculator.html"><strong>Mulch Calculator</strong><span>Estimate landscape material from area and depth.</span></a>
+<a class="rel" href="/construction/concrete-calculator.html"><strong>Concrete Calculator</strong><span>Estimate concrete volume from measured dimensions.</span></a>
+</div>
+</div>
+</details>
+</main>
+<footer><div class="wrap">© 2026 ToolVault · Free practical tools for the web.</div></footer>
+
+<script type="module">
+import {calculateSquareFootage} from "./square-footage-engine.js";
+const $=id=>document.getElementById(id);
+const units=["mm","cm","m","in","ft","yd"];
+const factor={mm:0.001,cm:0.01,m:1,in:0.0254,ft:0.3048,yd:0.9144};
+let shape="rectangle", quickUnit="ft", rowId=0;
+
+function fmt(n,d=2){return new Intl.NumberFormat(undefined,{maximumFractionDigits:d}).format(n)}
+function rowTemplate(id,defaults={length:12,width:10,unit:"ft"}){
+ return '<div class="row" data-row="'+id+'"><div class="row-head"><strong>Room / area '+(id+1)+'</strong><button class="remove" type="button">Remove</button></div><div class="grid2">'+
+ '<div class="field"><label>Length — wall to wall</label><div class="measure"><input class="r-length" type="number" min="0" step="any" value="'+defaults.length+'"><select class="r-length-unit">'+units.map(u=>'<option value="'+u+'" '+(u===defaults.unit?"selected":"")+'>'+u+'</option>').join("")+'</select></div><div class="hint">Measure the longest wall-to-wall distance.</div></div>'+
+ '<div class="field"><label>Width — wall to wall</label><div class="measure"><input class="r-width" type="number" min="0" step="any" value="'+defaults.width+'"><select class="r-width-unit">'+units.map(u=>'<option value="'+u+'" '+(u===defaults.unit?"selected":"")+'>'+u+'</option>').join("")+'</select></div><div class="hint">Measure the other wall-to-wall distance.</div></div>'+
+ '</div></div>';
+}
+function bindRows(){
+ document.querySelectorAll(".row").forEach(row=>{
+  row.querySelectorAll("input,select").forEach(el=>el.addEventListener("input",calculate));
+  row.querySelector(".remove").addEventListener("click",()=>{if(document.querySelectorAll(".row").length>1){row.remove();renumber();calculate()}});
+ });
+}
+function renumber(){document.querySelectorAll(".row").forEach((r,i)=>r.querySelector(".row-head strong").textContent="Room / area "+(i+1))}
+function addRow(){const id=rowId++;$("rectangleRows").insertAdjacentHTML("beforeend",rowTemplate(id,{length:12,width:10,unit:quickUnit}));bindRows();renumber();calculate()}
+function convertRows(next){
+ document.querySelectorAll(".row").forEach(row=>{
+  ["r-length","r-width"].forEach(cls=>{
+   const input=row.querySelector("."+cls),sel=row.querySelector(cls+"-unit"),old=sel.value,v=Number(input.value);
+   if(Number.isFinite(v)&&v>0) input.value=String(Number((v*factor[old]/factor[next]).toFixed(6)));
+   sel.value=next;
+  });
+ });
+ quickUnit=next;
+ document.querySelectorAll(".quick-unit").forEach(x=>x.classList.toggle("active",x.dataset.quick===next));
+ calculate();
+}
+function currentInput(){
+ if(shape==="rectangle"){
+  const areas=[...document.querySelectorAll(".row")].map(row=>({
+   length:Number(row.querySelector(".r-length").value)||0,
+   width:Number(row.querySelector(".r-width").value)||0,
+   lengthUnit:row.querySelector(".r-length-unit").value,
+   widthUnit:row.querySelector(".r-width-unit").value
+  }));
+  return {shape,areas};
+ }
+ if(shape==="triangle") return {shape,areas:[{base:Number($("base").value)||0,height:Number($("height").value)||0,baseUnit:$("baseUnit").value,heightUnit:$("heightUnit").value}]};
+ return {shape,areas:[{diameter:Number($("diameter").value)||0,diameterUnit:$("diameterUnit").value}]};
+}
+function calculate(){
+ const r=calculateSquareFootage(currentInput());
+ $("primaryResult").textContent=fmt(r.areaFt2,2)+" ft²";
+ $("resultNote").textContent=fmt(r.areaM2,2)+" m² · "+fmt(r.areaYd2,2)+" yd² · "+r.count+" area"+(r.count===1?"":"s");
+ $("results").innerHTML=[
+  ["Square feet",fmt(r.areaFt2,2)+" ft²","primary"],
+  ["Square meters",fmt(r.areaM2,2)+" m²",""],
+  ["Square yards",fmt(r.areaYd2,2)+" yd²",""],
+  ["Areas included",String(r.count),""]].map(x=>'<div class="metric '+x[2]+'"><span>'+x[0]+'</span><b>'+x[1]+'</b><small>Calculated from your measurements</small></div>').join("");
+ const formulas={rectangle:"length × width",triangle:"½ × base × height",circle:"π × (diameter ÷ 2)²"};
+ $("breakdown").innerHTML='<h3>Formula used</h3><div class="breakrow"><span>'+formulas[shape]+'</span><span>'+r.count+' area'+(r.count===1?"":"s")+'</span></div>';
+}
+function selectShape(next){
+ shape=next;
+ document.querySelectorAll(".shape").forEach(x=>x.classList.toggle("active",x.dataset.shape===next));
+ $("rectanglePanel").hidden=next!=="rectangle";$("trianglePanel").hidden=next!=="triangle";$("circlePanel").hidden=next!=="circle";
+ calculate();
+}
+function reset(){
+ shape="rectangle";quickUnit="ft";rowId=0;
+ $("rectangleRows").innerHTML="";addRow();
+ $("base").value=10;$("height").value=8;$("baseUnit").value="ft";$("heightUnit").value="ft";
+ $("diameter").value=10;$("diameterUnit").value="ft";
+ selectShape("rectangle");
+ document.querySelectorAll(".quick-unit").forEach(x=>x.classList.toggle("active",x.dataset.quick==="ft"));
+}
+document.querySelectorAll(".shape").forEach(x=>x.addEventListener("click",()=>selectShape(x.dataset.shape)));
+document.querySelectorAll(".quick-unit").forEach(x=>x.addEventListener("click",()=>convertRows(x.dataset.quick)));
+$("addRoom").addEventListener("click",addRow);
+["base","height","diameter","baseUnit","heightUnit","diameterUnit"].forEach(id=>$(id).addEventListener("input",calculate));
+$("calculate").addEventListener("click",calculate);$("reset").addEventListener("click",reset);
+addRow();calculate();
+</script>
+</body>
+</html>
