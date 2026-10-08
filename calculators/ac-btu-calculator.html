@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AC BTU Calculator — Air Conditioner Size for Any Room | ToolVault</title>
+<meta name="description" content="Free AC BTU calculator for room air-conditioner sizing. Enter room dimensions, ceiling height, sunlight, occupants and kitchen use to estimate cooling BTU, tons and kW.">
+<link rel="canonical" href="https://toolvault.aftabjordan1.workers.dev/calculators/ac-btu-calculator.html">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="theme-color" content="#0b8f78">
+<meta property="og:site_name" content="ToolVault">
+<meta property="og:title" content="AC BTU Calculator — Air Conditioner Size for Any Room | ToolVault">
+<meta property="og:description" content="Estimate the right room AC capacity in BTU/h, tons and cooling kW from clear room measurements and simple room conditions.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://toolvault.aftabjordan1.workers.dev/calculators/ac-btu-calculator.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AC BTU Calculator">
+<meta name="twitter:description" content="Estimate room AC cooling capacity in BTU/h, tons and kW.">
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"WebApplication","@id":"https://toolvault.aftabjordan1.workers.dev/calculators/ac-btu-calculator.html#app","name":"AC BTU Calculator","url":"https://toolvault.aftabjordan1.workers.dev/calculators/ac-btu-calculator.html","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
+{"@type":"WebPage","@id":"https://toolvault.aftabjordan1.workers.dev/calculators/ac-btu-calculator.html#page","name":"AC BTU Calculator — Air Conditioner Size for Any Room","url":"https://toolvault.aftabjordan1.workers.dev/calculators/ac-btu-calculator.html","isPartOf":{"@type":"WebSite","name":"ToolVault","url":"https://toolvault.aftabjordan1.workers.dev/"}},
+{"@type":"BreadcrumbList","itemListElement":[
+{"@type":"ListItem","position":1,"name":"ToolVault","item":"https://toolvault.aftabjordan1.workers.dev/"},
+{"@type":"ListItem","position":2,"name":"Calculators","item":"https://toolvault.aftabjordan1.workers.dev/calculators/"},
+{"@type":"ListItem","position":3,"name":"AC BTU Calculator","item":"https://toolvault.aftabjordan1.workers.dev/calculators/ac-btu-calculator.html"}]}
+]}
+</script>
+
+<style>
+:root{--page:#edf5f2;--surface:#fff;--surface2:#f7fbfa;--ink:#202927;--muted:#697672;--line:#d5e1dd;--brand:#0b8f78;--brand2:#086c5b;--soft:#e4f6f0;--warm:#f5ece4;--warmink:#8b6648;--dark:#0d3029;--shadow:0 8px 24px rgba(25,42,38,.07)}
+*{box-sizing:border-box}body{margin:0;background:var(--page);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.55}a{text-decoration:none;color:inherit}.wrap{max-width:1120px;margin:auto;padding:0 20px}
+header{background:rgba(255,255,255,.97);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20;backdrop-filter:blur(10px)}.nav{min-height:68px;display:flex;align-items:center;justify-content:space-between}.logo{font-size:24px;font-weight:950}.logo span{color:var(--brand)}.nav a{font-size:13px;color:var(--brand2);font-weight:850}
+main{padding:24px 0 58px}.crumb{font-size:12px;color:var(--muted);margin-bottom:14px}.crumb a{color:var(--brand2);font-weight:800}.hero{background:linear-gradient(135deg,#fff,#f5fbf9);border:1px solid var(--line);border-radius:21px;padding:29px;box-shadow:var(--shadow)}.eyebrow{display:inline-flex;background:var(--warm);color:var(--warmink);padding:7px 11px;border-radius:999px;font-size:11px;font-weight:900}.hero h1{font-size:clamp(35px,5vw,53px);line-height:1.03;letter-spacing:-2px;margin:13px 0 8px}.hero p{max-width:900px;color:var(--muted);font-size:15px;margin:0}
+.tool{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(340px,.92fr);gap:17px;margin-top:18px}.card{background:var(--surface);border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);overflow:hidden}.head{padding:19px 21px;border-bottom:1px solid var(--line)}.head h2{margin:0;font-size:20px}.head p{margin:5px 0 0;font-size:12px;color:var(--muted)}.body{padding:19px 21px}
+.quick{margin-bottom:13px;background:#0d3029;color:#fff;border-radius:17px;padding:20px}.quick small{display:block;text-transform:uppercase;letter-spacing:.08em;font-size:10px;opacity:.72}.quick h2{font-size:30px;margin:5px 0 2px}.quick p{margin:0;color:#c4d8d3;font-size:12px}
+.system-note{margin-top:12px;padding:11px 12px;border:1px solid #cfe0da;border-radius:11px;background:#f8fbfa;color:#586760;font-size:11px;line-height:1.45}
+.measure{display:grid;grid-template-columns:minmax(0,1fr) 84px}.measure input{border-radius:9px 0 0 9px}.measure select{border:1px solid #c8dad4;border-left:0;border-radius:0 9px 9px 0;padding:10px 7px;background:#f4faf7;color:var(--brand2);font-size:11px;font-weight:850;outline:none}.measure select:focus{border-color:#7bbcad;box-shadow:0 0 0 3px rgba(11,143,120,.08)}
+.quick-units{display:flex;gap:8px;margin-bottom:11px;flex-wrap:wrap}.quick-unit{border:1px solid var(--line);background:var(--surface2);color:#56645f;padding:9px 12px;border-radius:10px;font-size:11px;font-weight:900;cursor:pointer}.quick-unit.active{background:#24282a;border-color:#24282a;color:#fff}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field label{display:block;font-size:11px;font-weight:900;margin-bottom:5px}.field input,.field select{width:100%;border:1px solid #c8dad4;border-radius:9px;padding:10px;background:#fbfefd;color:var(--ink);font-size:12px;outline:none}.field input:focus,.field select:focus{border-color:#7bbcad;box-shadow:0 0 0 3px rgba(11,143,120,.08)}.hint{font-size:9px;color:#84918c;margin-top:4px;line-height:1.4}
+.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.choice{position:relative}.choice input{position:absolute;opacity:0;pointer-events:none}.choice label{display:block;border:1px solid var(--line);border-radius:11px;padding:11px;background:#f8fcfa;cursor:pointer;height:100%}.choice label strong{display:block;font-size:11px}.choice label span{display:block;font-size:9px;color:var(--muted);margin-top:3px}.choice input:checked+label{background:var(--soft);border-color:#99cdbf;color:var(--brand2)}
+.full{grid-column:1/-1}.section-label{font-size:11px;font-weight:900;margin:14px 0 7px}.action-row{display:flex;gap:8px;margin-top:15px}.primary{border:0;border-radius:10px;padding:12px 16px;background:var(--brand);color:#fff;font-weight:900;cursor:pointer}.secondary{border:1px solid var(--line);border-radius:10px;padding:12px 16px;background:#fff;color:var(--brand2);font-weight:900;cursor:pointer}
+.results{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:13px}.metric{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--surface2)}.metric.primary{background:var(--soft);border-color:#c3e7dd}.metric span{display:block;font-size:10px;color:var(--muted);font-weight:850;text-transform:uppercase;letter-spacing:.04em}.metric b{display:block;font-size:21px;margin-top:4px}.metric small{font-size:10px;color:var(--muted)}
+.breakdown{padding:0 13px 13px}.breakdown h3{font-size:13px;margin:0 0 7px}.breakrow{display:flex;justify-content:space-between;gap:15px;padding:8px 0;border-bottom:1px solid #edf1ef;font-size:11px}.breakrow span:last-child{font-weight:850}
+.alert{margin:0 13px 13px;padding:11px 12px;border:1px solid #d7e4df;border-radius:11px;background:#f8fbfa;font-size:10px;color:#586760;line-height:1.45}.error{margin:13px;border:1px solid #ead3ca;background:#fff8f5;color:#8e4a37;border-radius:11px;padding:11px;font-size:11px}
+.seo{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:17px;overflow:hidden;box-shadow:var(--shadow)}.seo summary{list-style:none;cursor:pointer;background:#f8fbfa;padding:15px 18px;color:var(--brand2);font-size:13px;font-weight:900}.seo summary::-webkit-details-marker{display:none}.seo summary:before{content:'+';display:inline-grid;place-items:center;width:21px;height:21px;border-radius:7px;background:var(--soft);margin-right:8px}.seo[open] summary:before{content:'−'}.seo-body{padding:23px}.seo-body h2{font-size:24px;letter-spacing:-.7px;margin:0 0 8px}.seo-body h2:not(:first-child){margin-top:27px}.seo-body h3{font-size:16px;margin:20px 0 6px}.seo-body p,.seo-body li{font-size:14px;color:#566760}.formula{padding:12px 14px;border-radius:11px;background:var(--soft);border:1px solid #c6e6dd;color:#245d52;font-weight:850;margin:11px 0}.example{padding:14px;border:1px solid var(--line);border-radius:11px;background:#fbfdfc}.related{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.rel{padding:13px;border:1px solid var(--line);border-radius:11px;background:#f7fbfa}.rel strong{display:block;font-size:12px;color:var(--brand2)}.rel span{font-size:10px;color:var(--muted)}
+footer{border-top:1px solid var(--line);padding:25px 0;background:#fff;color:#74807b;font-size:12px}
+@media(max-width:900px){.tool{grid-template-columns:1fr}.related{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.wrap{padding:0 14px}.hero{padding:23px 18px}.fields,.choices,.results,.related{grid-template-columns:1fr}.action-row{flex-direction:column}}
+</style>
+</head>
+<body>
+<header><div class="wrap nav"><a class="logo" href="/">Tool<span>Vault</span></a><a href="/calculators/">← Calculators</a></div></header>
+<main class="wrap">
+<div class="crumb"><a href="/">ToolVault</a> / <a href="/calculators/">Calculators</a> / AC BTU Calculator</div>
+<section class="hero"><span class="eyebrow">❄️ Room air-conditioner sizing</span><h1>AC BTU Calculator</h1><p>Estimate the cooling capacity a single room needs and see the result in BTU/h, tons and kW. The inputs are designed for ordinary users: measure the room, tell us about sunlight and people, and we do the rest.</p></section>
+
+<div class="tool">
+<section class="card">
+<div class="head"><h2>Tell us about the room</h2><p>Enter simple measurements. Each measurement shows its unit beside the number.</p></div>
+<div class="body">
+<div class="quick-units"><button class="quick-unit active" type="button" data-quick="imperial">Quick set: feet</button><button class="quick-unit" type="button" data-quick="metric">Quick set: metres</button></div>
+<div class="fields">
+<div class="field"><label for="length">Room length — wall to wall</label><div class="measure"><input id="length" type="number" min="0" step="any" value="15"><select id="lengthUnit"><option value="ft" selected>ft</option><option value="m">m</option><option value="in">in</option><option value="cm">cm</option></select></div><div class="hint">Measure from one wall to the opposite wall.</div></div>
+<div class="field"><label for="width">Room width — wall to wall</label><div class="measure"><input id="width" type="number" min="0" step="any" value="12"><select id="widthUnit"><option value="ft" selected>ft</option><option value="m">m</option><option value="in">in</option><option value="cm">cm</option></select></div><div class="hint">Measure from one side wall to the other.</div></div>
+<div class="field"><label for="ceiling">Ceiling height — floor to ceiling</label><div class="measure"><input id="ceiling" type="number" min="0" step="any" value="8"><select id="ceilingUnit"><option value="ft" selected>ft</option><option value="m">m</option><option value="in">in</option><option value="cm">cm</option></select></div><div class="hint">The official room-AC chart is based on an 8 ft ceiling.</div></div>
+<div class="field"><label for="occupants">People usually in the room</label><input id="occupants" type="number" min="0" step="1" value="2"><div class="hint">Count people who are normally in the room at the same time.</div></div>
+
+<div class="field full"><div class="section-label">How sunny is the room?</div><div class="choices">
+<div class="choice"><input id="sun-shaded" name="sun" type="radio" value="shaded"><label for="sun-shaded"><strong>Mostly shaded</strong><span>Little direct sunlight</span></label></div>
+<div class="choice"><input id="sun-normal" name="sun" type="radio" value="normal" checked><label for="sun-normal"><strong>Normal sunlight</strong><span>Some direct sunlight</span></label></div>
+<div class="choice"><input id="sun-sunny" name="sun" type="radio" value="sunny"><label for="sun-sunny"><strong>Very sunny</strong><span>Strong direct sunlight</span></label></div>
+</div></div>
+
+<div class="field full"><div class="section-label">Is this room a kitchen?</div><div class="choices">
+<div class="choice"><input id="kitchen-no" name="kitchen" type="radio" value="no" checked><label for="kitchen-no"><strong>No</strong><span>Bedroom, office, living room, etc.</span></label></div>
+<div class="choice"><input id="kitchen-yes" name="kitchen" type="radio" value="yes"><label for="kitchen-yes"><strong>Yes</strong><span>Cooking heat is present</span></label></div>
+</div></div>
+</div>
+<div class="action-row"><button class="primary" id="calculate" type="button">Calculate AC size</button><button class="secondary" id="reset" type="button">Reset</button></div>
+</div>
+</section>
+
+<section class="card">
+<div class="quick"><small>Recommended room AC</small><h2 id="recommended">—</h2><p id="recommendedNote">Enter your room details to calculate.</p></div>
+<div id="error"></div>
+<div id="results" class="results"></div>
+<div id="breakdown" class="breakdown"></div>
+<div class="alert">This is a room/zone planning estimate. It is not a whole-home HVAC load calculation and should not be used as a substitute for a professional Manual J or equivalent engineering load calculation.</div>
+</section>
+</div>
+
+<details class="seo" open>
+<summary>How to calculate AC BTU, formulas, worked example, limitations & FAQs</summary>
+<div class="seo-body">
+<h2>How to use the AC BTU calculator</h2>
+<ol><li>Measure the inside length and width of the room.</li><li>Measure the ceiling height from the finished floor to the ceiling.</li><li>Choose the sunlight condition that best describes the room.</li><li>Enter the number of people normally in the room.</li><li>Select kitchen if the air conditioner is cooling a kitchen space.</li><li>Read the estimated load and the next standard room-AC capacity.</li></ol>
+
+<h2>What BTU means</h2>
+<p>BTU/h is a unit of cooling capacity: it describes how much heat an air conditioner can remove per hour. AC equipment is commonly sold by cooling capacity in BTU/h, while tonnage and kW are alternative ways to express capacity.</p>
+
+<h2>The ToolVault calculation</h2>
+<p>The first step uses the published ENERGY STAR room-air-conditioner capacity chart. That chart is based on an 8-foot ceiling and maps room floor area to a room-AC capacity. ToolVault then applies the published adjustments for shade/sun, occupancy and kitchen use. For ceilings higher than 8 ft, ToolVault applies a transparent planning factor equal to ceiling height ÷ 8 ft; this higher-ceiling factor is a ToolVault approximation because the ENERGY STAR chart itself only states that higher ceilings may require more capacity rather than prescribing this exact equation.</p>
+<div class="formula">Base capacity = ENERGY STAR room-size chart value for the floor area</div>
+<div class="formula">Adjusted load = (Base capacity × ceiling factor × sun factor) + extra-people heat + kitchen heat</div>
+<div class="formula">Sun factor = 0.90 shaded, 1.00 normal, 1.10 very sunny</div>
+<div class="formula">Extra-people heat = max(0, people − 2) × 600 BTU/h</div>
+<div class="formula">Kitchen heat = 4,000 BTU/h when kitchen = yes; otherwise 0</div>
+<div class="formula">1 ton = 12,000 BTU/h · 1 kW cooling ≈ 3,412.14 BTU/h</div>
+
+<h2>Worked example</h2>
+<div class="example"><strong>Example: 15 × 12 ft room, 8 ft ceiling, 2 people, normal sunlight, not a kitchen.</strong><br>Floor area = 15 × 12 = <strong>180 ft²</strong>.<br>The ENERGY STAR chart puts a 150–250 ft² room at <strong>6,000 BTU/h</strong> for an 8 ft ceiling.<br>Sun factor = 1.00 and extra occupants = 0, kitchen = 0.<br>Estimated load = <strong>6,000 BTU/h</strong>.<br>The next standard room-AC size from the chart is <strong>6,000 BTU/h = 0.50 ton ≈ 1.76 kW of cooling capacity</strong>.</div>
+
+<h2>Why air-conditioner size should not be too large</h2>
+<p>A unit that is too large can cool the room quickly without running long enough to remove as much humidity. ENERGY STAR specifically warns that proper sizing matters for comfort and energy efficiency.</p>
+
+<h2>Accuracy and limitations</h2>
+<p>This calculator is intended for a single room, room air conditioner, window unit, portable unit or single-zone cooling planning. It does not model window area and orientation, insulation, air leakage, infiltration, floor/roof construction, adjacent-zone temperatures, duct losses, equipment performance curves, solar heat gain calculations or full internal heat loads.</p>
+<p>For whole-home systems, large glazed spaces, commercial buildings or permit/design work, use a full HVAC load calculation appropriate to the project and local requirements.</p>
+
+<h2>ENERGY STAR reference chart</h2>
+<p>The room-area portion of this calculator follows the published ENERGY STAR room-air-conditioner chart: 100–150 ft² → 5,000 BTU/h; 150–250 → 6,000; 250–300 → 7,000; 300–350 → 8,000; 350–400 → 9,000; 400–450 → 10,000; 450–550 → 12,000; 550–700 → 14,000; 700–1,000 → 18,000; 1,000–1,200 → 21,000; 1,200–1,400 → 23,000; 1,400–1,500 → 24,000; 1,500–2,000 → 30,000; 2,000–2,500 → 34,000 BTU/h.</p>
+<p>ENERGY STAR also recommends a 10% reduction for heavily shaded rooms, a 10% increase for very sunny rooms, 600 BTU/h for each regular occupant above two, and a 4,000 BTU/h increase when the unit is used in a kitchen.</p>
+<p>Source: <a href="https://www.energystar.gov/products/room_air_conditioners" target="_blank" rel="noopener">ENERGY STAR — Room Air Conditioners</a>.</p>
+
+<h2>Frequently asked questions</h2>
+<h3>How many BTUs does my room need?</h3>
+<p>Measure the room's floor area, then use the room-AC capacity chart and apply the room conditions. This calculator does those steps automatically.</p>
+<h3>How many BTUs is one ton of AC?</h3>
+<p>One ton of cooling is 12,000 BTU/h.</p>
+<h3>What size AC do I need for a 300 square foot room?</h3>
+<p>For an 8 ft ceiling, the ENERGY STAR chart assigns 7,000 BTU/h to a room up to 300 ft² and 8,000 BTU/h to the next 300–350 ft² band. Sun, occupancy and kitchen use can change the result.</p>
+<h3>Does ceiling height matter?</h3>
+<p>Yes. The published ENERGY STAR chart is based on an 8 ft ceiling and notes that higher ceilings may require more capacity. ToolVault makes its higher-ceiling approximation explicit rather than hiding it inside the result.</p>
+<h3>Can I use this for a whole house?</h3>
+<p>No. This is a room/zone sizing estimate. Whole-home HVAC sizing should use a detailed load calculation.</p>
+
+<h2>Related calculators</h2>
+<div class="related">
+<a class="rel" href="/solar/solar-load-calculator.html"><strong>Solar Load Calculator</strong><span>Estimate appliance load and PV capacity.</span></a>
+<a class="rel" href="/construction/concrete-calculator.html"><strong>Concrete Calculator</strong><span>Estimate concrete volume for construction.</span></a>
+<a class="rel" href="/calculators/"><strong>All Calculators</strong><span>Explore the ToolVault calculator library.</span></a>
+</div>
+</div>
+</details>
+</main>
+<footer><div class="wrap">© 2026 ToolVault · Free practical tools for the web.</div></footer>
+
+<script type="module">
+import {calculateAcBtu,conversions} from "./ac-btu-engine.js";
+
+const $=id=>document.getElementById(id);
+const lengthFactors={ft:0.3048,m:1,in:0.0254,cm:0.01};
+let quickSystem="imperial";
+
+function num(id){const n=Number($(id).value);return Number.isFinite(n)?Math.max(0,n):0}
+function fmt(n,d=0){if(!Number.isFinite(n))return "—";return new Intl.NumberFormat(undefined,{maximumFractionDigits:d}).format(n)}
+function unitFor(id){return $(id+"Unit").value}
+function toM(id){return num(id)*lengthFactors[unitFor(id)]}
+function fromM(m,u){return m/lengthFactors[u]}
+
+function convertField(id,nextUnit){
+  const sel=$(id+"Unit"), old=sel.value,v=num(id);
+  if(v>0) $(id).value=String(Number((v*lengthFactors[old]/lengthFactors[nextUnit]).toFixed(6)));
+  sel.value=nextUnit;
+}
+
+function setQuick(next){
+  const target=next==="metric"?"m":"ft";
+  ["length","width","ceiling"].forEach(id=>convertField(id,target));
+  quickSystem=next;
+  document.querySelectorAll(".quick-unit").forEach(b=>b.classList.toggle("active",b.dataset.quick===next));
+  calculate();
+}
+
+function selectedSun(){return document.querySelector('input[name="sun"]:checked')?.value||"normal"}
+function selectedKitchen(){return document.querySelector('input[name="kitchen"]:checked')?.value==="yes"}
+
+function calculate(){
+  const result=calculateAcBtu({
+    lengthM:toM("length"),
+    widthM:toM("width"),
+    ceilingM:toM("ceiling"),
+    occupants:num("occupants"),
+    sunExposure:selectedSun(),
+    kitchen:selectedKitchen()
+  });
+
+  const err=$("error"),results=$("results"),breakdown=$("breakdown");
+  err.innerHTML=""; results.innerHTML=""; breakdown.innerHTML="";
+
+  if(!result.ok){
+    err.innerHTML='<div class="error">'+result.error+'</div>';
+    $("recommended").textContent="—";
+    $("recommendedNote").textContent=result.areaSqFt?fmt(result.areaSqFt,0)+" ft² room area":"Enter valid room measurements.";
+    return;
+  }
+
+  $("recommended").textContent=fmt(result.recommendedBTU,0)+" BTU/h";
+  $("recommendedNote").textContent=fmt(result.recommendedTons,2)+" ton · "+fmt(result.recommendedCoolingKW,2)+" kW cooling";
+  results.innerHTML=[
+    ["Estimated cooling load",fmt(result.estimatedBTU,0)+" BTU/h","before selecting the equipment size"],
+    ["Recommended AC size",fmt(result.recommendedBTU,0)+" BTU/h","next standard room-AC size"],
+    ["Room area",fmt(result.areaSqFt,0)+" ft²","≈ "+fmt(result.areaM2,2)+" m²"],
+    ["Recommended capacity",fmt(result.recommendedTons,2)+" ton","1 ton = 12,000 BTU/h"]
+  ].map((x,i)=>'<div class="metric '+(i<2?"primary":"")+'"><span>'+x[0]+'</span><b>'+x[1]+'</b><small>'+x[2]+'</small></div>').join("");
+
+  const rows=[
+    ["Room size chart",fmt(result.chartBaseBTU,0)+" BTU/h"],
+    ["Ceiling adjustment",fmt(result.ceilingFactor,2)+" ×"],
+    ["Sunlight adjustment",(result.sunFactor===1?"No change":(result.sunFactor>1?"+10%":"−10%"))],
+    ["Extra people",result.extraOccupants>0?"+"+fmt(result.occupantBTU,0)+" BTU/h":"No extra allowance"],
+    ["Kitchen",result.kitchen?"+4,000 BTU/h":"No kitchen allowance"]
+  ];
+  breakdown.innerHTML='<h3>How your result was built</h3>'+rows.map(r=>'<div class="breakrow"><span>'+r[0]+'</span><span>'+r[1]+'</span></div>').join("");
+}
+
+function reset(){
+  $("length").value=15;$("width").value=12;$("ceiling").value=8;$("occupants").value=2;
+  $("lengthUnit").value="ft";$("widthUnit").value="ft";$("ceilingUnit").value="ft";
+  $("sun-normal").checked=true;$("kitchen-no").checked=true;quickSystem="imperial";
+  document.querySelectorAll(".quick-unit").forEach(b=>b.classList.toggle("active",b.dataset.quick==="imperial"));
+  calculate();
+}
+
+["length","width","ceiling"].forEach(id=>{
+  $(""+id+"Unit").addEventListener("change",calculate);
+  $(id).addEventListener("input",calculate);
+});
+$("occupants").addEventListener("input",calculate);
+document.querySelectorAll('input[name="sun"],input[name="kitchen"]').forEach(x=>x.addEventListener("change",calculate));
+document.querySelectorAll(".quick-unit").forEach(b=>b.addEventListener("click",()=>setQuick(b.dataset.quick)));
+$("calculate").addEventListener("click",calculate);
+$("reset").addEventListener("click",reset);
+calculate();
+</script>
+</body>
+</html>
