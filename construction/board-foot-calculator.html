@@ -34,7 +34,7 @@
 header{background:rgba(255,255,255,.97);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20;backdrop-filter:blur(10px)}.nav{min-height:68px;display:flex;align-items:center;justify-content:space-between}.logo{font-size:24px;font-weight:950}.logo span{color:var(--brand)}.nav a{font-size:13px;color:var(--brand2);font-weight:850}
 main{padding:24px 0 58px}.crumb{font-size:12px;color:var(--muted);margin-bottom:14px}.crumb a{color:var(--brand2);font-weight:800}.hero{background:linear-gradient(135deg,#fff,#f6fbf9);border:1px solid var(--line);border-radius:21px;padding:29px;box-shadow:var(--shadow)}.eyebrow{display:inline-flex;background:var(--woodsoft);color:var(--wood);padding:7px 11px;border-radius:999px;font-size:11px;font-weight:900}.hero h1{font-size:clamp(35px,5vw,53px);line-height:1.03;letter-spacing:-2px;margin:13px 0 8px}.hero p{max-width:850px;color:var(--muted);font-size:15px;margin:0}
 .tool{display:grid;grid-template-columns:minmax(0,1.16fr) minmax(320px,.84fr);gap:17px;margin-top:18px}.card{background:var(--surface);border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);overflow:hidden}.head{padding:19px 21px;border-bottom:1px solid var(--line)}.head h2{margin:0;font-size:20px}.head p{margin:5px 0 0;font-size:12px;color:var(--muted)}.body{padding:19px 21px}
-.unitbar{display:flex;gap:8px;margin-bottom:14px}.unit{border:1px solid var(--line);background:var(--surface2);color:#56645f;padding:9px 13px;border-radius:10px;font-size:12px;font-weight:900;cursor:pointer}.unit.active{background:#24282a;border-color:#24282a;color:#fff}
+.unitbar{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}.unit{border:1px solid var(--line);background:var(--surface2);color:#56645f;padding:9px 13px;border-radius:10px;font-size:12px;font-weight:900;cursor:pointer}.unit.active{background:#24282a;border-color:#24282a;color:#fff}.measure{display:grid;grid-template-columns:minmax(0,1fr) 82px}.measure input{border-radius:9px 0 0 9px}.measure select{border:1px solid #c8dad4;border-left:0;border-radius:0 9px 9px 0;padding:10px 6px;background:#f4faf7;color:var(--brand2);font-size:11px;font-weight:850;outline:none}.measure select:focus{border-color:#7bbcad;box-shadow:0 0 0 3px rgba(11,143,120,.08)}.unit-note{font-size:9px;color:#84918c;margin:3px 0 12px}
 .board-list{display:grid;gap:11px}.board{border:1px solid var(--line);border-radius:13px;background:#fbfdfc;padding:13px}.board-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.board-top strong{font-size:12px}.remove{border:1px solid #ead2cc;background:#fff7f4;color:#a14b35;border-radius:8px;padding:5px 8px;font-size:10px;font-weight:900;cursor:pointer}
 .fields{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:9px}.field label{display:block;font-size:10px;font-weight:900;margin-bottom:5px}.field input,.field select{width:100%;border:1px solid #c8dad4;border-radius:9px;padding:10px;background:#fbfefd;color:var(--ink);font-size:12px;outline:none}.field input:focus,.field select:focus{border-color:#7bbcad;box-shadow:0 0 0 3px rgba(11,143,120,.08)}.hint{font-size:9px;color:#84918c;margin-top:4px;line-height:1.35}.result-line{display:flex;justify-content:space-between;gap:10px;margin-top:9px;padding-top:9px;border-top:1px dashed #d9e4e0;font-size:10px;color:var(--muted)}.result-line b{color:var(--brand2);font-size:12px}
 .add{width:100%;margin-top:10px;border:1px dashed #9fcfc2;background:#f6fcfa;color:var(--brand2);border-radius:10px;padding:10px;font-size:12px;font-weight:900;cursor:pointer}
@@ -58,7 +58,7 @@ footer{border-top:1px solid var(--line);padding:25px 0;background:#fff;color:#74
 <section class="card">
 <div class="head"><h2>Lumber list</h2><p>Add one row for each different board size. Fractional dimensions such as 3/4 are supported.</p></div>
 <div class="body">
-<div class="unitbar"><button class="unit active" type="button" data-unit="imperial">Imperial (in / ft)</button><button class="unit" type="button" data-unit="metric">Metric (mm / m)</button></div>
+<div class="unitbar"><button class="unit active" type="button" data-unit="imperial">Quick set: Imperial</button><button class="unit" type="button" data-unit="metric">Quick set: Metric</button></div><div class="unit-note">Each board dimension has its own unit selector. Thickness/width can use mm, cm or in; board length can use in, ft or m.</div>
 <div class="board-list" id="boards"></div>
 <button class="add" id="addBoard" type="button">＋ Add another board size</button>
 <div class="preset-note"><strong>Important:</strong> board feet is a volume measure. For hardwood pricing, use the thickness and width that your supplier uses for billing. Standard lumber names such as 2×4 can refer to nominal sizes rather than the actual surfaced dimensions.</div>
@@ -166,157 +166,90 @@ footer{border-top:1px solid var(--line);padding:25px 0;background:#fff;color:#74
 <footer><div class="wrap">© 2026 ToolVault · Free practical tools for the web.</div></footer>
 
 <script type="module">
-import {calculateProject,calculateBoard,parseFraction} from './board-foot-engine.js';
-
+import {calculateProject,parseFraction} from './board-foot-engine.js';
 const $=id=>document.getElementById(id);
 let unit="imperial",nextId=1,lastPresetTarget=null;
-
+const THICK_UNITS={mm:0.03937007874015748,cm:0.3937007874015748,in:1};
+const WIDTH_UNITS={mm:0.03937007874015748,cm:0.3937007874015748,in:1};
+const LENGTH_UNITS={in:1,ft:12,m:39.37007874015748};
+const dimKeys={thickness:{units:["mm","cm","in"],factor:THICK_UNITS},width:{units:["mm","cm","in"],factor:WIDTH_UNITS},length:{units:["in","ft","m"],factor:LENGTH_UNITS}};
 function num(v,f=0){const n=Number(v);return Number.isFinite(n)?Math.max(0,n):f}
 function fmt(v,max=2){return new Intl.NumberFormat("en-US",{minimumFractionDigits:0,maximumFractionDigits:max}).format(v)}
-
-function toIn(value,field){
-  if(unit==="imperial") return parseFraction(value,0);
-  return parseFraction(value,0)/25.4;
+function factorFor(key,u){return dimKeys[key].factor[u]}
+function toBase(value,key,u){return parseFraction(value,0)*factorFor(key,u)}
+function fromBase(value,key,u){return value/factorFor(key,u)}
+function unitsHtml(key,current){return dimKeys[key].units.map(u=>'<option value="'+u+'" '+(u===current?'selected':'')+'>'+u+'</option>').join("")}
+function fieldHtml(label,key,value,kind,unitValue){
+  if(kind==="quantity") return '<div class="field"><label>'+label+'</label><input data-key="'+key+'" data-kind="quantity" type="number" min="0" step="1" value="'+value+'"></div>';
+  return '<div class="field"><label>'+label+'</label><div class="measure"><input data-key="'+key+'" data-kind="'+kind+'" type="text" inputmode="decimal" value="'+value+'"><select class="row-unit" data-key-unit="'+key+'">'+unitsHtml(key,unitValue)+'</select></div></div>';
 }
-function toFt(value){
-  if(unit==="imperial") return parseFraction(value,0);
-  return parseFraction(value,0)/0.3048;
-}
-function fromIn(v){return unit==="imperial"?v:v*25.4}
-function fromFt(v){return unit==="imperial"?v:v*0.3048}
-
-function fieldHtml(label,key,value,kind){
-  const suffix=kind==="length"?(unit==="imperial"?"ft":"m"):(unit==="imperial"?"in":"mm");
-  return '<div class="field"><label>'+label+' <span style="color:#87938f;font-weight:700">('+suffix+')</span></label><input data-key="'+key+'" data-kind="'+kind+'" type="text" inputmode="decimal" value="'+value+'"></div>';
-}
-
 function addBoard(initial={},preserve=false){
-  const box=document.createElement("div");
-  box.className="board";box.dataset.id=String(nextId++);
-  box.innerHTML=
-    '<div class="board-top"><strong>Board '+box.dataset.id+'</strong><button class="remove" type="button">Remove</button></div>'+
-    '<div class="fields" data-fields></div>'+
-    '<div class="result-line"><span>Board feet for this row</span><b data-row-result>— BF</b></div>';
+  const box=document.createElement("div"); box.className="board"; box.dataset.id=String(nextId++);
+  box.innerHTML='<div class="board-top"><strong>Board '+box.dataset.id+'</strong><button class="remove" type="button">Remove</button></div><div class="fields" data-fields></div><div class="result-line"><span>Board feet for this row</span><b data-row-result>— BF</b></div>';
   $("boards").appendChild(box);
-
-  function values(){
-    const get=k=>box.querySelector('[data-key="'+k+'"]')?.value||"";
-    return {name:"Board "+box.dataset.id,thickness:get("thickness"),width:get("width"),length:get("length"),quantity:get("quantity")};
-  }
+  function values(){ const get=k=>box.querySelector('[data-key="'+k+'"]')?.value||""; const u=k=>box.querySelector('[data-key-unit="'+k+'"]')?.value||defaultUnitFor(k); return {name:"Board "+box.dataset.id,thickness:get("thickness"),width:get("width"),length:get("length"),quantity:get("quantity"),thicknessUnit:u("thickness"),widthUnit:u("width"),lengthUnit:u("length")};}
   function render(){
     const v=values();
     const defaults=unit==="imperial"
       ? {thickness:v.thickness||"1",width:v.width||"6",length:v.length||"8",quantity:v.quantity||"1"}
-      : {thickness:v.thickness? v.thickness : "25.4",width:v.width? v.width : "152.4",length:v.length? v.length : "2.4384",quantity:v.quantity||"1"};
-    box.querySelector("[data-fields]").innerHTML=
-      fieldHtml("Thickness","thickness",defaults.thickness,"thickness")+
-      fieldHtml("Width","width",defaults.width,"width")+
-      fieldHtml("Length","length",defaults.length,"length")+
-      fieldHtml("Quantity","quantity",defaults.quantity,"quantity");
+      : {thickness:v.thickness||"25.4",width:v.width||"152.4",length:v.length||"2.4384",quantity:v.quantity||"1"};
+    const u={thickness:v.thicknessUnit||defaultUnitFor("thickness"),width:v.widthUnit||defaultUnitFor("width"),length:v.lengthUnit||defaultUnitFor("length")};
+    box.querySelector("[data-fields]").innerHTML=fieldHtml("Thickness","thickness",defaults.thickness,"thickness",u.thickness)+fieldHtml("Width","width",defaults.width,"width",u.width)+fieldHtml("Length","length",defaults.length,"length",u.length)+fieldHtml("Quantity","quantity",defaults.quantity,"quantity","qty");
     box.querySelectorAll("input").forEach(i=>i.addEventListener("input",()=>{lastPresetTarget=box;calculate()}));
+    box.querySelectorAll("select.row-unit").forEach(sel=>sel.addEventListener("change",()=>{ const key=sel.dataset.keyUnit; const input=box.querySelector('[data-key="'+key+'"]'); const old=sel.dataset.prev||sel.value; const v=parseFraction(input.value,0); if(input.value.trim()&&Number.isFinite(v)){ const base=toBase(v,key,old); input.value=String(Number(fromBase(base,key,sel.value).toFixed(6))); } sel.dataset.prev=sel.value; calculate(); }));
+    box.querySelectorAll("select.row-unit").forEach(sel=>sel.dataset.prev=sel.value);
   }
   box.querySelector(".remove").addEventListener("click",()=>{box.remove();calculate()});
-  render();calculate();
-  return box;
+  render();calculate();return box;
 }
-
+function defaultUnitFor(key){
+  if(unit==="imperial") return key==="length"?"ft":"in";
+  return key==="length"?"m":"mm";
+}
 function getRows(){
   return [...document.querySelectorAll(".board")].map(box=>{
-    const get=k=>box.querySelector('[data-key="'+k+'"]')?.value||"";
-    const thicknessIn=toIn(get("thickness"),"thickness");
-    const widthIn=toIn(get("width"),"width");
-    const lengthFt=toFt(get("length"));
-    const quantity=Math.max(0,Math.floor(num(get("quantity"),1)));
+    const value=k=>box.querySelector('[data-key="'+k+'"]')?.value||"";
+    const u=k=>box.querySelector('[data-key-unit="'+k+'"]')?.value||defaultUnitFor(k);
+    const thicknessIn=toBase(value("thickness"),"thickness",u("thickness"));
+    const widthIn=toBase(value("width"),"width",u("width"));
+    const lengthFt=toBase(value("length"),"length",u("length"))/12;
+    const quantity=Math.max(0,Math.floor(num(value("quantity"),1)));
     return {name:"Board "+box.dataset.id,thicknessIn,widthIn,lengthFt,quantity,box};
   });
 }
 function calculate(){
   const raw=getRows();
   const project=calculateProject({rows:raw.map(x=>({name:x.name,thicknessIn:x.thicknessIn,widthIn:x.widthIn,lengthFt:x.lengthFt,quantity:x.quantity})),wastePercent:num($("globalWaste").value,10),pricePerBF:num($("price").value,0)});
-  raw.forEach((row,i)=>{
-    const item=project.items[i];
-    if(row.box) row.box.querySelector("[data-row-result]").textContent=fmt(item.boardFeet,2)+" BF";
-  });
+  raw.forEach((row,i)=>{const item=project.items[i];if(row.box)row.box.querySelector("[data-row-result]").textContent=fmt(item.boardFeet,2)+" BF";});
   $("resultTitle").textContent=project.totalPieces>0?"Lumber quantity estimate":"Enter your lumber";
-  $("rawBF").textContent=fmt(project.rawBoardFeet,2);
-  $("wasteBF").textContent=fmt(project.wasteBoardFeet,2);
-  $("purchaseBF").textContent=fmt(project.purchaseBoardFeet,2);
-  $("pieces").textContent=fmt(project.totalPieces,0);
-  $("cubicFt").textContent=fmt(project.cubicFeet,3);
-  $("cubicM").textContent=fmt(project.cubicMeters,4);
-  const currency=($("currency").value||"$").trim();
-  $("cost").textContent=project.cost==null?"Add an optional price per board foot":currency+" "+fmt(project.cost,2);
+  $("rawBF").textContent=fmt(project.rawBoardFeet,2);$("wasteBF").textContent=fmt(project.wasteBoardFeet,2);$("purchaseBF").textContent=fmt(project.purchaseBoardFeet,2);$("pieces").textContent=fmt(project.totalPieces,0);$("cubicFt").textContent=fmt(project.cubicFeet,3);$("cubicM").textContent=fmt(project.cubicMeters,4);
+  const currency=($("currency").value||"$").trim();$("cost").textContent=project.cost==null?"Add an optional price per board foot":currency+" "+fmt(project.cost,2);
 }
-
-function convertUnit(next){
-  if(next===unit)return;
-  const oldUnit=unit;
+function setQuickSystem(next){
+  const target={thickness:next==="imperial"?"in":"mm",width:next==="imperial"?"in":"mm",length:next==="imperial"?"ft":"m"};
   document.querySelectorAll(".board").forEach(box=>{
-    box.querySelectorAll("input[data-kind]").forEach(input=>{
-      const kind=input.dataset.kind,val=input.value;
-      if(kind==="quantity")return;
-      if(kind==="length"){
-        const oldFt=oldUnit==="imperial"?parseFraction(val):parseFraction(val)/0.3048;
-        input.value=next==="imperial"
-          ? String(Number(oldFt.toFixed(4)))
-          : String(Number((oldFt*0.3048).toFixed(4)));
-      }else{
-        const oldIn=oldUnit==="imperial"?parseFraction(val):parseFraction(val)/25.4;
-        input.value=next==="imperial"
-          ? String(Number(oldIn.toFixed(4)))
-          : String(Number((oldIn*25.4).toFixed(4)));
-      }
-    });
+    ["thickness","width","length"].forEach(key=>{const input=box.querySelector('[data-key="'+key+'"]'),sel=box.querySelector('[data-key-unit="'+key+'"]'); if(!input||!sel)return; const old=sel.value,v=parseFraction(input.value,0); if(input.value.trim()){const base=toBase(v,key,old);input.value=String(Number(fromBase(base,key,target[key]).toFixed(6)));} sel.value=target[key];sel.dataset.prev=target[key];});
   });
-  unit=next;
-  document.querySelectorAll(".unit").forEach(x=>x.classList.toggle("active",x.dataset.unit===unit));
-  document.querySelectorAll(".board").forEach(box=>{
-    const vals={};
-    box.querySelectorAll("input[data-key]").forEach(i=>vals[i.dataset.key]=i.value);
-    box.querySelector("[data-fields]").innerHTML=
-      fieldHtml("Thickness","thickness",vals.thickness,"thickness")+
-      fieldHtml("Width","width",vals.width,"width")+
-      fieldHtml("Length","length",vals.length,"length")+
-      fieldHtml("Quantity","quantity",vals.quantity,"quantity");
-    box.querySelectorAll("input").forEach(i=>i.addEventListener("input",calculate));
-  });
-  calculate();
+  unit=next;document.querySelectorAll(".unit").forEach(x=>x.classList.toggle("active",x.dataset.unit===unit));calculate();
 }
-
 function applyPreset(value){
-  const box=lastPresetTarget||document.querySelector(".board");
-  if(!box||!value)return;
-  const set=(key,val)=>{const i=box.querySelector('[data-key="'+key+'"]');if(i)i.value=unit==="imperial"?val:String(Number((val*25.4).toFixed(4)))};
-  const presets={
-    "2x4":[1.5,3.5],
-    "2x6":[1.5,5.5],
-    "2x8":[1.5,7.25],
-    "2x10":[1.5,9.25],
-    "2x12":[1.5,11.25],
-    "4/4":[1, null],
-    "5/4":[1.25,null],
-    "6/4":[1.5,null],
-    "8/4":[2,null],
-    "12/4":[3,null]
-  };
+  const box=lastPresetTarget||document.querySelector(".board");if(!box||!value)return;
+  const presets={"2x4":[1.5,3.5],"2x6":[1.5,5.5],"2x8":[1.5,7.25],"2x10":[1.5,9.25],"2x12":[1.5,11.25],"4/4":[1,null],"5/4":[1.25,null],"6/4":[1.5,null],"8/4":[2,null],"12/4":[3,null]};
   const p=presets[value];if(!p)return;
-  set("thickness",p[0]);
-  if(p[1]!=null)set("width",p[1]);
-  calculate();
+  const set=(key,inches)=>{const input=box.querySelector('[data-key="'+key+'"]'),sel=box.querySelector('[data-key-unit="'+key+'"]');if(!input||!sel)return;input.value=String(Number(fromBase(inches,key,sel.value).toFixed(6)));};
+  set("thickness",p[0]);if(p[1]!=null)set("width",p[1]);calculate();
 }
 function reset(){
-  $("boards").innerHTML="";nextId=1;unit="imperial";lastPresetTarget=null;
-  $("globalWaste").value=10;$("price").value="";$("currency").value="$";$("preset").value="";
-  document.querySelectorAll(".unit").forEach(x=>x.classList.toggle("active",x.dataset.unit===unit));
-  addBoard();calculate();
+  $("boards").innerHTML="";nextId=1;lastPresetTarget=null;unit="imperial";$("globalWaste").value=10;$("price").value="";$("currency").value="$";$("preset").value="";
+  document.querySelectorAll(".unit").forEach(x=>x.classList.toggle("active",x.dataset.unit==="imperial"));addBoard();calculate();
 }
-
-document.querySelectorAll(".unit").forEach(btn=>btn.addEventListener("click",()=>convertUnit(btn.dataset.unit)));
+document.querySelectorAll(".unit").forEach(btn=>btn.addEventListener("click",()=>setQuickSystem(btn.dataset.unit)));
 $("addBoard").addEventListener("click",()=>{lastPresetTarget=addBoard();});
 $("preset").addEventListener("change",e=>{applyPreset(e.target.value);e.target.value=""});
-["globalWaste","price","currency"].forEach(id=>$(id).addEventListener("input",calculate));
-$("calculate").addEventListener("click",calculate);$("reset").addEventListener("click",reset);
+["globalWaste","price","currency"].forEach(id=>$(id).addEventListener("input",calculate));$("calculate").addEventListener("click",calculate);$("reset").addEventListener("click",reset);
 addBoard();calculate();
 </script>
+</body>
+</html>
 </body>
 </html>
