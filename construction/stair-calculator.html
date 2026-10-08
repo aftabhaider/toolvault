@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stair Calculator — Rise, Run, Risers & Stringer Length | ToolVault</title>
+<meta name="description" content="Free stair calculator for straight stairs. Calculate riser height, tread count, total run, stair angle, stringer length, fit and optional planning-reference checks in imperial or metric units.">
+<link rel="canonical" href="https://toolvault.aftabjordan1.workers.dev/construction/stair-calculator.html">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="theme-color" content="#0b8f78">
+<meta property="og:site_name" content="ToolVault">
+<meta property="og:title" content="Stair Calculator — Rise, Run, Risers & Stringer Length | ToolVault">
+<meta property="og:description" content="Calculate straight-stair risers, treads, total run, angle, stringer length and fit in metric or imperial units.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://toolvault.aftabjordan1.workers.dev/construction/stair-calculator.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Stair Calculator — Rise, Run, Risers & Stringer Length | ToolVault">
+<meta name="twitter:description" content="Calculate straight-stair rise, run, stringer length and optional planning checks.">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"WebApplication","@id":"https://toolvault.aftabjordan1.workers.dev/construction/stair-calculator.html#app","name":"Stair Calculator","url":"https://toolvault.aftabjordan1.workers.dev/construction/stair-calculator.html","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires a modern web browser","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
+{"@type":"WebPage","@id":"https://toolvault.aftabjordan1.workers.dev/construction/stair-calculator.html#page","url":"https://toolvault.aftabjordan1.workers.dev/construction/stair-calculator.html","name":"Stair Calculator — Rise, Run, Risers & Stringer Length","isPartOf":{"@type":"WebSite","name":"ToolVault","url":"https://toolvault.aftabjordan1.workers.dev/"}},
+{"@type":"BreadcrumbList","itemListElement":[
+{"@type":"ListItem","position":1,"name":"ToolVault","item":"https://toolvault.aftabjordan1.workers.dev/"},
+{"@type":"ListItem","position":2,"name":"Construction","item":"https://toolvault.aftabjordan1.workers.dev/construction/"},
+{"@type":"ListItem","position":3,"name":"Stair Calculator","item":"https://toolvault.aftabjordan1.workers.dev/construction/stair-calculator.html"}]}
+]}
+</script>
+<style>
+:root{--page:#edf5f2;--surface:#fff;--surface2:#f7fbfa;--ink:#202927;--muted:#697672;--line:#d5e1dd;--brand:#0b8f78;--brand2:#086c5b;--soft:#e4f6f0;--warm:#f5ece4;--warmink:#8b6648;--shadow:0 8px 24px rgba(25,42,38,.07)}
+*{box-sizing:border-box}body{margin:0;background:var(--page);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.55}a{text-decoration:none;color:inherit}.wrap{max-width:1120px;margin:auto;padding:0 20px}
+header{background:rgba(255,255,255,.97);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20;backdrop-filter:blur(10px)}.nav{min-height:68px;display:flex;align-items:center;justify-content:space-between}.logo{font-size:24px;font-weight:950}.logo span{color:var(--brand)}.nav a{font-size:13px;color:var(--brand2);font-weight:850}
+main{padding:24px 0 58px}.crumb{font-size:12px;color:var(--muted);margin-bottom:14px}.crumb a{color:var(--brand2);font-weight:800}.hero{background:linear-gradient(135deg,#fff,#f5fbf9);border:1px solid var(--line);border-radius:21px;padding:29px;box-shadow:var(--shadow)}.eyebrow{display:inline-flex;background:var(--warm);color:var(--warmink);padding:7px 11px;border-radius:999px;font-size:11px;font-weight:900}.hero h1{font-size:clamp(35px,5vw,53px);line-height:1.03;letter-spacing:-2px;margin:13px 0 8px}.hero p{max-width:900px;color:var(--muted);font-size:15px;margin:0}
+.tool{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(320px,.88fr);gap:17px;margin-top:18px}.card{background:var(--surface);border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);overflow:hidden}.head{padding:19px 21px;border-bottom:1px solid var(--line)}.head h2{margin:0;font-size:20px}.head p{margin:5px 0 0;font-size:12px;color:var(--muted)}.body{padding:19px 21px}
+.unitbar{display:flex;gap:8px;margin-bottom:14px}.unit{border:1px solid var(--line);background:var(--surface2);color:#56645f;padding:9px 13px;border-radius:10px;font-size:12px;font-weight:900;cursor:pointer}.unit.active{background:#24282a;border-color:#24282a;color:#fff}
+.fields{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:10px}.field label{display:block;font-size:10px;font-weight:900;margin-bottom:5px}.field input,.field select{width:100%;border:1px solid #c8dad4;border-radius:9px;padding:10px;background:#fbfefd;color:var(--ink);font-size:12px;outline:none}.field input:focus,.field select:focus{border-color:#7bbcad;box-shadow:0 0 0 3px rgba(11,143,120,.08)}.hint{font-size:9px;color:#84918c;margin-top:4px;line-height:1.35}
+.advanced{margin-top:12px;border:1px solid var(--line);border-radius:11px;overflow:hidden}.advanced summary{cursor:pointer;list-style:none;padding:12px 14px;background:#f8fbfa;color:var(--brand2);font-size:12px;font-weight:900}.advanced summary::-webkit-details-marker{display:none}.advanced summary:before{content:'+';display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;background:var(--soft);margin-right:8px}.advanced[open] summary:before{content:'−'}.advanced-body{padding:14px;border-top:1px solid var(--line)}.advanced-body h3{font-size:13px;margin:0 0 8px}.advanced-body p{font-size:11px;color:var(--muted);margin:0 0 13px}
+.action-row{display:flex;gap:8px;margin-top:14px}.primary{border:0;border-radius:10px;padding:12px 15px;background:var(--brand);color:#fff;font-weight:900;cursor:pointer}.secondary{border:1px solid var(--line);border-radius:10px;padding:12px 15px;background:#fff;color:var(--brand2);font-weight:900;cursor:pointer}
+.result-head{padding:20px;background:linear-gradient(135deg,#0d3029,#087f6b);color:#fff}.result-head small{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;opacity:.72}.result-head h2{font-size:21px;margin:5px 0 0}.results{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:13px}.metric{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--surface2)}.metric.primary{background:var(--soft);border-color:#c3e7dd}.metric span{display:block;font-size:10px;color:var(--muted);font-weight:850;text-transform:uppercase;letter-spacing:.04em}.metric b{display:block;font-size:19px;margin-top:4px}.metric small{font-size:10px;color:var(--muted)}.status{padding:0 13px 13px}.statusbox{border:1px solid var(--line);border-radius:11px;padding:11px 12px;background:#fbfdfc;font-size:11px}.pass{color:#176b55;font-weight:900}.fail{color:#a14b35;font-weight:900}
+.alert{margin:0 13px 13px;padding:11px 12px;border:1px solid #d7e4df;border-radius:11px;background:#f8fbfa;font-size:10px;color:#586760;line-height:1.45}
+.seo{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:17px;overflow:hidden;box-shadow:var(--shadow)}.seo summary{list-style:none;cursor:pointer;background:#f8fbfa;padding:15px 18px;color:var(--brand2);font-size:13px;font-weight:900}.seo summary::-webkit-details-marker{display:none}.seo summary:before{content:'+';display:inline-grid;place-items:center;width:21px;height:21px;border-radius:7px;background:var(--soft);margin-right:8px}.seo[open] summary:before{content:'−'}.seo-body{padding:23px}.seo-body h2{font-size:24px;letter-spacing:-.7px;margin:0 0 8px}.seo-body h2:not(:first-child){margin-top:27px}.seo-body h3{font-size:16px;margin:20px 0 6px}.seo-body p,.seo-body li{font-size:14px;color:#566760}.formula{padding:12px 14px;border-radius:11px;background:var(--soft);border:1px solid #c6e6dd;color:#245d52;font-weight:850;margin:11px 0}.example{padding:14px;border:1px solid var(--line);border-radius:11px;background:#fbfdfc}.formula-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.formula-grid .formula{margin:0}.related{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.rel{padding:13px;border:1px solid var(--line);border-radius:11px;background:#f7fbfa}.rel strong{display:block;font-size:12px;color:var(--brand2)}.rel span{font-size:10px;color:var(--muted)}
+footer{border-top:1px solid var(--line);padding:25px 0;background:#fff;color:#74807b;font-size:12px}
+@media(max-width:900px){.tool{grid-template-columns:1fr}.fields{grid-template-columns:1fr 1fr}.related{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.wrap{padding:0 14px}.hero{padding:23px 18px}.fields,.results,.related,.formula-grid{grid-template-columns:1fr}.action-row{flex-direction:column}}
+</style>
+</head>
+<body>
+<header><div class="wrap nav"><a class="logo" href="/">Tool<span>Vault</span></a><a href="/construction/">← Construction tools</a></div></header>
+<main class="wrap">
+<div class="crumb"><a href="/">ToolVault</a> / <a href="/construction/">Construction</a> / Stair Calculator</div>
+<section class="hero"><span class="eyebrow">🪜 Free stair rise & run calculator</span><h1>Stair Calculator</h1><p>Calculate a straight stair layout from total rise and tread depth. Get riser count, exact riser height, tread count, total run, stair angle and theoretical stringer length in metric or imperial units.</p></section>
+<div class="tool">
+<section class="card">
+<div class="head"><h2>Straight-stair inputs</h2><p>Keep the first three fields simple. Use Advanced settings only when your project needs a fit or planning check.</p></div>
+<div class="body">
+<div class="unitbar"><button class="unit active" type="button" data-unit="imperial">Imperial (in)</button><button class="unit" type="button" data-unit="metric">Metric (mm)</button></div>
+<div class="fields">
+<div class="field"><label for="totalRise">Total rise</label><input id="totalRise" type="text" inputmode="decimal" value="108"><div class="hint">Finished floor to finished floor vertical height.</div></div>
+<div class="field"><label for="targetRiser">Target riser height</label><input id="targetRiser" type="text" inputmode="decimal" value="7.5"><div class="hint">Used to choose a whole riser count when no override is set.</div></div>
+<div class="field"><label for="treadDepth">Tread depth / run</label><input id="treadDepth" type="text" inputmode="decimal" value="10"><div class="hint">Horizontal step depth per tread.</div></div>
+</div>
+<details class="advanced">
+<summary>Advanced settings: step count, fit, width, stringers & reference checks</summary>
+<div class="advanced-body">
+<h3>Project geometry</h3>
+<div class="fields">
+<div class="field"><label for="riserOverride">Riser count override</label><input id="riserOverride" type="number" min="0" step="1" placeholder="Auto"><div class="hint">Leave blank to calculate from total rise ÷ target riser.</div></div>
+<div class="field"><label for="availableRun">Available run</label><input id="availableRun" type="text" inputmode="decimal" placeholder="Optional"><div class="hint">Checks whether the calculated run fits your space.</div></div>
+<div class="field"><label for="stairWidth">Stair width</label><input id="stairWidth" type="text" inputmode="decimal" placeholder="Optional"><div class="hint">Used for optional width check and tread-area estimate.</div></div>
+<div class="field"><label for="stringerCount">Stringer count</label><input id="stringerCount" type="number" min="1" step="1" value="2"><div class="hint">Used only for total stringer material length.</div></div>
+<div class="field"><label for="waste">Waste allowance (%)</label><input id="waste" type="number" min="0" max="100" step="1" value="10"><div class="hint">Applied to total stringer length and tread-area estimate.</div></div>
+<div class="field"><label for="reference">Optional reference check</label><select id="reference"><option value="none">No code profile</option><option value="irc2021">2021 IRC residential reference</option></select><div class="hint">Reference only — local code and amendments control the project.</div></div>
+<div class="field"><label for="maxRiser">Max riser (optional)</label><input id="maxRiser" type="text" inputmode="decimal" placeholder="Auto from reference"><div class="hint">Leave blank unless using a custom limit.</div></div>
+<div class="field"><label for="minTread">Min tread (optional)</label><input id="minTread" type="text" inputmode="decimal" placeholder="Auto from reference"><div class="hint">Leave blank unless using a custom limit.</div></div>
+<div class="field"><label for="minWidth">Min width (optional)</label><input id="minWidth" type="text" inputmode="decimal" placeholder="Auto from reference"><div class="hint">Leave blank unless using a custom limit.</div></div>
+</div>
+<div class="alert">The 2021 IRC residential reference uses a 7¾ in maximum riser, 10 in minimum tread and 36 in clear-width baseline. It is not a universal building-code checker.</div>
+</div>
+</details>
+<div class="action-row"><button class="primary" id="calculate" type="button">Calculate stairs</button><button class="secondary" id="reset" type="button">Reset</button></div>
+</div>
+</section>
+<section class="card">
+<div class="result-head"><small>Calculated straight-stair layout</small><h2>Rise, run & stringer results</h2></div>
+<div id="results" class="results"></div>
+<div id="status" class="status"></div>
+<div id="alert"></div>
+</section>
+</div>
+<details class="seo" open>
+<summary>How to calculate stairs, formulas, examples & FAQ</summary>
+<div class="seo-body">
+<h2>How to use the stair calculator</h2>
+<ol><li>Measure total rise from lower finished floor to upper finished floor.</li><li>Enter a target riser height and the tread depth for each step.</li><li>The calculator chooses a whole number of risers and divides the rise evenly so every riser is equal.</li><li>Open Advanced settings for a fixed riser count, available-run fit check, stair width, stringer count, waste or optional reference limits.</li></ol>
+<h2>Stair calculator formulas</h2>
+<div class="formula-grid">
+<div class="formula">Riser count = ceil(Total rise ÷ Target riser height)</div>
+<div class="formula">Riser height = Total rise ÷ Riser count</div>
+<div class="formula">Treads = Riser count − 1</div>
+<div class="formula">Total run = Treads × Tread depth</div>
+<div class="formula">Stringer length = √(Total rise² + Total run²)</div>
+<div class="formula">Stair angle = arctan(Riser height ÷ Tread depth)</div>
+</div>
+<h2>What the inputs mean</h2>
+<p><strong>Total rise</strong> is the vertical distance between finished floor surfaces. <strong>Riser height</strong> is the vertical height of one step. <strong>Tread depth</strong> (or run) is the horizontal depth of one tread. For a straight stair flight, the upper floor or landing is the final walking level, so there is normally one fewer physical tread than risers.</p>
+<h2>Worked example</h2>
+<div class="example"><strong>Example: 108 in total rise, 7.5 in target riser, 10 in tread.</strong><br>Risers = ceil(108 ÷ 7.5) = 15.<br>Actual riser = 108 ÷ 15 = 7.2 in.<br>Treads = 15 − 1 = 14.<br>Total run = 14 × 10 = 140 in.<br>Stringer length = √(108² + 140²) ≈ 176.79 in (14.73 ft).<br>Angle = arctan(7.2 ÷ 10) ≈ 35.75°.<br>Comfort check 2R + T = 24.4 in, within the common 24–25 in planning range.</div>
+<h2>Accuracy and limitations</h2>
+<p>The arithmetic is performed with full floating-point precision and rounded only for display. The calculator is limited to straight-flight geometry. It does not calculate framing strength, stringer throat depth, cut layout, headroom clearance geometry, landings, handrails, guards, winders, spiral stairs, structural connections or permit approval.</p>
+<p>A theoretical stringer length is the diagonal of the total-rise/total-run triangle. Actual lumber length and cutting layout depend on the stair construction method, top and bottom cuts, tread thickness, attachment details and local practice. Do not treat the diagonal as a final cut list.</p>
+<h2>Reference checks are not code approval</h2>
+<p>The optional 2021 IRC residential reference is included because stair dimensions are often discussed in relation to IRC R311.7.5.1 and R311.7.5.2. The official ICC code text states a maximum riser of 7¾ inches; tread depth, width, headroom, landings and other requirements are separate checks. Codes are adopted and amended locally, so use the code edition actually adopted for the project.</p>
+<p>Reference: <a href="https://codes.iccsafe.org/content/IRC2021P1/chapter-3-building-planning" target="_blank" rel="noopener">2021 International Residential Code — ICC Digital Codes</a>.</p>
+<h2>Frequently asked questions</h2>
+<h3>How many risers should a staircase have?</h3><p>Choose a practical target riser height, divide total rise by that target and round up to a whole number. Then divide total rise by the chosen riser count so every riser is equal. A local code may impose a maximum riser height.</p>
+<h3>Why are there usually one fewer treads than risers?</h3><p>In a straight flight, the upper floor or landing is the final walking level. That means the number of physical treads is normally one less than the number of risers.</p>
+<h3>How do I calculate stair stringer length?</h3><p>For straight-stair geometry, use the Pythagorean theorem: stringer length = √(total rise² + total run²). The result is a theoretical diagonal, not a finished cut length.</p>
+<h3>What is a comfortable stair ratio?</h3><p>A common planning rule checks 2 × riser + tread depth against about 24–25 inches. This is a comfort guideline, not a universal code requirement.</p>
+<h3>Does this calculator guarantee code compliance?</h3><p>No. It provides arithmetic and optional reference checks only. Stair rules vary by jurisdiction, building type, code edition and amendments.</p>
+<h2>Related construction tools</h2>
+<div class="related">
+<a class="rel" href="/construction/board-foot-calculator.html"><strong>Board Foot Calculator</strong><span>Lumber volume and waste.</span></a>
+<a class="rel" href="/construction/paint-calculator.html"><strong>Paint Calculator</strong><span>Paint quantity from area and coats.</span></a>
+<a class="rel" href="/construction/concrete-calculator.html"><strong>Concrete Calculator</strong><span>Concrete volume and material estimates.</span></a>
+<a class="rel" href="/construction/mulch-calculator.html"><strong>Mulch Calculator</strong><span>Landscape volume and bags.</span></a>
+</div>
+</div>
+</details>
+</main>
+<footer><div class="wrap">© 2026 ToolVault · Free practical tools for the web.</div></footer>
+<script type="module">
+import { calculateStairs, parseFraction, inchesToMillimetres, millimetresToInches } from "./stair-engine.js";
+const $ = id => document.getElementById(id);
+const unitButtons = [...document.querySelectorAll(".unit")];
+const inputIds = ["totalRise","targetRiser","treadDepth","riserOverride","availableRun","stairWidth","stringerCount","waste","maxRiser","minTread","minWidth"];
+let unit = "imperial";
+const defaults = {
+  imperial: { totalRise:"108", targetRiser:"7.5", treadDepth:"10", riserOverride:"", availableRun:"", stairWidth:"", stringerCount:"2", waste:"10", maxRiser:"", minTread:"", minWidth:"" },
+  metric: { totalRise:"2743.2", targetRiser:"190.5", treadDepth:"254", riserOverride:"", availableRun:"", stairWidth:"", stringerCount:"2", waste:"10", maxRiser:"", minTread:"", minWidth:"" }
+};
+const referenceValues = { irc2021: {
+  imperial:{ maxRiser:7.75, minTread:10, minWidth:36 },
+  metric:{ maxRiser:196.85, minTread:254, minWidth:914.4 }
+} };
+function read(id){ return $(id).value.trim(); }
+function parse(id){ return parseFraction(read(id),0); }
+function fmt(n,digits=3){
+  if(!Number.isFinite(n)) return "—";
+  const d=Math.max(0,Math.min(6,digits));
+  return new Intl.NumberFormat(undefined,{maximumFractionDigits:d}).format(n);
+}
+function fmtLength(n){ return fmt(n,unit==="imperial"?2:1); }
+function displayValue(value,suffix){ return fmtLength(value)+" "+suffix; }
+function convertInput(id,from,to){
+  if(!["totalRise","targetRiser","treadDepth","availableRun","stairWidth","maxRiser","minTread","minWidth"].includes(id)) return;
+  const raw=read(id); if(!raw) return;
+  const n=parseFraction(raw,0); if(!(n>0)) return;
+  const converted=from==="imperial"&&to==="metric"?inchesToMillimetres(n):millimetresToInches(n);
+  $(id).value=String(Number(converted.toFixed(6)));
+}
+function setReferenceValues(clearOnNone=true){
+  const ref=$("reference").value;
+  if(ref==="irc2021"){
+    const v=referenceValues.irc2021[unit];
+    $("maxRiser").value=String(v.maxRiser);
+    $("minTread").value=String(v.minTread);
+    $("minWidth").value=String(v.minWidth);
+  }else if(clearOnNone){
+    $("maxRiser").value="";$("minTread").value="";$("minWidth").value="";
+  }
+}
+function calculate(){
+  const result=calculateStairs({
+    totalRise:parse("totalRise"),
+    targetRiser:parse("targetRiser"),
+    treadDepth:parse("treadDepth"),
+    riserCountOverride:parse("riserOverride"),
+    availableRun:parse("availableRun"),
+    stairWidth:parse("stairWidth"),
+    stringerCount:parse("stringerCount"),
+    wastePercent:parse("waste"),
+    maxRiser:parse("maxRiser"),
+    minTread:parse("minTread"),
+    minWidth:parse("minWidth")
+  });
+  const out=$("results"),status=$("status"),alert=$("alert");
+  if(!result.ok){
+    out.innerHTML='<div class="metric primary" style="grid-column:1/-1"><span>Input check</span><b>Enter valid dimensions</b><small>'+result.error+'</small></div>';
+    status.innerHTML="";alert.innerHTML="";return;
+  }
+  const suffix=unit==="imperial"?"in":"mm";
+  const areaSuffix=unit==="imperial"?"in²":"mm²";
+  const cards=[
+    ["Risers",fmt(result.risers,0),"equal-height vertical steps"],
+    ["Riser height",displayValue(result.actualRiser,suffix),"exact after whole-number riser count"],
+    ["Treads",fmt(result.treads,0),"normally one fewer than risers"],
+    ["Total run",displayValue(result.totalRun,suffix),"horizontal footprint of the flight"],
+    ["Stair angle",fmt(result.stairAngleDegrees,2)+"°","angle from the horizontal"],
+    ["Stringer length",displayValue(result.stringerLength,suffix),"theoretical diagonal only"]
+  ];
+  let html="";
+  cards.forEach((c,i)=>html+='<div class="metric '+(i===1||i===5?'primary':'')+'"><span>'+c[0]+'</span><b>'+c[1]+'</b><small>'+c[2]+'</small></div>');
+  html+='<div class="metric"><span>Step diagonal</span><b>'+displayValue(result.stepDiagonal,suffix)+'</b><small>rise/run increment along the stringer</small></div>';
+  html+='<div class="metric"><span>2R + T comfort check</span><b>'+fmt(result.comfortValue,2)+' '+suffix+'</b><small>'+result.comfortStatus+'</small></div>';
+  if(result.fit){
+    html+='<div class="metric"><span>Available run</span><b>'+displayValue(result.fit.availableRun,suffix)+'</b><small>'+(result.fit.fits?fmt(result.fit.spare,2)+" "+suffix+" spare":"exceeds space by "+fmt(result.fit.excess,2)+" "+suffix)+'</small></div>';
+  }
+  if(result.stairWidth>0){
+    html+='<div class="metric"><span>Tread surface area</span><b>'+fmt(result.treadAreaWithWaste,2)+' '+areaSuffix+'</b><small>all treads incl. '+fmt(result.wastePercent,0)+'% allowance</small></div>';
+  }
+  html+='<div class="metric"><span>Stringer material</span><b>'+displayValue(result.totalStringerLengthWithWaste,suffix)+'</b><small>'+fmt(result.stringerCount,0)+' stringers incl. '+fmt(result.wastePercent,0)+'% allowance</small></div>';
+  out.innerHTML=html;
+  let statusHtml="";
+  if(result.fit){
+    statusHtml+='<div class="statusbox">'+(result.fit.fits?'<span class="pass">✓ Run fits the available space.</span>':'<span class="fail">✕ Calculated run exceeds the available space.</span>')+'</div>';
+  }
+  if(result.code.maxRiser||result.code.minTread||result.code.minWidth){
+    const labels=[];
+    if(result.code.maxRiser) labels.push('Riser '+(result.code.maxRiser.pass?'passes':'fails')+' reference max');
+    if(result.code.minTread) labels.push('Tread '+(result.code.minTread.pass?'passes':'fails')+' reference minimum');
+    if(result.code.minWidth) labels.push('Width '+(result.code.minWidth.pass?'passes':'fails')+' reference minimum');
+    statusHtml+='<div class="statusbox" style="margin-top:8px"><span class="'+(result.codePass?'pass':'fail')+'">'+(result.codePass?'Reference checks passed':'Reference checks need review')+'</span><br>'+labels.join(' · ')+'</div>';
+  }
+  status.innerHTML=statusHtml;
+  alert.innerHTML='<div class="alert">Planning calculation only. Verify the adopted building code, headroom, landings, handrails, guards, structure and construction method before building.</div>';
+}
+function reset(){
+  const d=defaults[unit];inputIds.forEach(id=>$(id).value=d[id]);$("reference").value="none";calculate();
+}
+unitButtons.forEach(btn=>btn.addEventListener("click",()=>{
+  const next=btn.dataset.unit;if(next===unit)return;const old=unit;
+  inputIds.forEach(id=>convertInput(id,old,next));unit=next;
+  unitButtons.forEach(x=>x.classList.toggle("active",x===btn));setReferenceValues(false);calculate();
+}));
+$("reference").addEventListener("change",()=>setReferenceValues(true));
+$("calculate").addEventListener("click",calculate);
+$("reset").addEventListener("click",reset);
+inputIds.forEach(id=>$(id).addEventListener("input",calculate));
+setReferenceValues();calculate();
+</script>
+</body>
+</html>
