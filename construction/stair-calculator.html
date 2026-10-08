@@ -32,7 +32,7 @@
 header{background:rgba(255,255,255,.97);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20;backdrop-filter:blur(10px)}.nav{min-height:68px;display:flex;align-items:center;justify-content:space-between}.logo{font-size:24px;font-weight:950}.logo span{color:var(--brand)}.nav a{font-size:13px;color:var(--brand2);font-weight:850}
 main{padding:24px 0 58px}.crumb{font-size:12px;color:var(--muted);margin-bottom:14px}.crumb a{color:var(--brand2);font-weight:800}.hero{background:linear-gradient(135deg,#fff,#f5fbf9);border:1px solid var(--line);border-radius:21px;padding:29px;box-shadow:var(--shadow)}.eyebrow{display:inline-flex;background:var(--warm);color:var(--warmink);padding:7px 11px;border-radius:999px;font-size:11px;font-weight:900}.hero h1{font-size:clamp(35px,5vw,53px);line-height:1.03;letter-spacing:-2px;margin:13px 0 8px}.hero p{max-width:900px;color:var(--muted);font-size:15px;margin:0}
 .tool{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(320px,.88fr);gap:17px;margin-top:18px}.card{background:var(--surface);border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);overflow:hidden}.head{padding:19px 21px;border-bottom:1px solid var(--line)}.head h2{margin:0;font-size:20px}.head p{margin:5px 0 0;font-size:12px;color:var(--muted)}.body{padding:19px 21px}
-.unitbar{display:flex;gap:8px;margin-bottom:14px}.unit{border:1px solid var(--line);background:var(--surface2);color:#56645f;padding:9px 13px;border-radius:10px;font-size:12px;font-weight:900;cursor:pointer}.unit.active{background:#24282a;border-color:#24282a;color:#fff}
+.unitbar{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}.unit{border:1px solid var(--line);background:var(--surface2);color:#56645f;padding:9px 13px;border-radius:10px;font-size:12px;font-weight:900;cursor:pointer}.unit.active{background:#24282a;border-color:#24282a;color:#fff}.measure{display:grid;grid-template-columns:minmax(0,1fr) 92px}.measure input{border-radius:9px 0 0 9px}.measure select{border:1px solid #c8dad4;border-left:0;border-radius:0 9px 9px 0;padding:10px 7px;background:#f4faf7;color:var(--brand2);font-size:11px;font-weight:850;outline:none}.measure select:focus{border-color:#7bbcad;box-shadow:0 0 0 3px rgba(11,143,120,.08)}.result-unit{display:flex;align-items:center;gap:8px;margin:0 0 12px;font-size:11px;color:var(--muted);font-weight:800}.result-unit select{border:1px solid var(--line);border-radius:9px;padding:8px 9px;background:#f7fbfa;color:var(--brand2);font-weight:850}.measure-note{font-size:9px;color:#84918c;margin-top:4px;line-height:1.35}
 .fields{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:10px}.field label{display:block;font-size:10px;font-weight:900;margin-bottom:5px}.field input,.field select{width:100%;border:1px solid #c8dad4;border-radius:9px;padding:10px;background:#fbfefd;color:var(--ink);font-size:12px;outline:none}.field input:focus,.field select:focus{border-color:#7bbcad;box-shadow:0 0 0 3px rgba(11,143,120,.08)}.hint{font-size:9px;color:#84918c;margin-top:4px;line-height:1.35}
 .advanced{margin-top:12px;border:1px solid var(--line);border-radius:11px;overflow:hidden}.advanced summary{cursor:pointer;list-style:none;padding:12px 14px;background:#f8fbfa;color:var(--brand2);font-size:12px;font-weight:900}.advanced summary::-webkit-details-marker{display:none}.advanced summary:before{content:'+';display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;background:var(--soft);margin-right:8px}.advanced[open] summary:before{content:'−'}.advanced-body{padding:14px;border-top:1px solid var(--line)}.advanced-body h3{font-size:13px;margin:0 0 8px}.advanced-body p{font-size:11px;color:var(--muted);margin:0 0 13px}
 .action-row{display:flex;gap:8px;margin-top:14px}.primary{border:0;border-radius:10px;padding:12px 15px;background:var(--brand);color:#fff;font-weight:900;cursor:pointer}.secondary{border:1px solid var(--line);border-radius:10px;padding:12px 15px;background:#fff;color:var(--brand2);font-weight:900;cursor:pointer}
@@ -53,11 +53,12 @@ footer{border-top:1px solid var(--line);padding:25px 0;background:#fff;color:#74
 <section class="card">
 <div class="head"><h2>Straight-stair inputs</h2><p>Keep the first three fields simple. Use Advanced settings only when your project needs a fit or planning check.</p></div>
 <div class="body">
-<div class="unitbar"><button class="unit active" type="button" data-unit="imperial">Imperial (in)</button><button class="unit" type="button" data-unit="metric">Metric (mm)</button></div>
+<div class="unitbar"><button class="unit active" type="button" data-unit="imperial">Quick set: Imperial</button><button class="unit" type="button" data-unit="metric">Quick set: Metric</button></div>
+<div class="measure-note">Every dimensional input has its own unit. You can mix units, for example <strong>9 ft total rise + 7.5 in risers + 10 in tread</strong>.</div>
 <div class="fields">
-<div class="field"><label for="totalRise">Total rise</label><input id="totalRise" type="text" inputmode="decimal" value="108"><div class="hint">Finished floor to finished floor vertical height.</div></div>
-<div class="field"><label for="targetRiser">Target riser height</label><input id="targetRiser" type="text" inputmode="decimal" value="7.5"><div class="hint">Used to choose a whole riser count when no override is set.</div></div>
-<div class="field"><label for="treadDepth">Tread depth / run</label><input id="treadDepth" type="text" inputmode="decimal" value="10"><div class="hint">Horizontal step depth per tread.</div></div>
+<div class="field"><label for="totalRise">Total rise</label><div class="measure"><input id="totalRise" type="text" inputmode="decimal" value="9"><select class="measure-unit" data-unit-for="totalRise"><option value="mm">mm</option><option value="cm">cm</option><option value="in" selected>in</option><option value="ft">ft</option><option value="m">m</option></select></div><div class="hint">Finished floor to finished floor vertical height.</div></div>
+<div class="field"><label for="targetRiser">Target riser height</label><div class="measure"><input id="targetRiser" type="text" inputmode="decimal" value="7.5"><select class="measure-unit" data-unit-for="targetRiser"><option value="mm">mm</option><option value="cm">cm</option><option value="in" selected>in</option><option value="ft">ft</option><option value="m">m</option></select></div><div class="hint">Used to choose a whole riser count when no override is set.</div></div>
+<div class="field"><label for="treadDepth">Tread depth / run</label><div class="measure"><input id="treadDepth" type="text" inputmode="decimal" value="10"><select class="measure-unit" data-unit-for="treadDepth"><option value="mm">mm</option><option value="cm">cm</option><option value="in" selected>in</option><option value="ft">ft</option><option value="m">m</option></select></div><div class="hint">Horizontal step depth per tread.</div></div>
 </div>
 <details class="advanced">
 <summary>Advanced settings: step count, fit, width, stringers & reference checks</summary>
@@ -65,14 +66,12 @@ footer{border-top:1px solid var(--line);padding:25px 0;background:#fff;color:#74
 <h3>Project geometry</h3>
 <div class="fields">
 <div class="field"><label for="riserOverride">Riser count override</label><input id="riserOverride" type="number" min="0" step="1" placeholder="Auto"><div class="hint">Leave blank to calculate from total rise ÷ target riser.</div></div>
-<div class="field"><label for="availableRun">Available run</label><input id="availableRun" type="text" inputmode="decimal" placeholder="Optional"><div class="hint">Checks whether the calculated run fits your space.</div></div>
-<div class="field"><label for="stairWidth">Stair width</label><input id="stairWidth" type="text" inputmode="decimal" placeholder="Optional"><div class="hint">Used for optional width check and tread-area estimate.</div></div>
+<div class="field"><label for="availableRun">Available run</label><div class="measure"><input id="availableRun" type="text" inputmode="decimal" placeholder="Optional"><select class="measure-unit" data-unit-for="availableRun"><option value="mm">mm</option><option value="cm">cm</option><option value="in" selected>in</option><option value="ft">ft</option><option value="m">m</option></select></div><div class="hint">Checks whether the calculated run fits your space.</div></div>
+<div class="field"><label for="stairWidth">Stair width</label><div class="measure"><input id="stairWidth" type="text" inputmode="decimal" placeholder="Optional"><select class="measure-unit" data-unit-for="stairWidth"><option value="mm">mm</option><option value="cm">cm</option><option value="in" selected>in</option><option value="ft">ft</option><option value="m">m</option></select></div><div class="hint">Used for optional width check and tread-area estimate.</div></div>
 <div class="field"><label for="stringerCount">Stringer count</label><input id="stringerCount" type="number" min="1" step="1" value="2"><div class="hint">Used only for total stringer material length.</div></div>
 <div class="field"><label for="waste">Waste allowance (%)</label><input id="waste" type="number" min="0" max="100" step="1" value="10"><div class="hint">Applied to total stringer length and tread-area estimate.</div></div>
 <div class="field"><label for="reference">Optional reference check</label><select id="reference"><option value="none">No code profile</option><option value="irc2021">2021 IRC residential reference</option></select><div class="hint">Reference only — local code and amendments control the project.</div></div>
-<div class="field"><label for="maxRiser">Max riser (optional)</label><input id="maxRiser" type="text" inputmode="decimal" placeholder="Auto from reference"><div class="hint">Leave blank unless using a custom limit.</div></div>
-<div class="field"><label for="minTread">Min tread (optional)</label><input id="minTread" type="text" inputmode="decimal" placeholder="Auto from reference"><div class="hint">Leave blank unless using a custom limit.</div></div>
-<div class="field"><label for="minWidth">Min width (optional)</label><input id="minWidth" type="text" inputmode="decimal" placeholder="Auto from reference"><div class="hint">Leave blank unless using a custom limit.</div></div>
+<div class="field"><label for="maxRiser">Max riser (optional)</label><div class="measure"><input id="maxRiser" type="text" inputmode="decimal" placeholder="Auto from reference"><select class="measure-unit" data-unit-for="maxRiser"><option value="mm">mm</option><option value="cm">cm</option><option value="in" selected>in</option><option value="ft">ft</option><option value="m">m</option></select></div><div class="hint">Leave blank unless using a custom limit.</div></div><div class="field"><label for="minTread">Min tread (optional)</label><div class="measure"><input id="minTread" type="text" inputmode="decimal" placeholder="Auto from reference"><select class="measure-unit" data-unit-for="minTread"><option value="mm">mm</option><option value="cm">cm</option><option value="in" selected>in</option><option value="ft">ft</option><option value="m">m</option></select></div><div class="hint">Leave blank unless using a custom limit.</div></div><div class="field"><label for="minWidth">Min width (optional)</label><div class="measure"><input id="minWidth" type="text" inputmode="decimal" placeholder="Auto from reference"><select class="measure-unit" data-unit-for="minWidth"><option value="mm">mm</option><option value="cm">cm</option><option value="in" selected>in</option><option value="ft">ft</option><option value="m">m</option></select></div><div class="hint">Leave blank unless using a custom limit.</div></div>
 </div>
 <div class="alert">The 2021 IRC residential reference uses a 7¾ in maximum riser, 10 in minimum tread and 36 in clear-width baseline. It is not a universal building-code checker.</div>
 </div>
@@ -82,6 +81,8 @@ footer{border-top:1px solid var(--line);padding:25px 0;background:#fff;color:#74
 </section>
 <section class="card">
 <div class="result-head"><small>Calculated straight-stair layout</small><h2>Rise, run & stringer results</h2></div>
+<div style="padding:13px 13px 0"><label class="result-unit" for="resultUnit">Result length units
+<select id="resultUnit"><option value="in" selected>inches (in)</option><option value="ft">feet (ft)</option><option value="mm">millimetres (mm)</option><option value="cm">centimetres (cm)</option><option value="m">metres (m)</option></select></label></div>
 <div id="results" class="results"></div>
 <div id="status" class="status"></div>
 <div id="alert"></div>
@@ -129,114 +130,97 @@ footer{border-top:1px solid var(--line);padding:25px 0;background:#fff;color:#74
 </main>
 <footer><div class="wrap">© 2026 ToolVault · Free practical tools for the web.</div></footer>
 <script type="module">
-import { calculateStairs, parseFraction, inchesToMillimetres, millimetresToInches } from "./stair-engine.js";
+import { calculateStairs, parseFraction } from "./stair-engine.js";
 const $ = id => document.getElementById(id);
-const unitButtons = [...document.querySelectorAll(".unit")];
-const inputIds = ["totalRise","targetRiser","treadDepth","riserOverride","availableRun","stairWidth","stringerCount","waste","maxRiser","minTread","minWidth"];
-let unit = "imperial";
-const defaults = {
-  imperial: { totalRise:"108", targetRiser:"7.5", treadDepth:"10", riserOverride:"", availableRun:"", stairWidth:"", stringerCount:"2", waste:"10", maxRiser:"", minTread:"", minWidth:"" },
-  metric: { totalRise:"2743.2", targetRiser:"190.5", treadDepth:"254", riserOverride:"", availableRun:"", stairWidth:"", stringerCount:"2", waste:"10", maxRiser:"", minTread:"", minWidth:"" }
-};
-const referenceValues = { irc2021: {
-  imperial:{ maxRiser:7.75, minTread:10, minWidth:36 },
-  metric:{ maxRiser:196.85, minTread:254, minWidth:914.4 }
-} };
+const quickButtons = [...document.querySelectorAll(".unit")];
+const dimIds = ["totalRise","targetRiser","treadDepth","availableRun","stairWidth","maxRiser","minTread","minWidth"];
+const defaults = { totalRise:9, targetRiser:7.5, treadDepth:10, availableRun:"", stairWidth:"", maxRiser:"", minTread:"", minWidth:"" };
+const referenceValuesIn = { maxRiser:7.75, minTread:10, minWidth:36 };
+const IN_PER_UNIT = { mm:1/25.4, cm:1/2.54, in:1, ft:12, m:39.37007874015748 };
+let quickSystem = "imperial";
+
 function read(id){ return $(id).value.trim(); }
-function parse(id){ return parseFraction(read(id),0); }
-function fmt(n,digits=3){
-  if(!Number.isFinite(n)) return "—";
-  const d=Math.max(0,Math.min(6,digits));
-  return new Intl.NumberFormat(undefined,{maximumFractionDigits:d}).format(n);
+function unitFor(id){ return document.querySelector('[data-unit-for="'+id+'"]')?.value || "in"; }
+function parseValueIn(id){ const v=parseFraction(read(id),0); return v*IN_PER_UNIT[unitFor(id)]; }
+function fromInches(inches,unit){ return inches/IN_PER_UNIT[unit]; }
+function fmt(n,digits=3){ if(!Number.isFinite(n)) return "—"; return new Intl.NumberFormat(undefined,{maximumFractionDigits:Math.max(0,Math.min(6,digits))}).format(n); }
+function resultUnit(){ return $("resultUnit").value; }
+function lengthOut(inches){ const u=resultUnit(); return fmt(fromInches(inches,u),u==="in"||u==="ft"?2:1)+" "+u; }
+function areaOut(squareInches){ const u=resultUnit(); const factor=IN_PER_UNIT[u]*IN_PER_UNIT[u]; return fmt(squareInches/(factor),2)+" "+(u==="in"?"in²":u==="ft"?"ft²":u==="mm"?"mm²":u==="cm"?"cm²":"m²"); }
+function convertFieldUnit(id,oldUnit,newUnit){
+  const input=$(id); const raw=input.value.trim(); if(!raw) return;
+  const inValue=parseFraction(raw,0)*IN_PER_UNIT[oldUnit];
+  input.value=String(Number(fromInches(inValue,newUnit).toFixed(6)));
 }
-function fmtLength(n){ return fmt(n,unit==="imperial"?2:1); }
-function displayValue(value,suffix){ return fmtLength(value)+" "+suffix; }
-function convertInput(id,from,to){
-  if(!["totalRise","targetRiser","treadDepth","availableRun","stairWidth","maxRiser","minTread","minWidth"].includes(id)) return;
-  const raw=read(id); if(!raw) return;
-  const n=parseFraction(raw,0); if(!(n>0)) return;
-  const converted=from==="imperial"&&to==="metric"?inchesToMillimetres(n):millimetresToInches(n);
-  $(id).value=String(Number(converted.toFixed(6)));
+function setQuickSystem(next){
+  if(next===quickSystem)return;
+  const oldTarget=quickSystem;
+  const target=next==="metric"?"mm":"in";
+  dimIds.forEach(id=>{ const sel=document.querySelector('[data-unit-for="'+id+'"]'); if(sel){ const old=sel.value; convertFieldUnit(id,old,target); sel.value=target; }});
+  quickSystem=next;
+  quickButtons.forEach(x=>x.classList.toggle("active",x.dataset.unit===next));
+  calculate();
 }
 function setReferenceValues(clearOnNone=true){
   const ref=$("reference").value;
   if(ref==="irc2021"){
-    const v=referenceValues.irc2021[unit];
-    $("maxRiser").value=String(v.maxRiser);
-    $("minTread").value=String(v.minTread);
-    $("minWidth").value=String(v.minWidth);
+    Object.entries(referenceValuesIn).forEach(([id,inches])=>{ const u=unitFor(id); $(id).value=String(Number(fromInches(inches,u).toFixed(6))); });
   }else if(clearOnNone){
-    $("maxRiser").value="";$("minTread").value="";$("minWidth").value="";
+    ["maxRiser","minTread","minWidth"].forEach(id=>$(id).value="");
   }
 }
 function calculate(){
   const result=calculateStairs({
-    totalRise:parse("totalRise"),
-    targetRiser:parse("targetRiser"),
-    treadDepth:parse("treadDepth"),
-    riserCountOverride:parse("riserOverride"),
-    availableRun:parse("availableRun"),
-    stairWidth:parse("stairWidth"),
-    stringerCount:parse("stringerCount"),
-    wastePercent:parse("waste"),
-    maxRiser:parse("maxRiser"),
-    minTread:parse("minTread"),
-    minWidth:parse("minWidth")
+    totalRise:parseValueIn("totalRise"),
+    targetRiser:parseValueIn("targetRiser"),
+    treadDepth:parseValueIn("treadDepth"),
+    riserCountOverride:parseFraction(read("riserOverride"),0),
+    availableRun:parseValueIn("availableRun"),
+    stairWidth:parseValueIn("stairWidth"),
+    stringerCount:parseFraction(read("stringerCount"),0),
+    wastePercent:parseFraction(read("waste"),0),
+    maxRiser:parseValueIn("maxRiser"),
+    minTread:parseValueIn("minTread"),
+    minWidth:parseValueIn("minWidth")
   });
   const out=$("results"),status=$("status"),alert=$("alert");
-  if(!result.ok){
-    out.innerHTML='<div class="metric primary" style="grid-column:1/-1"><span>Input check</span><b>Enter valid dimensions</b><small>'+result.error+'</small></div>';
-    status.innerHTML="";alert.innerHTML="";return;
-  }
-  const suffix=unit==="imperial"?"in":"mm";
-  const areaSuffix=unit==="imperial"?"in²":"mm²";
+  if(!result.ok){ out.innerHTML='<div class="metric primary" style="grid-column:1/-1"><span>Input check</span><b>Enter valid dimensions</b><small>'+result.error+'</small></div>'; status.innerHTML=""; alert.innerHTML=""; return; }
   const cards=[
     ["Risers",fmt(result.risers,0),"equal-height vertical steps"],
-    ["Riser height",displayValue(result.actualRiser,suffix),"exact after whole-number riser count"],
+    ["Riser height",lengthOut(result.actualRiser),"exact after whole-number riser count"],
     ["Treads",fmt(result.treads,0),"normally one fewer than risers"],
-    ["Total run",displayValue(result.totalRun,suffix),"horizontal footprint of the flight"],
+    ["Total run",lengthOut(result.totalRun),"horizontal footprint of the flight"],
     ["Stair angle",fmt(result.stairAngleDegrees,2)+"°","angle from the horizontal"],
-    ["Stringer length",displayValue(result.stringerLength,suffix),"theoretical diagonal only"]
+    ["Stringer length",lengthOut(result.stringerLength),"theoretical diagonal only"]
   ];
-  let html="";
-  cards.forEach((c,i)=>html+='<div class="metric '+(i===1||i===5?'primary':'')+'"><span>'+c[0]+'</span><b>'+c[1]+'</b><small>'+c[2]+'</small></div>');
-  html+='<div class="metric"><span>Step diagonal</span><b>'+displayValue(result.stepDiagonal,suffix)+'</b><small>rise/run increment along the stringer</small></div>';
-  html+='<div class="metric"><span>2R + T comfort check</span><b>'+fmt(result.comfortValue,2)+' '+suffix+'</b><small>'+result.comfortStatus+'</small></div>';
-  if(result.fit){
-    html+='<div class="metric"><span>Available run</span><b>'+displayValue(result.fit.availableRun,suffix)+'</b><small>'+(result.fit.fits?fmt(result.fit.spare,2)+" "+suffix+" spare":"exceeds space by "+fmt(result.fit.excess,2)+" "+suffix)+'</small></div>';
-  }
-  if(result.stairWidth>0){
-    html+='<div class="metric"><span>Tread surface area</span><b>'+fmt(result.treadAreaWithWaste,2)+' '+areaSuffix+'</b><small>all treads incl. '+fmt(result.wastePercent,0)+'% allowance</small></div>';
-  }
-  html+='<div class="metric"><span>Stringer material</span><b>'+displayValue(result.totalStringerLengthWithWaste,suffix)+'</b><small>'+fmt(result.stringerCount,0)+' stringers incl. '+fmt(result.wastePercent,0)+'% allowance</small></div>';
+  let html=""; cards.forEach((x,i)=>html+='<div class="metric '+(i===1||i===5?'primary':'')+'"><span>'+x[0]+'</span><b>'+x[1]+'</b><small>'+x[2]+'</small></div>');
+  html+='<div class="metric"><span>Step diagonal</span><b>'+lengthOut(result.stepDiagonal)+'</b><small>rise/run increment along the stringer</small></div>';
+  const comfortIn=result.comfortValue;
+  html+='<div class="metric"><span>2R + T comfort check</span><b>'+lengthOut(comfortIn)+'</b><small>'+result.comfortStatus+'</small></div>';
+  if(result.fit){ html+='<div class="metric"><span>Available run</span><b>'+lengthOut(result.fit.availableRun)+'</b><small>'+(result.fit.fits?fmt(fromInches(result.fit.spare,resultUnit()),2)+" "+resultUnit()+" spare":"exceeds space by "+fmt(fromInches(result.fit.excess,resultUnit()),2)+" "+resultUnit())+'</small></div>'; }
+  if(result.stairWidth>0){ html+='<div class="metric"><span>Tread surface area</span><b>'+areaOut(result.treadAreaWithWaste)+' </b><small>all treads incl. '+fmt(result.wastePercent,0)+'% allowance</small></div>'; }
+  html+='<div class="metric"><span>Stringer material</span><b>'+lengthOut(result.totalStringerLengthWithWaste)+'</b><small>'+fmt(result.stringerCount,0)+' stringers incl. '+fmt(result.wastePercent,0)+'% allowance</small></div>';
   out.innerHTML=html;
   let statusHtml="";
-  if(result.fit){
-    statusHtml+='<div class="statusbox">'+(result.fit.fits?'<span class="pass">✓ Run fits the available space.</span>':'<span class="fail">✕ Calculated run exceeds the available space.</span>')+'</div>';
-  }
-  if(result.code.maxRiser||result.code.minTread||result.code.minWidth){
-    const labels=[];
-    if(result.code.maxRiser) labels.push('Riser '+(result.code.maxRiser.pass?'passes':'fails')+' reference max');
-    if(result.code.minTread) labels.push('Tread '+(result.code.minTread.pass?'passes':'fails')+' reference minimum');
-    if(result.code.minWidth) labels.push('Width '+(result.code.minWidth.pass?'passes':'fails')+' reference minimum');
-    statusHtml+='<div class="statusbox" style="margin-top:8px"><span class="'+(result.codePass?'pass':'fail')+'">'+(result.codePass?'Reference checks passed':'Reference checks need review')+'</span><br>'+labels.join(' · ')+'</div>';
-  }
+  if(result.fit){ statusHtml+='<div class="statusbox">'+(result.fit.fits?'<span class="pass">✓ Run fits the available space.</span>':'<span class="fail">✕ Calculated run exceeds the available space.</span>')+'</div>'; }
+  if(result.code.maxRiser||result.code.minTread||result.code.minWidth){ const labels=[]; if(result.code.maxRiser) labels.push('Riser '+(result.code.maxRiser.pass?'passes':'fails')+' reference max'); if(result.code.minTread) labels.push('Tread '+(result.code.minTread.pass?'passes':'fails')+' reference minimum'); if(result.code.minWidth) labels.push('Width '+(result.code.minWidth.pass?'passes':'fails')+' reference minimum'); statusHtml+='<div class="statusbox" style="margin-top:8px"><span class="'+(result.codePass?'pass':'fail')+'">'+(result.codePass?'Reference checks passed':'Reference checks need review')+'</span><br>'+labels.join(' · ')+'</div>'; }
   status.innerHTML=statusHtml;
   alert.innerHTML='<div class="alert">Planning calculation only. Verify the adopted building code, headroom, landings, handrails, guards, structure and construction method before building.</div>';
 }
 function reset(){
-  const d=defaults[unit];inputIds.forEach(id=>$(id).value=d[id]);$("reference").value="none";calculate();
+  dimIds.forEach(id=>{ if($(id)) $(id).value=""; });
+  $("totalRise").value=String(defaults.totalRise);$("targetRiser").value=String(defaults.targetRiser);$("treadDepth").value=String(defaults.treadDepth);
+  $("stringerCount").value="2";$("waste").value="10";$("reference").value="none";$("resultUnit").value="in";
+  dimIds.forEach(id=>{const s=document.querySelector('[data-unit-for="'+id+'"]'); if(s)s.value="in";});
+  quickSystem="imperial";quickButtons.forEach(x=>x.classList.toggle("active",x.dataset.unit==="imperial")); calculate();
 }
-unitButtons.forEach(btn=>btn.addEventListener("click",()=>{
-  const next=btn.dataset.unit;if(next===unit)return;const old=unit;
-  inputIds.forEach(id=>convertInput(id,old,next));unit=next;
-  unitButtons.forEach(x=>x.classList.toggle("active",x===btn));setReferenceValues(false);calculate();
-}));
-$("reference").addEventListener("change",()=>setReferenceValues(true));
-$("calculate").addEventListener("click",calculate);
-$("reset").addEventListener("click",reset);
-inputIds.forEach(id=>$(id).addEventListener("input",calculate));
-setReferenceValues();calculate();
+dimIds.forEach(id=>{ const input=$(id), sel=document.querySelector('[data-unit-for="'+id+'"]'); if(!sel||!input)return; sel.addEventListener("change",()=>{const old=sel.dataset.prev||sel.value; const v=parseFraction(input.value,0); if(input.value.trim()&&Number.isFinite(v)){ const inches=v*IN_PER_UNIT[old]; input.value=String(Number(fromInches(inches,sel.value).toFixed(6))); } sel.dataset.prev=sel.value; calculate(); }); sel.dataset.prev=sel.value; input.addEventListener("input",calculate);});
+quickButtons.forEach(btn=>btn.addEventListener("click",()=>setQuickSystem(btn.dataset.unit)));
+$("reference").addEventListener("change",()=>setReferenceValues(true)); $("resultUnit").addEventListener("change",calculate); $("calculate").addEventListener("click",calculate); $("reset").addEventListener("click",reset);
+$("riserOverride").addEventListener("input",calculate); $("stringerCount").addEventListener("input",calculate); $("waste").addEventListener("input",calculate);
+setReferenceValues(); calculate();
 </script>
+</body>
+</html>
 </body>
 </html>
