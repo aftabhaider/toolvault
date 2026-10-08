@@ -83,11 +83,11 @@ input,select,.control{background:#fbfefd;border-color:#c9ddd7}
 <div class="areaList" id="areas"></div>
 <button class="addArea" id="addArea" type="button">＋ Add another area</button>
 <details class="advanced-details"><summary>Optional settings: density, waste, price and bag weight</summary><div class="controls" style="margin-top:0">
-<div class="field"><label for="density">Material density (t/m³)</label><input id="density" type="number" min="0.01" step="0.01" value="1.60"><small>Typical loose gravel may vary. Replace this with your supplier's density when available.</small></div>
+<div class="field"><label for="density">Gravel weight per cubic metre</label><input id="density" type="number" min="0.01" step="0.01" value="1.60"><small>Used only to estimate weight. Use your supplier's stated bulk density when available.</small></div>
 <div class="field"><label for="waste">Waste / extra allowance (%)</label><input id="waste" type="number" min="0" max="100" step="1" value="10"></div>
 <div class="field"><label for="price">Optional price per tonne</label><input id="price" type="number" min="0" step="0.01" placeholder="e.g. 35.00"></div>
 <div class="field"><label for="currency">Currency symbol/code</label><input id="currency" maxlength="6" value="$" placeholder="USD, $, €, £"></div>
-<div class="field"><label for="bagSize">Optional bag weight (kg)</label><input id="bagSize" type="number" min="0" step="0.1" placeholder="e.g. 20"></div>
+<div class="field"><label for="bagSize">Weight of one bag</label><input id="bagSize" type="number" min="0" step="0.1" placeholder="e.g. 20"></div>
 </div></details>
 <div class="help" style="margin-top:13px">Planning estimate: gravel density varies by material type, moisture and compaction. For purchasing, use the supplier's stated density or bag coverage and round up to a practical order quantity.</div>
 </div>
