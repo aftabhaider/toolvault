@@ -148,7 +148,7 @@ body{background:#edf5f2!important}
 input,select,.control{background:#fbfefd;border-color:#c9ddd7}
 .unitChoice,.shape,.seg,.choice{background:#f7fcfa}
 .unitChoice.active,.shape.active,.seg.active,.choice.active{background:#e3f6f0;border-color:#99cdbf;color:#086c5b}
-</style>
+.measure{display:grid;grid-template-columns:minmax(0,1fr) 76px}.measure input{border-radius:9px 0 0 9px}.measure select{border:1px solid #c8dad4;border-left:0;border-radius:0 9px 9px 0;padding:10px 6px;background:#f7fcfa;color:#086c5b;font-size:11px;font-weight:850;outline:none}.measure select:focus{border-color:#7bbcad;box-shadow:0 0 0 3px rgba(11,143,120,.08)}</style>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"WebApplication","name":"Solar Energy Generation Calculator","url":"https://toolvault.aftabjordan1.workers.dev/solar/solar-energy-generation-calculator.html","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
@@ -309,6 +309,9 @@ input,select,.control{background:#fbfefd;border-color:#c9ddd7}
 <script>
 const $=id=>document.getElementById(id);
 let coords=null, weatherData=null;
+const POWER_FACTOR={W:1,kW:1000};
+function panelWatts(){return (Number($('panelWatt').value)||0)*POWER_FACTOR[$('panelWattUnit').value]}
+window.__toolvaultPanelWatts=panelWatts;
 
 function setStatus(t,err=false){$('status').textContent=t;$('status').className='status'+(err?' error':'')}
 function weatherCode(c){if(c==0)return'Clear';if(c<=3)return'Partly cloudy';if(c<=48)return'Fog';if(c<=67)return'Rain';if(c<=77)return'Snow';if(c<=82)return'Rain showers';if(c<=86)return'Snow showers';return'Thunderstorm'}
@@ -345,7 +348,7 @@ async function loadWeather(){
 }
 
 function render(){
- const count=Math.max(1,Number($('panelCount').value)||1), watts=Math.max(1,Number($('panelWatt').value)||1);
+ const count=Math.max(1,Number($('panelCount').value)||1), watts=Math.max(1,panelWatts());
  const loss=Math.min(40,Math.max(0,Number($('losses').value)||0));
  const kwp=count*watts/1000;
  $('kwp').textContent=n(kwp,2)+' kWp';$('outPanels').textContent=n(count);$('outWatt').textContent=n(watts)+' W';
@@ -375,7 +378,7 @@ $('locBtn').onclick=geocode;
 $('calc').onclick=async()=>{if(!coords)await geocode(); if(coords){if(!weatherData)await loadWeather();else render()}};
 $('refresh').onclick=loadWeather;
 $('period').onchange=loadWeather;
-['panelCount','panelWatt','losses','tilt','azimuth'].forEach(id=>$(id).addEventListener('input',()=>{if(weatherData)render()}));
+['panelCount','panelWatt','losses','tilt','azimuth','panelWattUnit'].forEach(id=>$(id).addEventListener('input',()=>{if(weatherData)render()}));
 geocode();
 </script>
 
@@ -441,7 +444,7 @@ geocode();
     const sw=arr(['shortwave_radiation','shortwave_radiation_instant']);
     const temp=arr(['temperature_2m']), cloud=arr(['cloud_cover']);
     const count=n(document.querySelector('#panelCount,#panels,#numberOfPanels')?.value,8);
-    const watts=n(document.querySelector('#panelWatts,#panelCapacity,#watts')?.value,625);
+    const watts=window.__toolvaultPanelWatts?window.__toolvaultPanelWatts():n(document.querySelector('#panelWatts,#panelCapacity,#watts')?.value,625);
     const loss=n(document.querySelector('#systemLoss,#losses,#systemLosses')?.value,14);
     const kwp=count*watts/1000, factor=1-Math.min(50,Math.max(0,loss))/100;
     return times.map((t,i)=>{
@@ -565,7 +568,7 @@ geocode();
        const times=h&&h.time||[];
        const gti=h&&(h.global_tilted_irradiance||h.global_tilted_irradiance_instant)||[];
        const count=Number(document.getElementById('panelCount')?.value)||8;
-       const watts=Number(document.getElementById('panelWatt')?.value)||625;
+       const watts=window.__toolvaultPanelWatts?window.__toolvaultPanelWatts():Number(document.getElementById('panelWatt')?.value)||625;
        const loss=Math.min(40,Math.max(0,Number(document.getElementById('losses')?.value)||0));
        const kwp=count*watts/1000, factor=1-loss/100;
        let total=0;
