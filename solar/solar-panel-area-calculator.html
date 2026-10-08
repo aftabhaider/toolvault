@@ -88,17 +88,17 @@ input,select,.control{background:#fbfefd;border-color:#c9ddd7}
 <div class="card panel">
 <h2>Solar Panel Inputs</h2>
 <div class="formgrid">
-<div class="field"><label for="panels">Number of Panels</label><input id="panels" type="number" min="1" step="1" value="8"></div>
-<div class="field"><label for="watt">Panel Wattage</label><div class="measure"><input id="watt" type="number" min="0.001" step="any" value="625"><select id="wattUnit" aria-label="Panel wattage unit"><option value="W" selected>W</option><option value="kW">kW</option></select></div></div>
-<div class="field"><label for="length">Panel Length</label><div class="measure"><input id="length" type="number" min="0.001" step="any" value="2382"><select id="lengthUnit" aria-label="Panel length unit"><option value="mm" selected>mm</option><option value="cm">cm</option><option value="m">m</option><option value="in">in</option><option value="ft">ft</option></select></div></div>
-<div class="field"><label for="width">Panel Width</label><div class="measure"><input id="width" type="number" min="0.001" step="any" value="1134"><select id="widthUnit" aria-label="Panel width unit"><option value="mm" selected>mm</option><option value="cm">cm</option><option value="m">m</option><option value="in">in</option><option value="ft">ft</option></select></div></div>
+<div class="field"><label for="panels">How many solar panels?</label><input id="panels" type="number" min="1" step="1" value="8"></div>
+<div class="field"><label for="watt">Power of one panel</label><div class="measure"><input id="watt" type="number" min="0.001" step="any" value="625"><select id="wattUnit" aria-label="Panel wattage unit"><option value="W" selected>W</option><option value="kW">kW</option></select></div></div>
+<div class="field"><label for="length">Length of one panel</label><div class="measure"><input id="length" type="number" min="0.001" step="any" value="2382"><select id="lengthUnit" aria-label="Panel length unit"><option value="mm" selected>mm</option><option value="cm">cm</option><option value="m">m</option><option value="in">in</option><option value="ft">ft</option></select></div></div>
+<div class="field"><label for="width">Width of one panel</label><div class="measure"><input id="width" type="number" min="0.001" step="any" value="1134"><select id="widthUnit" aria-label="Panel width unit"><option value="mm" selected>mm</option><option value="cm">cm</option><option value="m">m</option><option value="in">in</option><option value="ft">ft</option></select></div></div>
 <details class="advanced-fields"><summary>Advanced layout options: spacing factor & display unit</summary><div class="advanced-inner"><div class="field"><label for="spacing">Spacing / Layout Factor</label>
 <select id="spacing">
 <option value="1.10">1.10 × — Tight</option><option value="1.15">1.15 × — Compact</option>
 <option value="1.20" selected>1.20 × — Practical</option><option value="1.25">1.25 × — More access</option>
 <option value="1.30">1.30 × — Generous</option>
 </select>
-<div class="note">Adds an allowance for practical gaps and access.</div></div><div class="field"><label for="unit">Display Unit</label>
+<div class="note">Extra space for gaps, mounting and access around the panels.</div></div><div class="field"><label for="unit">Display Unit</label>
 <select id="unit"><option value="both" selected>m² and ft²</option><option value="m2">m² only</option><option value="ft2">ft² only</option></select></div></div></details>
 </div></div>
 </div>
