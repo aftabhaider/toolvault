@@ -127,14 +127,18 @@ Public keyword and SERP research used for this roadmap:
 
 ## Build order
 
-1. Paint Calculator — completed as the first new cluster page.
-2. Mulch Calculator.
-3. Board Foot Calculator.
+1. Paint Calculator — completed.
+2. Mulch Calculator — completed.
+3. Board Foot Calculator — next opportunity to evaluate/build.
 4. Stair Calculator.
 5. AC / BTU Calculator.
 6. Square Footage Calculator.
 7. Deepen existing construction/engineering clusters based on Search Console data.
 8. Age/date tools after ToolVault has stronger domain authority and a larger internal-link network.
+
+## Current status
+
+Paint and Mulch are now implemented as dedicated calculator pages with dedicated engines, category links, homepage links and sitemap entries. The next portfolio decision should be based on current search demand/SERP opportunity rather than simply following the old order.
 
 ## Measurement loop
 
