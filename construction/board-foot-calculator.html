@@ -67,10 +67,10 @@ footer{border-top:1px solid var(--line);padding:25px 0;background:#fff;color:#74
 <summary>Advanced settings: common lumber presets, waste & price</summary>
 <div class="advanced-body">
 <div class="fields">
-<div class="field"><label for="globalWaste">Waste allowance (%)</label><input id="globalWaste" type="number" min="0" max="100" step="1" value="10"><div class="hint">Add allowance for cuts, defects or unusable pieces.</div></div>
-<div class="field"><label for="price">Price per board foot</label><input id="price" type="number" min="0" step="0.01" placeholder="Optional"></div>
+<div class="field"><label for="globalWaste">Extra lumber for cuts & defects (%)</label><input id="globalWaste" type="number" min="0" max="100" step="1" value="10"><div class="hint">Add allowance for cuts, defects or unusable pieces.</div></div>
+<div class="field"><label for="price">Price of one board foot</label><input id="price" type="number" min="0" step="0.01" placeholder="Optional"></div>
 <div class="field"><label for="currency">Currency</label><input id="currency" type="text" maxlength="8" value="$" placeholder="$, €, £, Rs"></div>
-<div class="field"><label for="preset"><span id="presetLabel">Preset reference</span></label><select id="preset"><option value="">Choose a common size</option><option value="2x4">2×4 actual 1.5 × 3.5 in</option><option value="2x6">2×6 actual 1.5 × 5.5 in</option><option value="2x8">2×8 actual 1.5 × 7.25 in</option><option value="2x10">2×10 actual 1.5 × 9.25 in</option><option value="2x12">2×12 actual 1.5 × 11.25 in</option><option value="4/4">4/4 nominal thickness = 1 in</option><option value="5/4">5/4 nominal thickness = 1.25 in</option><option value="6/4">6/4 nominal thickness = 1.5 in</option><option value="8/4">8/4 nominal thickness = 2 in</option><option value="12/4">12/4 nominal thickness = 3 in</option></select></div>
+<div class="field"><label for="preset"><span id="presetLabel">Choose a common lumber size (optional)</span></label><select id="preset"><option value="">Choose a common size</option><option value="2x4">2×4 actual 1.5 × 3.5 in</option><option value="2x6">2×6 actual 1.5 × 5.5 in</option><option value="2x8">2×8 actual 1.5 × 7.25 in</option><option value="2x10">2×10 actual 1.5 × 9.25 in</option><option value="2x12">2×12 actual 1.5 × 11.25 in</option><option value="4/4">4/4 nominal thickness = 1 in</option><option value="5/4">5/4 nominal thickness = 1.25 in</option><option value="6/4">6/4 nominal thickness = 1.5 in</option><option value="8/4">8/4 nominal thickness = 2 in</option><option value="12/4">12/4 nominal thickness = 3 in</option></select></div>
 </div>
 </div>
 </details>
@@ -180,8 +180,9 @@ function toBase(value,key,u){return parseFraction(value,0)*factorFor(key,u)}
 function fromBase(value,key,u){return value/factorFor(key,u)}
 function unitsHtml(key,current){return dimKeys[key].units.map(u=>'<option value="'+u+'" '+(u===current?'selected':'')+'>'+u+'</option>').join("")}
 function fieldHtml(label,key,value,kind,unitValue){
-  if(kind==="quantity") return '<div class="field"><label>'+label+'</label><input data-key="'+key+'" data-kind="quantity" type="number" min="0" step="1" value="'+value+'"></div>';
-  return '<div class="field"><label>'+label+'</label><div class="measure"><input data-key="'+key+'" data-kind="'+kind+'" type="text" inputmode="decimal" value="'+value+'"><select class="row-unit" data-key-unit="'+key+'">'+unitsHtml(key,unitValue)+'</select></div></div>';
+  const helper={thickness:"Enter the actual thickness of one board. Example: 1 or 3/4.",width:"Enter the actual width of one board. Example: 6.",length:"Enter the length of one board.",quantity:"How many boards of this size do you have?"};
+  if(kind==="quantity") return '<div class="field"><label>'+label+'</label><input data-key="'+key+'" data-kind="quantity" type="number" min="0" step="1" value="'+value+'"><div class="hint">'+helper[key]+'</div></div>';
+  return '<div class="field"><label>'+label+'</label><div class="measure"><input data-key="'+key+'" data-kind="'+kind+'" type="text" inputmode="decimal" value="'+value+'"><select class="row-unit" data-key-unit="'+key+'">'+unitsHtml(key,unitValue)+'</select></div><div class="hint">'+helper[key]+'</div></div>';
 }
 function addBoard(initial={},preserve=false){
   const box=document.createElement("div"); box.className="board"; box.dataset.id=String(nextId++);
@@ -194,7 +195,7 @@ function addBoard(initial={},preserve=false){
       ? {thickness:v.thickness||"1",width:v.width||"6",length:v.length||"8",quantity:v.quantity||"1"}
       : {thickness:v.thickness||"25.4",width:v.width||"152.4",length:v.length||"2.4384",quantity:v.quantity||"1"};
     const u={thickness:v.thicknessUnit||defaultUnitFor("thickness"),width:v.widthUnit||defaultUnitFor("width"),length:v.lengthUnit||defaultUnitFor("length")};
-    box.querySelector("[data-fields]").innerHTML=fieldHtml("Thickness","thickness",defaults.thickness,"thickness",u.thickness)+fieldHtml("Width","width",defaults.width,"width",u.width)+fieldHtml("Length","length",defaults.length,"length",u.length)+fieldHtml("Quantity","quantity",defaults.quantity,"quantity","qty");
+    box.querySelector("[data-fields]").innerHTML=fieldHtml("Thickness of one board","thickness",defaults.thickness,"thickness",u.thickness)+fieldHtml("Width of one board","width",defaults.width,"width",u.width)+fieldHtml("Length of one board","length",defaults.length,"length",u.length)+fieldHtml("Number of boards","quantity",defaults.quantity,"quantity","qty");
     box.querySelectorAll("input").forEach(i=>i.addEventListener("input",()=>{lastPresetTarget=box;calculate()}));
     box.querySelectorAll("select.row-unit").forEach(sel=>sel.addEventListener("change",()=>{ const key=sel.dataset.keyUnit; const input=box.querySelector('[data-key="'+key+'"]'); const old=sel.dataset.prev||sel.value; const v=parseFraction(input.value,0); if(input.value.trim()&&Number.isFinite(v)){ const base=toBase(v,key,old); input.value=String(Number(fromBase(base,key,sel.value).toFixed(6))); } sel.dataset.prev=sel.value; calculate(); }));
     box.querySelectorAll("select.row-unit").forEach(sel=>sel.dataset.prev=sel.value);
