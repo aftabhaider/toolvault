@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+<title>ToolVault</title>
+<rect width="64" height="64" rx="14" fill="#073f39"/>
+<path d="M18 17h28v7H35v23h-6V24H18z" fill="#fff"/>
+<path d="M34 25l8 16 9-18h-8l-5 10-5-10z" fill="#42e6ad"/>
+<path d="M12 49h40" stroke="#0b8f78" stroke-width="3" stroke-linecap="round"/>
+</svg>
