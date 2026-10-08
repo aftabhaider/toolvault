@@ -183,7 +183,7 @@ input,select,.control{background:#fbfefd;border-color:#c9ddd7}
 <div class="hint" id="locStatus">Enter a city or area and press Find.</div></div>
 
 <div class="field"><label for="panelCount">Number of panels</label><input id="panelCount" type="number" min="1" step="1" value="8"></div>
-<div class="field"><label for="panelWatt">Panel capacity (watts)</label><input id="panelWatt" type="number" min="50" step="1" value="625"></div>
+<div class="field"><label for="panelWatt">Panel capacity</label><div class="measure"><input id="panelWatt" type="number" min="0.001" step="any" value="625"><select id="panelWattUnit" aria-label="Panel capacity unit"><option value="W" selected>W</option><option value="kW">kW</option></select></div></div>
 
 <details class="advanced-fields"><summary>Advanced settings: losses, forecast period, tilt & azimuth</summary><div class="advanced-inner"><div class="field"><label for="losses">System losses (%)</label><input id="losses" type="number" min="0" max="40" step="1" value="14"><div class="hint">Inverter, wiring, temperature, mismatch and other system losses.</div></div><div class="field"><label for="period">Forecast period</label><select id="period"><option value="1">Today</option><option value="7" selected>Next 7 days</option><option value="30">Next 30 days</option></select></div><div class="field"><label for="tilt">Panel tilt (°)</label><input id="tilt" type="number" min="0" max="90" step="1" value="30"><div class="hint">Used for Global Tilted Irradiance (GTI).</div></div><div class="field"><label for="azimuth">Panel azimuth (°)</label><input id="azimuth" type="number" min="-180" max="180" step="1" value="0"><div class="hint">0° = South, -90° = East, 90° = West, ±180° = North.</div></div></div></details>
 </div>
