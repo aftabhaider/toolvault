@@ -169,7 +169,8 @@ Primary reference used for the calculator:
 - ToolVault's higher-ceiling adjustment is explicitly labeled as a planning approximation rather than an ENERGY STAR formula.
 
 Next portfolio target:
-6. Research the next high-demand / low-availability calculator opportunity before implementation.
+6. Roof Pitch Calculator — completed. The current page targets roof pitch / roof slope geometry with rise/run, pitch ratio, angle, slope percentage, pitch multiplier and optional rafter length.
+7. Research the next high-demand / low-availability calculator opportunity before implementation.
 
 
 ## Current Square Footage research notes
@@ -177,4 +178,4 @@ Next portfolio target:
 Square Footage Calculator is now implemented at /calculators/square-footage-calculator.html. The page targets the broad room/floor area calculation intent with a beginner-first rectangle workflow plus triangle and circle options, multiple-room totals, visible unit selectors and exact area conversions. Current competing tools also emphasize multiple rooms and simple shapes, so ToolVault differentiates through clear measurement language, global units, transparent formulas and an area-only scope that does not mix material takeoffs into the core calculation.
 
 Next portfolio target:
-7. Deepen an existing construction or engineering cluster using Search Console data before creating another broad calculator.
+8. Deepen an existing construction or engineering cluster using Search Console data before creating another broad calculator.
