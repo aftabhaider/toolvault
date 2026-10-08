@@ -130,8 +130,7 @@ Public keyword and SERP research used for this roadmap:
 1. Paint Calculator — completed.
 2. Mulch Calculator — completed.
 3. Board Foot Calculator — completed.
-4. Stair Calculator — next opportunity to evaluate/build.
-4. Stair Calculator.
+4. Stair Calculator — completed.
 5. AC / BTU Calculator.
 6. Square Footage Calculator.
 7. Deepen existing construction/engineering clusters based on Search Console data.
