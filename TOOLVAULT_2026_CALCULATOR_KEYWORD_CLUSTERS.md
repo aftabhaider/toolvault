@@ -147,7 +147,7 @@ Current Stair research notes:
 - No separate "how to calculate stairs" guide is created yet because the calculator page already contains the complete instructional/search-intent content and should be measured before adding another page for the same cluster.
 
 Next portfolio target:
-5. AC / BTU Calculator — research current demand and SERP opportunity before implementation.
+5. AC / BTU Calculator — completed.
 
 ## Measurement loop
 
@@ -157,3 +157,16 @@ After each cluster:
 - Monitor queries, impressions, CTR, average position and indexed status.
 - Identify unexpected long-tail queries.
 - Improve the existing page before creating another page for the same intent.
+
+
+## Current AC / BTU research notes
+
+AC / BTU is now implemented as a room/zone sizing calculator. Current 2026 SERPs show active free tools from ENERGY STAR-based and rule-of-thumb competitors, including calculators that use room size, ceiling height, sun exposure, occupancy and kitchen use. ToolVault differentiates with plain-English inputs, visible units, transparent breakdowns, the official ENERGY STAR room-AC capacity bands, and an explicit warning that whole-home HVAC sizing needs a detailed load calculation.
+
+Primary reference used for the calculator:
+- ENERGY STAR Room Air Conditioners: https://www.energystar.gov/products/room_air_conditioners
+- ENERGY STAR publishes the room-area capacity chart, 10% shade/sun adjustments, +600 BTU/h for each regular occupant above two, and +4,000 BTU/h for kitchen use. 
+- ToolVault's higher-ceiling adjustment is explicitly labeled as a planning approximation rather than an ENERGY STAR formula.
+
+Next portfolio target:
+6. Research the next high-demand / low-availability calculator opportunity before implementation.
