@@ -69,8 +69,8 @@ export function calculateMulch(input={}){
   const bagCost=bagPrice>0?bags*bagPrice:null;
   const costDifference=(bulkCost!=null&&bagCost!=null)?bagCost-bulkCost:null;
 
-  const coveragePerYardFt2=(targetDepthM>0)?(1/M2_TO_FT2)*(M3_TO_FT3/cubicYards || 0):0;
-  const sqFtPerYardAtDepth=targetDepthM>0?(1/((targetDepthM))*M3_TO_YD3/M2_TO_FT2):0;
+  const sqFtPerYardAtDepth=targetDepthM>0?((1/M3_TO_YD3)/targetDepthM)*M2_TO_FT2:0;
+  const coveragePerYardFt2=sqFtPerYardAtDepth;
 
   return {
     beds:breakdown,totalAreaM2,netVolumeM3,orderVolumeM3,cubicFeet,cubicYards,
