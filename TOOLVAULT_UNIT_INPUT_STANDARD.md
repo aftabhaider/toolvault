@@ -6,6 +6,19 @@ Updated: 2026-10-08
 
 Every calculator that accepts a physical measurement should make the unit visible at the input itself. Users should never have to guess whether a number means metres, feet, inches, square feet, litres, gallons or another unit.
 
+## Plain-language labels
+
+The label must tell a non-expert what physical quantity to enter. Technical terms may appear after the plain-English label, not instead of it. Add a one-line helper explaining where/how to measure the value when the meaning is not obvious.
+
+Examples:
+- Total rise → Floor-to-floor height
+- Riser height → Height of one step
+- Tread depth → Depth of one step
+- Available run → Horizontal space available for the staircase
+- Panel wattage → Power of one solar panel
+- Conductor cross-section → Cable size
+- Paint coverage → How much area does the paint cover?
+
 ## Input rule
 
 Use a value input paired with a unit selector when a measurement can reasonably be entered in more than one unit.
