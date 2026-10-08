@@ -48,12 +48,14 @@ export function calculateMulch(input={}){
 
   let totalAreaM2=0;
   const breakdown=beds.map((bed,index)=>{
-    const areaM2=shapeAreaM2(bed);
+    const quantity=Math.max(1,Math.floor(positive(bed?.quantity,1)));
+    const areaM2=shapeAreaM2(bed)*quantity;
     const volumeM3=areaM2*appliedDepthM;
     totalAreaM2+=areaM2;
     return {
       index:index+1,
       shape:bed?.shape||"rectangle",
+      quantity,
       areaM2,
       volumeM3
     };
