@@ -54,7 +54,7 @@ body{background:#edf5f2!important}
 input,select,.control{background:#fbfefd;border-color:#c9ddd7}
 .unitChoice,.shape,.seg,.choice{background:#f7fcfa}
 .unitChoice.active,.shape.active,.seg.active,.choice.active{background:#e3f6f0;border-color:#99cdbf;color:#086c5b}
-</style>
+.measure{display:grid;grid-template-columns:minmax(0,1fr) 82px}.measure input{border-radius:9px 0 0 9px}.measure select{border:1px solid #c8dad4;border-left:0;border-radius:0 9px 9px 0;padding:10px 6px;background:#f7fcfa;color:#086c5b;font-size:11px;font-weight:850;outline:none}.measure select:focus{border-color:#7bbcad;box-shadow:0 0 0 3px rgba(11,143,120,.08)}.unit-note{font-size:9px;color:#84918c;margin:7px 0 12px}</style>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"WebApplication","@id":"https://toolvault.aftabjordan1.workers.dev/construction/gravel-calculator.html#app","name":"Gravel Calculator","url":"https://toolvault.aftabjordan1.workers.dev/construction/gravel-calculator.html","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires a modern web browser","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
@@ -161,171 +161,52 @@ input,select,.control{background:#fbfefd;border-color:#c9ddd7}
 
 <script>
 const areasEl=document.getElementById('areas');
-let nextId=1;
-let unitSystem='metric';
-
-function inputNum(cls,value){
-  return '<input class="'+cls+'" type="number" min="0" step="any" value="'+value+'">';
-}
-
+let nextId=1,unitSystem='metric';
+const M={mm:.001,cm:.01,m:1,in:.0254,ft:.3048};
+function num(v,f=0){const n=Number(v);return Number.isFinite(n)?Math.max(0,n):f}
+function fmt(v,d=2){return new Intl.NumberFormat(undefined,{maximumFractionDigits:d}).format(v)}
+function inputNum(cls,value){return '<input class="'+cls+'" type="number" min="0" step="any" value="'+value+'">'}
+function opts(current,depth=false){const list=depth?["mm","cm","in","ft","m"]:["mm","cm","m","in","ft"];return list.map(u=>'<option value="'+u+'" '+(u===current?'selected':'')+'>'+u+'</option>').join("")}
+function measure(label,key,value,current,depth=false){return '<div class="field '+(key==="depth"?"full":"rectOnly")+(depth?" full":"")+'"><span class="dimLabel">'+label+'</span><div class="measure"><input data-key="'+key+'" type="number" min="0" step="any" value="'+value+'"><select class="row-unit" data-unit-for="'+key+'">'+opts(current,depth)+'</select></div></div>'}
 function areaTemplate(id){
-  const el=document.createElement('div');
-  el.className='areaItem';el.dataset.shape='rect';el.dataset.id=id;
-  el.innerHTML=
-    '<div class="areaTop"><strong>Area '+id+'</strong><button class="remove" type="button">Remove</button></div>'+
-    '<div class="shapeRow">'+
-      '<label class="shape active"><input type="radio" name="shape-'+id+'" value="rect" checked>▭ Rectangle</label>'+
-      '<label class="shape"><input type="radio" name="shape-'+id+'" value="circle">○ Circle</label>'+
-    '</div>'+
-    '<div class="areaFields" style="margin-top:10px">'+
-      '<div class="field rectOnly">'+
-        '<span class="dimLabel">Length</span>'+
-        '<div class="metricOnly">'+inputNum('lenM',10)+'</div>'+
-        '<div class="imperialOnly pair">'+inputNum('lenFt',30)+'<span class="suffix">ft</span>'+inputNum('lenIn',0)+'<span class="suffix">in</span></div>'+
-        '<small class="unitHint metricOnly">Enter meters (m)</small><small class="unitHint imperialOnly">Enter feet and optional inches</small>'+
-      '</div>'+
-      '<div class="field rectOnly">'+
-        '<span class="dimLabel">Width</span>'+
-        '<div class="metricOnly">'+inputNum('widM',5)+'</div>'+
-        '<div class="imperialOnly pair">'+inputNum('widFt',15)+'<span class="suffix">ft</span>'+inputNum('widIn',0)+'<span class="suffix">in</span></div>'+
-        '<small class="unitHint metricOnly">Enter meters (m)</small><small class="unitHint imperialOnly">Enter feet and optional inches</small>'+
-      '</div>'+
-      '<div class="field circleOnly">'+
-        '<span class="dimLabel">Diameter</span>'+
-        '<div class="metricOnly">'+inputNum('diaM',5)+'</div>'+
-        '<div class="imperialOnly pair">'+inputNum('diaFt',15)+'<span class="suffix">ft</span>'+inputNum('diaIn',0)+'<span class="suffix">in</span></div>'+
-        '<small class="unitHint metricOnly">Enter meters (m)</small><small class="unitHint imperialOnly">Enter feet and optional inches</small>'+
-      '</div>'+
-      '<div class="field full">'+
-        '<span class="dimLabel">Depth</span>'+
-        '<div class="metricOnly">'+inputNum('depthCm',10)+'</div>'+
-        '<div class="imperialOnly">'+inputNum('depthIn',4)+'</div>'+
-        '<small class="unitHint metricOnly">Enter centimeters (cm)</small><small class="unitHint imperialOnly">Enter inches (in)</small>'+
-      '</div>'+
-    '</div>';
-
-  const radios=[...el.querySelectorAll('input[type=radio]')];
-  radios.forEach(r=>r.addEventListener('change',()=>{
-    el.dataset.shape=r.value;
-    el.querySelectorAll('.shape').forEach(s=>s.classList.toggle('active',s.querySelector('input').checked));
-    calculate();
-  }));
-  el.querySelector('.remove').addEventListener('click',()=>{el.remove();calculate()});
-  el.querySelectorAll('input[type=number]').forEach(i=>i.addEventListener('input',calculate));
-  return el;
+ const el=document.createElement('div');el.className='areaItem';el.dataset.shape='rect';el.dataset.id=id;
+ const defaultDim=unitSystem==='metric'?'m':'ft',defaultDepth=unitSystem==='metric'?'cm':'in';
+ el.innerHTML='<div class="areaTop"><strong>Area '+id+'</strong><button class="remove" type="button">Remove</button></div><div class="shapeRow"><label class="shape active"><input type="radio" name="shape-'+id+'" value="rect" checked>▭ Rectangle</label><label class="shape"><input type="radio" name="shape-'+id+'" value="circle">○ Circle</label></div><div class="areaFields" style="margin-top:10px"><div data-shape-fields></div>'+measure("Depth","depth",10,defaultDepth,true)+'</div>';
+ areasEl.appendChild(el);
+ function renderShape(){
+   const current={};el.querySelectorAll("[data-key]").forEach(i=>current[i.dataset.key]=i.value);
+   const units={};el.querySelectorAll(".row-unit").forEach(s=>units[s.dataset.unitFor]=s.value);
+   const s=el.dataset.shape,dim=defaultDim;
+   let h='';
+   if(s==='rect') h=measure("Length","length",current.length|| (unitSystem==='metric'?10:30),units.length||dim)+measure("Width","width",current.width||(unitSystem==='metric'?5:15),units.width||dim);
+   else h=measure("Diameter","diameter",current.diameter||(unitSystem==='metric'?5:15),units.diameter||dim);
+   el.querySelector('[data-shape-fields]').innerHTML=h;
+   const depthInput=el.querySelector('[data-key="depth"]');
+   const depthSel=el.querySelector('[data-unit-for="depth"]');
+   if(!depthInput.dataset.hasValue){depthInput.value=unitSystem==='metric'?10:4;depthInput.dataset.hasValue='1';}
+   [depthSel].forEach(s=>{s.dataset.prev=s.value;s.addEventListener("change",()=>{const old=s.dataset.prev||s.value,v=num(depthInput.value);if(depthInput.value.trim())depthInput.value=(v*M[old]/M[s.value]).toFixed(6);s.dataset.prev=s.value;calculate();});});
+   el.querySelectorAll('.row-unit:not([data-unit-for="depth"])').forEach(s=>{s.dataset.prev=s.value;s.addEventListener("change",()=>{const key=s.dataset.unitFor,input=el.querySelector('[data-key="'+key+'"]'),old=s.dataset.prev||s.value,v=num(input.value);if(input.value.trim())input.value=(v*M[old]/M[s.value]).toFixed(6);s.dataset.prev=s.value;calculate();});});
+   el.querySelectorAll('input[data-key]').forEach(i=>i.addEventListener('input',calculate));
+ }
+ el.querySelectorAll('input[type=radio]').forEach(r=>r.addEventListener('change',()=>{el.dataset.shape=r.value;el.querySelectorAll('.shape').forEach(s=>s.classList.toggle('active',s.querySelector('input').checked));renderShape();calculate();}));
+ el.querySelector('.remove').addEventListener('click',()=>{el.remove();calculate()});renderShape();return el;
 }
-
-function addArea(){
-  areasEl.appendChild(areaTemplate(nextId++));
-  applyUnitUI();
-  calculate();
+function addArea(){areasEl.appendChild(areaTemplate(nextId++));calculate()}
+function quickSet(next){
+ const dim=next==='metric'?'m':'ft',dep=next==='metric'?'cm':'in';
+ document.querySelectorAll('.areaItem').forEach(el=>el.querySelectorAll('.row-unit').forEach(s=>{const key=s.dataset.unitFor,input=el.querySelector('[data-key="'+key+'"]'),old=s.value,nu=key==='depth'?dep:dim;if(!input)return;const v=num(input.value);if(input.value.trim())input.value=(v*M[old]/M[nu]).toFixed(6);s.value=nu;s.dataset.prev=nu;}));
+ unitSystem=next;document.querySelectorAll('.unitChoice').forEach(x=>x.classList.toggle('active',x.querySelector('input').value===unitSystem));calculate();
 }
-
-function applyUnitUI(){
-  document.querySelectorAll('.metricOnly').forEach(el=>el.style.display=unitSystem==='metric'?'block':'none');
-  document.querySelectorAll('.imperialOnly').forEach(el=>{
-    const show=unitSystem==='imperial';
-    el.style.display=show?(el.classList.contains('pair')?'grid':'block'):'none';
-  });
-  document.querySelectorAll('.unitChoice').forEach(el=>{
-    const radio=el.querySelector('input');
-    el.classList.toggle('active',radio.checked);
-  });
-}
-
-function convertUnitFields(from,to){
-  document.querySelectorAll('.areaItem').forEach(el=>{
-    const l=from==='metric'?num(el,'lenM'):(num(el,'lenFt')+num(el,'lenIn')/12)*0.3048;
-    const w=from==='metric'?num(el,'widM'):(num(el,'widFt')+num(el,'widIn')/12)*0.3048;
-    const d=from==='metric'?num(el,'depthCm')/100:num(el,'depthIn')*0.0254;
-    const dia=from==='metric'?num(el,'diaM'):(num(el,'diaFt')+num(el,'diaIn')/12)*0.3048;
-    if(to==='metric'){
-      el.querySelector('.lenM').value=l.toFixed(3);
-      el.querySelector('.widM').value=w.toFixed(3);
-      el.querySelector('.depthCm').value=(d*100).toFixed(1);
-      el.querySelector('.diaM').value=dia.toFixed(3);
-    }else{
-      const writeImperial=(prefix,m)=>{
-        const totalIn=m/0.0254;
-        const ft=Math.floor(totalIn/12);
-        const inch=totalIn-ft*12;
-        el.querySelector('.'+prefix+'Ft').value=String(ft);
-        el.querySelector('.'+prefix+'In').value=inch.toFixed(1);
-      };
-      writeImperial('len',l);
-      writeImperial('wid',w);
-      writeImperial('dia',dia);
-      el.querySelector('.depthIn').value=(d/0.0254).toFixed(1);
-    }
-  });
-}
-
-document.querySelectorAll('input[name="unitSystem"]').forEach(r=>{
-  r.addEventListener('change',()=>{
-    const previous=unitSystem;
-    const next=r.value;
-    if(previous!==next) convertUnitFields(previous,next);
-    unitSystem=next;
-    applyUnitUI();
-    calculate();
-  });
-});
-
-document.getElementById('addArea').addEventListener('click',addArea);
-['density','waste','price','currency','bagSize'].forEach(id=>document.getElementById(id).addEventListener('input',calculate));
-
-function num(el,cls){
-  const v=el.querySelector('.'+cls);
-  return v?Math.max(0,Number(v.value)||0):0;
-}
-function metersForLength(el,prefix){
-  if(unitSystem==='metric') return num(el,prefix+'M');
-  return (num(el,prefix+'Ft')+num(el,prefix+'In')/12)*0.3048;
-}
-function metersForDepth(el){
-  if(unitSystem==='metric') return num(el,'depthCm')/100;
-  return num(el,'depthIn')*0.0254;
-}
-
 function calculate(){
-  let netM3=0,count=0;
-  document.querySelectorAll('.areaItem').forEach(el=>{
-    const depth=metersForDepth(el);
-    let areaM2=0;
-    if(el.dataset.shape==='circle'){
-      const d=metersForLength(el,'dia');
-      areaM2=Math.PI*Math.pow(d/2,2);
-    }else{
-      const l=metersForLength(el,'len');
-      const w=metersForLength(el,'wid');
-      areaM2=l*w;
-    }
-    netM3+=areaM2*depth;
-    count++;
-  });
-  const waste=Math.max(0,Number(document.getElementById('waste').value)||0);
-  const density=Math.max(0,Number(document.getElementById('density').value)||0);
-  const gross=netM3*(1+waste/100);
-  const tons=gross*density;
-  const yd3=gross*1.30795062;
-  const ft3=gross*35.3146667;
-  const bagKg=Math.max(0,Number(document.getElementById('bagSize').value)||0);
-  const bags=bagKg>0?Math.ceil((tons*1000)/bagKg):0;
-  const price=Math.max(0,Number(document.getElementById('price').value)||0);
-  const currency=(document.getElementById('currency').value||'$').trim();
-
-  document.getElementById('m3').textContent=count?gross.toFixed(2):'—';
-  document.getElementById('tons').textContent=count?tons.toFixed(2):'—';
-  document.getElementById('yd3').textContent=count?yd3.toFixed(2):'—';
-  document.getElementById('ft3').textContent=count?ft3.toFixed(1):'—';
-  document.getElementById('bags').textContent=bagKg>0&&count?String(bags):'—';
-  document.getElementById('bagsNote').textContent=bagKg>0?'bags of '+bagKg+' kg':'enter bag weight';
-  document.getElementById('areaCount').textContent=count;
-  document.getElementById('cost').textContent=price>0&&count?currency+' '+(tons*price).toFixed(2):'Add price/tonne';
-  document.getElementById('resultTitle').textContent=count?gross.toFixed(2)+' m³ of material':'Enter your project dimensions';
+ let netM3=0,count=0;
+ document.querySelectorAll('.areaItem').forEach(el=>{const depthKey=el.querySelector('[data-key="depth"]'),depthUnit=el.querySelector('[data-unit-for="depth"]').value,depth=num(depthKey.value)*M[depthUnit];let areaM2=0;if(el.dataset.shape==='circle'){const dEl=el.querySelector('[data-key="diameter"]'),u=el.querySelector('[data-unit-for="diameter"]').value;const d=num(dEl.value)*M[u];areaM2=Math.PI*Math.pow(d/2,2)}else{const l=num(el.querySelector('[data-key="length"]').value)*M[el.querySelector('[data-unit-for="length"]').value],w=num(el.querySelector('[data-key="width"]').value)*M[el.querySelector('[data-unit-for="width"]').value];areaM2=l*w}netM3+=areaM2*depth;count++;});
+ const waste=num(document.getElementById('waste').value),density=num(document.getElementById('density').value),gross=netM3*(1+waste/100),tons=gross*density,yd3=gross*1.30795062,ft3=gross*35.3146667,bagKg=num(document.getElementById('bagSize').value),bags=bagKg>0?Math.ceil((tons*1000)/bagKg):0,price=num(document.getElementById('price').value),currency=(document.getElementById('currency').value||'$').trim();
+ document.getElementById('m3').textContent=count?gross.toFixed(2):'—';document.getElementById('tons').textContent=count?tons.toFixed(2):'—';document.getElementById('yd3').textContent=count?yd3.toFixed(2):'—';document.getElementById('ft3').textContent=count?ft3.toFixed(1):'—';document.getElementById('bags').textContent=bagKg>0&&count?String(bags):'—';document.getElementById('bagsNote').textContent=bagKg>0?'bags of '+bagKg+' kg':'enter bag weight';document.getElementById('areaCount').textContent=count;document.getElementById('cost').textContent=price>0&&count?currency+' '+(tons*price).toFixed(2):'Add price/tonne';document.getElementById('resultTitle').textContent=count?gross.toFixed(2)+' m³ of material':'Enter your project dimensions';
 }
-
-addArea();
+document.querySelectorAll('input[name="unitSystem"]').forEach(r=>r.addEventListener('change',()=>quickSet(r.value)));
+document.getElementById('addArea').addEventListener('click',addArea);['density','waste','price','currency','bagSize'].forEach(id=>document.getElementById(id).addEventListener('input',calculate));addArea();
 </script>
+</body>
+</html>
 </body>
 </html>
