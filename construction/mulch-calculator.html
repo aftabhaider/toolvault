@@ -125,7 +125,7 @@ footer{border-top:1px solid var(--line);padding:25px 0;background:#fff;color:#74
 <p>One cubic yard contains 27 cubic feet. At a 3-inch layer, one cubic yard covers about 108 square feet. This follows directly from the volume formula and is useful for checking a bulk-delivery estimate.</p>
 
 <h2>Mulch Calculator for Bags</h2>
-<p>Retail mulch is sold in different bag sizes, so the calculator asks for the actual bag volume rather than assuming every product uses the same size. A 2 ft³ bag is common, but the bag label should always take priority. Current mulch calculators also emphasize checking the product-specific bag coverage before ordering. citeturn432508search0turn432508search3</p>
+<p>Retail mulch is sold in different bag sizes, so the calculator asks for the actual bag volume rather than assuming every product uses the same size. A 2 ft³ bag is common, but the bag label should always take priority. Current mulch calculators also emphasize checking the product-specific bag coverage before ordering.</p>
 
 <h2>How Deep Should Mulch Be?</h2>
 <p>Depth depends on the landscape use and material. Penn State Extension says a 2–3 inch layer is effective for many planted areas, while University of Minnesota Extension describes a 2–4 inch range for balancing weed suppression with soil aeration. Avoid treating one depth as a universal rule; follow the needs of the planting and the mulch product. citeturn364823search0turn364823search1</p>
@@ -134,7 +134,7 @@ footer{border-top:1px solid var(--line);padding:25px 0;background:#fff;color:#74
 <p>Coverage depends on depth. At 1 inch, one cubic yard covers about 324 ft²; at 2 inches, about 162 ft²; at 3 inches, about 108 ft²; and at 4 inches, about 81 ft². These values come directly from the cubic-yard volume conversion.</p>
 
 <h2>Tree Ring and Circular Bed Calculations</h2>
-<p>For a circular bed, ToolVault uses the area of a circle. For a tree ring, it subtracts the inner circle from the outer circle, so mulch is not calculated for the trunk-clearance area. Proper mulch placement also means keeping mulch away from tree trunks and plant stems. citeturn364823search7turn364823search9</p>
+<p>For a circular bed, ToolVault uses the area of a circle. For a tree ring, it subtracts the inner circle from the outer circle, so mulch is not calculated for the trunk-clearance area. Proper mulch placement also means keeping mulch away from tree trunks and plant stems. <a href="https://extension.psu.edu/planting-trees-in-your-community-forest" rel="noopener" target="_blank">Penn State tree-mulching guidance</a>.</p>
 
 <h2>Worked Example: 20 × 10 ft Bed at 3 Inches</h2>
 <div class="example">
@@ -161,7 +161,7 @@ footer{border-top:1px solid var(--line);padding:25px 0;background:#fff;color:#74
 <h3>Can I calculate existing mulch top-up?</h3>
 <p>Yes. Enter the target depth and the existing settled depth in Advanced settings. The calculator subtracts the existing depth before calculating the additional material needed.</p>
 <h3>Should mulch touch a tree trunk?</h3>
-<p>No. Extension guidance recommends keeping mulch away from trunks and stems rather than creating a mound around them. citeturn364823search7turn364823search9</p>
+<p>No. Extension guidance recommends keeping mulch away from trunks and stems rather than creating a mound around them. See <a href="https://extension.psu.edu/planting-trees-in-your-community-forest" rel="noopener" target="_blank">Penn State tree-mulching guidance</a>.</p>
 
 <h2>Related Construction Calculators</h2>
 <div class="related">
@@ -223,15 +223,16 @@ function addBed(initial){
     const s=box.querySelector('input[name="shape-'+box.dataset.id+'"]:checked').value;
     const f=box.querySelector("[data-fields]");
     const vals=preserve?current:{};
+    const defaults=unit==="metric"?{length:6,width:3,diameter:4,base:5,height:3,outer:4,inner:0.6}:{length:20,width:10,diameter:10,base:10,height:8,outer:12,inner:2};
     let h="";
     if(s==="rectangle"){
-      h=field("Length","length",vals.length||20,"dim")+" "+field("Width","width",vals.width||10,"dim");
+      h=field("Length","length",vals.length||defaults.length,"dim")+" "+field("Width","width",vals.width||defaults.width,"dim");
     }else if(s==="circle"){
-      h=field("Diameter","diameter",vals.diameter||10,"dim");
+      h=field("Diameter","diameter",vals.diameter||defaults.diameter,"dim");
     }else if(s==="triangle"){
-      h=field("Base","base",vals.base||10,"dim")+" "+field("Height","height",vals.height||8,"dim");
+      h=field("Base","base",vals.base||defaults.base,"dim")+" "+field("Height","height",vals.height||defaults.height,"dim");
     }else{
-      h=field("Outer diameter","outer",vals.outer||10,"dim")+" "+field("Inner diameter / trunk clearance","inner",vals.inner||2,"dim");
+      h=field("Outer diameter","outer",vals.outer||defaults.outer,"dim")+" "+field("Inner diameter / trunk clearance","inner",vals.inner||defaults.inner,"dim");
     }
     h+=field("Quantity","quantity",vals.quantity||$("#quantity").value||1,"qty","Number of identical areas with these dimensions.");
     f.innerHTML=h;
