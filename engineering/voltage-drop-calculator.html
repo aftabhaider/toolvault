@@ -55,7 +55,7 @@ body{background:#edf5f2!important}
 input,select,.control{background:#fbfefd;border-color:#c9ddd7}
 .unitChoice,.shape,.seg,.choice{background:#f7fcfa}
 .unitChoice.active,.shape.active,.seg.active,.choice.active{background:#e3f6f0;border-color:#99cdbf;color:#086c5b}
-</style>
+.measure{display:grid;grid-template-columns:minmax(0,1fr) 84px}.measure input{border-radius:9px 0 0 9px}.measure select{border:1px solid #c8dad4;border-left:0;border-radius:0 9px 9px 0;padding:10px 6px;background:#f7fcfa;color:#086c5b;font-size:11px;font-weight:850;outline:none}.measure select:focus{border-color:#7bbcad;box-shadow:0 0 0 3px rgba(11,143,120,.08)}</style>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"WebApplication","name":"Voltage Drop Calculator","url":"https://toolvault.aftabjordan1.workers.dev/engineering/voltage-drop-calculator.html","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
@@ -180,16 +180,23 @@ input,select,.control{background:#fbfefd;border-color:#c9ddd7}
 <footer><div class="wrap">© 2026 ToolVault · Free practical tools for the web. Planning calculations must be checked against installation specifications, manufacturer data and applicable electrical requirements.</div></footer>
 
 <script type="module">
-import {calculateVoltageDrop,maxLengthForDrop,minimumAreaForDrop,awgAreaMm2,awgCircularMils,METRIC_SIZES_MM2,AWG_SIZES,RHO_OHM_M} from './voltage-drop-engine.js';
-
+import {calculateVoltageDrop,maxLengthForDrop,minimumAreaForDrop,awgAreaMm2,METRIC_SIZES_MM2,AWG_SIZES,RHO_OHM_M} from './voltage-drop-engine.js';
 const $=id=>document.getElementById(id);
 const metricSize=$('metricSize'),awgSize=$('awgSize');
 METRIC_SIZES_MM2.forEach(v=>metricSize.add(new Option(String(v),String(v))));
 AWG_SIZES.forEach(v=>awgSize.add(new Option(v.label,String(v.n))));
 metricSize.value='6';awgSize.value='12';
+const V_PER={V:1,kV:1000},A_PER={mA:0.001,A:1,kA:1000},M_PER={m:1,ft:0.3048};
 function num(v){const n=Number(v);return Number.isFinite(n)?Math.max(0,n):0}
 function fixed(n,d=2){return Number(n).toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d})}
-function lengthM(){const L=num($('length').value);return $('lengthUnit').value==='ft'?L*0.3048:L}
+function convertUnit(input,select,map){
+  const raw=num(input.value),old=select.dataset.prev||select.value,next=select.value;
+  if(raw>0)input.value=(raw*map[old]/map[next]).toFixed(6).replace(/.?0+$/,'');
+  select.dataset.prev=next;
+}
+function canonicalVoltage(){return num($('voltage').value)*V_PER[$('voltageUnit').value]}
+function canonicalCurrent(){return num($('current').value)*A_PER[$('currentUnit').value]}
+function lengthM(){return num($('length').value)*M_PER[$('lengthUnit').value]}
 function areaMm2(){return $('sizeSystem').value==='mm2'?num(metricSize.value):awgAreaMm2(Number(awgSize.value))}
 function rho(){return document.querySelector('input[name="resMode"]:checked').value==='custom'?num($('rho').value):RHO_OHM_M[$('material').value]}
 function selectedSizeLabel(){return $('sizeSystem').value==='mm2'?fixed(areaMm2(),3)+' mm²':$('awgSize').options[$('awgSize').selectedIndex].text}
@@ -203,39 +210,28 @@ function toggleUI(){
 }
 function render(){
   $('error').style.display='none';$('error').textContent='';
-  const sourceV=num($('voltage').value),I=num($('current').value),L=lengthM(),A=areaMm2(),RHO=rho(),target=num($('target').value),hours=num($('hours').value);
+  const sourceV=canonicalVoltage(),I=canonicalCurrent(),L=lengthM(),A=areaMm2(),RHO=rho(),target=num($('target').value),hours=num($('hours').value);
   if(!(sourceV>0&&I>0&&L>0&&A>0&&RHO>0)){ $('error').style.display='block';$('error').textContent='Enter positive voltage, current, length, conductor size and resistivity.';return; }
   const system=document.querySelector('input[name="system"]:checked').value,material=$('material').value;
-  const result=calculateVoltageDrop({system,material,currentA:I,lengthM:L,areaMm2:A,sourceV,rhoOverride:document.querySelector('input[name="resMode"]:checked').value==='custom'?RHO:null});
-  $('dropV').textContent=fixed(result.volts,3);
-  $('dropPct').textContent=fixed(result.percent,3);
-  $('loadV').textContent=fixed(result.loadV,3);
-  $('rPerM').textContent=result.rPerM.toExponential(4);
-  $('lossW').textContent=fixed(result.powerLossW,2);
-  $('lossKwh').textContent=hours>0?fixed(result.energyLossKWhPerDay,3):'—';
-  const maxL=maxLengthForDrop({sourceV,targetPercent:target,currentA:I,areaMm2:A,material,system,rhoOverride:document.querySelector('input[name="resMode"]:checked').value==='custom'?RHO:null});
-  const minA=minimumAreaForDrop({sourceV,targetPercent:target,currentA:I,lengthM:L,material,system,rhoOverride:document.querySelector('input[name="resMode"]:checked').value==='custom'?RHO:null});
+  const custom=document.querySelector('input[name="resMode"]:checked').value==='custom';
+  const result=calculateVoltageDrop({system,material,currentA:I,lengthM:L,areaMm2:A,sourceV,rhoOverride:custom?RHO:null});
+  $('dropV').textContent=fixed(result.volts,3);$('dropPct').textContent=fixed(result.percent,3);$('loadV').textContent=fixed(result.loadV,3);$('rPerM').textContent=result.rPerM.toExponential(4);$('lossW').textContent=fixed(result.powerLossW,2);$('lossKwh').textContent=hours>0?fixed(result.energyLossKWhPerDay,3):'—';
+  const maxL=maxLengthForDrop({sourceV,targetPercent:target,currentA:I,areaMm2:A,material,system,rhoOverride:custom?RHO:null});
+  const minA=minimumAreaForDrop({sourceV,targetPercent:target,currentA:I,lengthM:L,material,system,rhoOverride:custom?RHO:null});
   const maxDisplay=$('lengthUnit').value==='ft'?fixed(maxL/0.3048,1)+' ft':fixed(maxL,1)+' m';
-  $('maxLen').textContent=maxDisplay;
-  $('minArea').textContent=fixed(minA,3);
-  $('resultTitle').textContent=fixed(result.percent,2)+'% voltage drop';
-  const targetV=sourceV*target/100;
-  const factor=result.factor;
-  $('breakRows').innerHTML=[
-    ['System factor',factor===Math.sqrt(3)?'√3 = 1.732':factor+' × one-way path'],
-    ['Conductor',''+material+' · '+selectedSizeLabel()],
-    ['One-conductor resistance',result.rPerM.toExponential(4)+' Ω/m'],
-    ['Maximum drop at target',fixed(targetV,3)+' V'],
-    ['Target',fixed(target,2)+'%']
-  ].map(r=>'<div class="breakRow"><span>'+r[0]+'</span><span>'+r[1]+'</span></div>').join('');
-  if(result.percent>target && target>0)$('dropPct').style.textDecoration='underline';
+  $('maxLen').textContent=maxDisplay;$('minArea').textContent=fixed(minA,3);$('resultTitle').textContent=fixed(result.percent,2)+'% voltage drop';
+  const targetV=sourceV*target/100,factor=result.factor;
+  $('breakRows').innerHTML=[['System factor',factor===Math.sqrt(3)?'√3 = 1.732':factor+' × one-way path'],['Conductor',''+material+' · '+selectedSizeLabel()],['One-conductor resistance',result.rPerM.toExponential(4)+' Ω/m'],['Maximum drop at target',fixed(targetV,3)+' V'],['Target',fixed(target,2)+'%']].map(r=>'<div class="breakRow"><span>'+r[0]+'</span><span>'+r[1]+'</span></div>').join('');
+  if(result.percent>target&&target>0)$('dropPct').style.textDecoration='underline';
 }
+['voltageUnit','currentUnit','lengthUnit'].forEach(id=>{const s=$(id);s.dataset.prev=s.value;s.addEventListener('change',()=>{const map=id==='voltageUnit'?V_PER:id==='currentUnit'?A_PER:M_PER;convertUnit($(id==='voltageUnit'?'voltage':id==='currentUnit'?'current':'length'),s,map);render();});});
 document.querySelectorAll('input[name="system"]').forEach(x=>x.addEventListener('change',()=>{toggleUI();render()}));
 document.querySelectorAll('input[name="resMode"]').forEach(x=>x.addEventListener('change',()=>{toggleUI();render()}));
 $('sizeSystem').addEventListener('change',()=>{toggleUI();render()});
-['voltage','current','length','lengthUnit','material','metricSize','awgSize','target','hours','rho'].forEach(id=>$(id).addEventListener('input',render));
-$('priceUnit')?.addEventListener('input',render);
+['voltage','current','length','material','metricSize','awgSize','target','hours','rho'].forEach(id=>$(id).addEventListener('input',render));
 toggleUI();render();
 </script>
+</body>
+</html>
 </body>
 </html>
