@@ -137,9 +137,10 @@ input,select,.control{background:#fbfefd;border-color:#c9ddd7}
 <section class="card">
 <div class="card-head"><div class="step">01</div><div><h2>Appliances & Load</h2><p>Enter the appliances you want the solar system to support.</p></div></div>
 <div class="card-body">
+<p class="small-note" style="margin:0 0 10px;color:#73817d;font-size:12px">For each appliance, choose the item, enter how many you have, enter the power of one appliance, and enter how many hours you expect to use it each day.</p>
 <div class="table-wrap">
 <table class="load-table">
-<thead><tr><th>Appliance</th><th>Quantity</th><th>Power</th><th>Time / day</th><th></th></tr></thead>
+<thead><tr><th>What appliance?</th><th>How many?</th><th>Power used</th><th>Hours used each day</th><th></th></tr></thead>
 <tbody id="appliances"></tbody>
 </table>
 </div>
@@ -158,9 +159,9 @@ input,select,.control{background:#fbfefd;border-color:#c9ddd7}
 <section class="card full">
 <div class="card-head"><div class="step">02</div><div><h2>Solar Settings</h2><p>Set the local solar resource and planning losses.</p></div></div>
 <div class="card-body">
-<details class="advanced-details"><summary>Advanced solar settings: peak sun hours & system losses</summary><div class="settings">
-<div class="field"><label>Peak sun hours / day</label><input id="sunHours" class="control" type="number" min="1" max="12" step=".1" value="5"><small>Typical planning input: 4–6 hours.</small></div>
-<div class="field"><label>System losses</label><input id="losses" class="control" type="number" min="0" max="50" step="1" value="20"><small>Accounts for wiring, temperature, dust and other losses.</small></div>
+<details class="advanced-details"><summary>Advanced solar settings: sunlight & system losses</summary><div class="settings">
+<div class="field"><label>Usable sunlight hours per day</label><input id="sunHours" class="control" type="number" min="1" max="12" step=".1" value="5"><small>Approximate equivalent full-sun hours available each day. Example: 5.</small></div>
+<div class="field"><label>Estimated system losses</label><input id="losses" class="control" type="number" min="0" max="50" step="1" value="20"><small>Allowance for inverter, wiring, temperature, dust and other losses.</small></div>
 </div></details>
 </div>
 </section>
@@ -170,8 +171,8 @@ input,select,.control{background:#fbfefd;border-color:#c9ddd7}
 <div class="card-body">
 <div class="backup"><div class="backup-title">⚡ Simple battery sizing</div><div style="font-size:11px;color:#657870;line-height:1.55">Choose the load you want to keep running during an outage and the number of hours you need. The calculator automatically shows equivalent 12V, 24V and 48V capacities.</div></div>
 <details class="advanced-details" style="margin-top:12px"><summary>Backup settings: load & required hours</summary><div class="settings" style="margin-top:0">
-<div class="field"><label>Backup load</label><div class="inlineMeasure"><input id="backupLoad" class="control" type="number" min="0" step="1" value="500"><select id="backupLoadUnit" aria-label="Backup load unit"><option value="W" selected>W</option><option value="kW">kW</option></select></div></div>
-<div class="field"><label>Desired backup time</label><div class="inlineMeasure"><input id="backupHours" class="control" type="number" min=".1" step=".1" value="4"><select id="backupHoursUnit" aria-label="Backup time unit"><option value="h" selected>h</option><option value="min">min</option></select></div></div>
+<div class="field"><label>Backup power needed</label><div class="inlineMeasure"><input id="backupLoad" class="control" type="number" min="0" step="1" value="500"><select id="backupLoadUnit" aria-label="Backup load unit"><option value="W" selected>W</option><option value="kW">kW</option></select></div></div>
+<div class="field"><label>How long should backup last?</label><div class="inlineMeasure"><input id="backupHours" class="control" type="number" min=".1" step=".1" value="4"><select id="backupHoursUnit" aria-label="Backup time unit"><option value="h" selected>h</option><option value="min">min</option></select></div></div>
 </div></details>
 <button id="calculate" class="calculate" type="button">Calculate Solar System <span>→</span></button>
 <div class="live">Planning estimate • No fixed panel wattage assumption</div>
