@@ -108,7 +108,7 @@ body{background:#edf5f2!important}
 input,select,.control{background:#fbfefd;border-color:#c9ddd7}
 .unitChoice,.shape,.seg,.choice{background:#f7fcfa}
 .unitChoice.active,.shape.active,.seg.active,.choice.active{background:#e3f6f0;border-color:#99cdbf;color:#086c5b}
-</style>
+.inlineMeasure{display:grid;grid-template-columns:minmax(0,1fr) 76px}.inlineMeasure input{border-radius:9px 0 0 9px}.inlineMeasure select{height:38px;border:1px solid #cddbd5;border-left:0;border-radius:0 9px 9px 0;padding:0 6px;background:#f7fcfa;color:#086c5b;font:inherit;font-size:11px;font-weight:850;outline:none}.inlineMeasure select:focus{border-color:#087f73;box-shadow:0 0 0 3px rgba(8,127,115,.10)}</style>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"WebApplication","name":"Solar Load Calculator","url":"https://toolvault.aftabjordan1.workers.dev/solar/solar-load-calculator.html","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
@@ -139,7 +139,7 @@ input,select,.control{background:#fbfefd;border-color:#c9ddd7}
 <div class="card-body">
 <div class="table-wrap">
 <table class="load-table">
-<thead><tr><th>Appliance</th><th>Quantity</th><th>Watts</th><th>Hours / day</th><th></th></tr></thead>
+<thead><tr><th>Appliance</th><th>Quantity</th><th>Power</th><th>Time / day</th><th></th></tr></thead>
 <tbody id="appliances"></tbody>
 </table>
 </div>
@@ -170,8 +170,8 @@ input,select,.control{background:#fbfefd;border-color:#c9ddd7}
 <div class="card-body">
 <div class="backup"><div class="backup-title">⚡ Simple battery sizing</div><div style="font-size:11px;color:#657870;line-height:1.55">Choose the load you want to keep running during an outage and the number of hours you need. The calculator automatically shows equivalent 12V, 24V and 48V capacities.</div></div>
 <details class="advanced-details" style="margin-top:12px"><summary>Backup settings: load & required hours</summary><div class="settings" style="margin-top:0">
-<div class="field"><label>Backup load (Watts)</label><input id="backupLoad" class="control" type="number" min="0" step="10" value="500"></div>
-<div class="field"><label>Desired backup time (hours)</label><input id="backupHours" class="control" type="number" min=".5" step=".5" value="4"></div>
+<div class="field"><label>Backup load</label><div class="inlineMeasure"><input id="backupLoad" class="control" type="number" min="0" step="1" value="500"><select id="backupLoadUnit" aria-label="Backup load unit"><option value="W" selected>W</option><option value="kW">kW</option></select></div></div>
+<div class="field"><label>Desired backup time</label><div class="inlineMeasure"><input id="backupHours" class="control" type="number" min=".1" step=".1" value="4"><select id="backupHoursUnit" aria-label="Backup time unit"><option value="h" selected>h</option><option value="min">min</option></select></div></div>
 </div></details>
 <button id="calculate" class="calculate" type="button">Calculate Solar System <span>→</span></button>
 <div class="live">Planning estimate • No fixed panel wattage assumption</div>
@@ -257,197 +257,43 @@ input,select,.control{background:#fbfefd;border-color:#c9ddd7}
 <script>
 (function(){
 "use strict";
-
-const APPLIANCES=[
- ["LED Bulb",10],["Ceiling Fan",70],["TV",100],["Refrigerator",200],
- ["Laptop",60],["Water Pump",750],["Iron",1000],["Air Conditioner",1200],
- ["Washing Machine",500],["LED Tube Light",20],["Other",100]
-];
-
-const $=id=>document.getElementById(id);
-const tbody=$("appliances");
-
-function num(el, fallback=0){
-  const n=parseFloat(el && el.value);
-  return Number.isFinite(n) ? n : fallback;
-}
-
-function makeInput(cls,type,value,min="0",max="",step="1"){
-  const el=document.createElement("input");
-  el.className="control "+cls;
-  el.type=type;
-  el.value=value;
-  el.min=min;
-  if(max!=="") el.max=max;
-  el.step=step;
-  return el;
-}
-
+const APPLIANCES=[["LED Bulb",10],["Ceiling Fan",70],["TV",100],["Refrigerator",200],["Laptop",60],["Water Pump",750],["Iron",1000],["Air Conditioner",1200],["Washing Machine",500],["LED Tube Light",20],["Other",100]];
+const $=id=>document.getElementById(id),tbody=$("appliances");
+const W_PER={W:1,kW:1000},H_PER={h:1,min:1/60};
+function num(el,fallback=0){const n=parseFloat(el&&el.value);return Number.isFinite(n)?n:fallback}
+function makeInput(cls,type,value,min="0",max="",step="1"){const el=document.createElement("input");el.className="control "+cls;el.type=type;el.value=value;el.min=min;if(max!=="")el.max=max;el.step=step;return el}
+function group(input,units,current){const wrap=document.createElement("div");wrap.className="inlineMeasure";wrap.append(input);const sel=document.createElement("select");units.forEach(u=>{const o=document.createElement("option");o.value=u;o.textContent=u;o.selected=u===current;sel.append(o)});wrap.append(sel);sel.dataset.prev=sel.value;sel.addEventListener("change",()=>{const old=sel.dataset.prev||sel.value,next=sel.value,v=num(input);const factor=units===W_PER?W_PER:H_PER;input.value=(v*factor[old]/factor[next]).toFixed(4).replace(/.?0+$/,'');sel.dataset.prev=next;update()});return wrap}
 function addAppliance(name="Other",qty=1,watts=100,hours=1){
-  const tr=document.createElement("tr");
-
-  const tdName=document.createElement("td");
-  const select=document.createElement("select");
-  select.className="control name";
-
-  APPLIANCES.forEach(item=>{
-    const option=document.createElement("option");
-    option.value=item[0];
-    option.textContent=item[0];
-    option.dataset.watts=item[1];
-    if(item[0]===name) option.selected=true;
-    select.appendChild(option);
-  });
-  tdName.appendChild(select);
-
-  const tdQty=document.createElement("td");
-  const qtyInput=makeInput("qty","number",qty,0,"","1");
-  tdQty.appendChild(qtyInput);
-
-  const tdWatts=document.createElement("td");
-  const watt=makeInput("watts","number",watts,0,"","1");
-  tdWatts.appendChild(watt);
-
-  const tdHours=document.createElement("td");
-  const hoursInput=makeInput("hours","number",hours,0,24,"0.5");
-  tdHours.appendChild(hoursInput);
-
-  const tdRemove=document.createElement("td");
-  const remove=document.createElement("button");
-  remove.type="button";
-  remove.className="remove";
-  remove.textContent="×";
-  remove.title="Remove appliance";
-  tdRemove.appendChild(remove);
-
-  tr.append(tdName,tdQty,tdWatts,tdHours,tdRemove);
-  tbody.appendChild(tr);
-
-  select.addEventListener("change",function(){
-    const option=this.options[this.selectedIndex];
-    watt.value=option.dataset.watts;
-    update();
-  });
-
-  [qtyInput,watt,hoursInput].forEach(input=>{
-    input.addEventListener("input",update);
-    input.addEventListener("change",update);
-  });
-
-  remove.addEventListener("click",function(){
-    tr.remove();
-    update();
-  });
-
-  return tr;
+ const tr=document.createElement("tr"),tdName=document.createElement("td"),select=document.createElement("select");select.className="control name";
+ APPLIANCES.forEach(item=>{const option=document.createElement("option");option.value=item[0];option.textContent=item[0];option.dataset.watts=item[1];if(item[0]===name)option.selected=true;select.appendChild(option)});tdName.appendChild(select);
+ const tdQty=document.createElement("td"),qtyInput=makeInput("qty","number",qty,0,"","1");tdQty.appendChild(qtyInput);
+ const tdWatts=document.createElement("td"),watt=makeInput("watts","number",watts,0,"","1");tdWatts.appendChild(group(watt,W_PER,"W"));
+ const tdHours=document.createElement("td"),hoursInput=makeInput("hours","number",hours,0,"","0.25");tdHours.appendChild(group(hoursInput,H_PER,"h"));
+ const tdRemove=document.createElement("td"),remove=document.createElement("button");remove.type="button";remove.className="remove";remove.textContent="×";remove.title="Remove appliance";tdRemove.appendChild(remove);
+ tr.append(tdName,tdQty,tdWatts,tdHours,tdRemove);tbody.appendChild(tr);
+ select.addEventListener("change",function(){const option=this.options[this.selectedIndex];watt.value=option.dataset.watts;update()});
+ [qtyInput,watt,hoursInput].forEach(input=>{input.addEventListener("input",update);input.addEventListener("change",update)});
+ remove.addEventListener("click",()=>{tr.remove();update()});return tr;
 }
-
-function nextModule(required,list){
-  for(const value of list){
-    if(value>=required) return value;
-  }
-  return Math.ceil(required/100)*100;
-}
-
+function nextModule(required,list){for(const value of list)if(value>=required)return value;return Math.ceil(required/100)*100}
+function canonical(el,key,units){const input=el.querySelector("."+key),sel=input?.parentElement.querySelector("select");return num(input)*units[sel?.value||Object.keys(units)[0]]}
 function update(){
-  let connected=0;
-  let dailyWh=0;
-
-  tbody.querySelectorAll("tr").forEach(row=>{
-    const quantity=Math.max(0,num(row.querySelector(".qty")));
-    const watts=Math.max(0,num(row.querySelector(".watts")));
-    const hours=Math.min(24,Math.max(0,num(row.querySelector(".hours"))));
-
-    connected += quantity*watts;
-    dailyWh += quantity*watts*hours;
-  });
-
-  const sunHours=Math.max(1,num($("sunHours"),5));
-  const losses=Math.min(50,Math.max(0,num($("losses"),20)));
-  const usableSolar=1-(losses/100);
-
-  // PV power in watts. Daily energy is Wh/day.
-  const pvRaw=dailyWh/(sunHours*usableSolar);
-  const pvW=Math.max(0,Math.ceil(pvRaw/10)*10);
-
-  const inverter=Math.max(1,Math.ceil((connected*1.25)/100)/10);
-
-  const backupLoad=Math.max(0,num($("backupLoad")));
-  const backupHours=Math.max(0,num($("backupHours")));
-  const batteryWh=backupLoad*backupHours;
-  const nominalWh=batteryWh/0.8;
-
-  const capacities12_24=[80,100,120,130,150,160,170,180,185,190,200,210,220,230,250,260,280,300,350,400,450,500,550,600,650,700,750,800,900,1000,1200,1500,2000];
-  const capacities48=[50,100,150,200,300,400,500,600,700,800,900,1000,1200,1500,2000,2500,3000];
-
-  const b12=nextModule(nominalWh/12,capacities12_24);
-  const b24=nextModule(nominalWh/24,capacities12_24);
-  const b48=nextModule(nominalWh/48,capacities48);
-
-  // Side overview
-  $("sideLoad").firstChild.nodeValue=Math.round(connected).toLocaleString();
-  $("sideDaily").textContent=(dailyWh/1000).toFixed(2)+" kWh";
-  $("sidePV").textContent=(pvW/1000).toFixed(2)+" kW";
-  $("sideInv").textContent=inverter.toFixed(1)+" kW";
-  $("sideBat12").textContent=b12.toLocaleString()+" Ah";
-  $("sideBat24").textContent=b24.toLocaleString()+" Ah";
-  $("sideBat48").textContent=b48.toLocaleString()+" Ah";
-
-  // Results
-  $("connectedLoad").textContent=Math.round(connected).toLocaleString()+" W";
-  $("dailyEnergy").textContent=(dailyWh/1000).toFixed(2)+" kWh";
-  $("monthlyEnergy").textContent=((dailyWh*30)/1000).toFixed(1)+" kWh";
-  $("annualEnergy").textContent=((dailyWh*365)/1000).toFixed(0)+" kWh";
-  $("pvCapacity").textContent=(pvW/1000).toFixed(2)+" kW";
-  $("pvWatts").textContent=pvW.toLocaleString()+" W";
-  $("inverterSize").textContent=inverter.toFixed(1)+" kW";
-  $("batteryEnergy").textContent=(batteryWh/1000).toFixed(2)+" kWh";
-  $("battery12").textContent=b12.toLocaleString()+" Ah";
-  $("battery24").textContent=b24.toLocaleString()+" Ah";
-  $("battery48").textContent=b48.toLocaleString()+" Ah";
-  $("backupLoadResult").textContent=Math.round(backupLoad).toLocaleString()+" W";
-
-  const note=document.querySelector(".note");
-  if(note){
-    note.innerHTML=
-      "<b>PV calculation:</b> "+
-      (dailyWh/1000).toFixed(2)+" kWh/day ÷ "+
-      sunHours.toFixed(1)+" sun-hours ÷ "+
-      usableSolar.toFixed(2)+" usable solar factor = "+
-      "<b>"+pvW.toLocaleString()+" W ("+(pvW/1000).toFixed(2)+" kW)</b>. "+
-      "&nbsp; <b>Battery:</b> 80% usable energy.";
-  }
+ let connected=0,dailyWh=0;
+ tbody.querySelectorAll("tr").forEach(row=>{const quantity=Math.max(0,num(row.querySelector(".qty"))),wInput=row.querySelector(".watts"),hInput=row.querySelector(".hours"),wSel=wInput.parentElement.querySelector("select"),hSel=hInput.parentElement.querySelector("select");const watts=Math.max(0,num(wInput))*W_PER[wSel.value],hours=Math.min(24,Math.max(0,num(hInput)*H_PER[hSel.value]));connected+=quantity*watts;dailyWh+=quantity*watts*hours});
+ const sunHours=Math.max(1,num($("sunHours"),5)),losses=Math.min(50,Math.max(0,num($("losses"),20))),usableSolar=1-losses/100,pvRaw=dailyWh/(sunHours*usableSolar),pvW=Math.max(0,Math.ceil(pvRaw/10)*10),inverter=Math.max(1,Math.ceil((connected*1.25)/100)/10);
+ const bLoadUnit=$("backupLoadUnit").value,bHoursUnit=$("backupHoursUnit").value,backupLoad=Math.max(0,num($("backupLoad"))*W_PER[bLoadUnit]),backupHours=Math.max(0,num($("backupHours"))*H_PER[bHoursUnit]),batteryWh=backupLoad*backupHours,nominalWh=batteryWh/.8;
+ const capacities12_24=[80,100,120,130,150,160,170,180,185,190,200,210,220,230,250,260,280,300,350,400,450,500,550,600,650,700,750,800,900,1000,1200,1500,2000],capacities48=[50,100,150,200,300,400,500,600,700,800,900,1000,1200,1500,2000,2500,3000],b12=nextModule(nominalWh/12,capacities12_24),b24=nextModule(nominalWh/24,capacities12_24),b48=nextModule(nominalWh/48,capacities48);
+ $("sideLoad").firstChild.nodeValue=Math.round(connected).toLocaleString();$("sideDaily").textContent=(dailyWh/1000).toFixed(2)+" kWh";$("sidePV").textContent=(pvW/1000).toFixed(2)+" kW";$("sideInv").textContent=inverter.toFixed(1)+" kW";$("sideBat12").textContent=b12.toLocaleString()+" Ah";$("sideBat24").textContent=b24.toLocaleString()+" Ah";$("sideBat48").textContent=b48.toLocaleString()+" Ah";
+ $("connectedLoad").textContent=Math.round(connected).toLocaleString()+" W";$("dailyEnergy").textContent=(dailyWh/1000).toFixed(2)+" kWh";$("monthlyEnergy").textContent=((dailyWh*30)/1000).toFixed(1)+" kWh";$("annualEnergy").textContent=((dailyWh*365)/1000).toFixed(0)+" kWh";$("pvCapacity").textContent=(pvW/1000).toFixed(2)+" kW";$("pvWatts").textContent=pvW.toLocaleString()+" W";$("inverterSize").textContent=inverter.toFixed(1)+" kW";$("batteryEnergy").textContent=(batteryWh/1000).toFixed(2)+" kWh";$("battery12").textContent=b12.toLocaleString()+" Ah";$("battery24").textContent=b24.toLocaleString()+" Ah";$("battery48").textContent=b48.toLocaleString()+" Ah";$("backupLoadResult").textContent=Math.round(backupLoad).toLocaleString()+" W";
+ const note=document.querySelector(".note");if(note)note.innerHTML="<b>PV calculation:</b> "+(dailyWh/1000).toFixed(2)+" kWh/day ÷ "+sunHours.toFixed(1)+" sun-hours ÷ "+usableSolar.toFixed(2)+" usable solar factor = <b>"+pvW.toLocaleString()+" W ("+(pvW/1000).toFixed(2)+" kW)</b>. &nbsp; <b>Battery:</b> 80% usable energy.";
 }
-
-// Initial appliances
-addAppliance("LED Bulb",5,10,6);
-addAppliance("Ceiling Fan",3,70,8);
-addAppliance("TV",1,100,5);
-
-// Add appliance button
-$("addAppliance").addEventListener("click",function(){
-  addAppliance("Other",1,100,1);
-  update();
-});
-
-// Settings
-["sunHours","losses","backupLoad","backupHours"].forEach(id=>{
-  $(id).addEventListener("input",update);
-  $(id).addEventListener("change",update);
-});
-
-// Main calculate button
-$("calculate").addEventListener("click",function(){
-  update();
-  $("results").classList.add("show");
-  $("results").scrollIntoView({behavior:"smooth",block:"start"});
-});
-
-// First calculation
-update();
-
+addAppliance("LED Bulb",5,10,6);addAppliance("Ceiling Fan",3,70,8);addAppliance("TV",1,100,5);
+$("addAppliance").addEventListener("click",()=>{addAppliance("Other",1,100,1);update()});
+["sunHours","losses","backupLoad","backupHours","backupLoadUnit","backupHoursUnit"].forEach(id=>$(id).addEventListener("input",update));
+$("calculate").addEventListener("click",()=>{update();$("results").classList.add("show");$("results").scrollIntoView({behavior:"smooth",block:"start"})});update();
 })();
 </script>
+
  <div style="max-width:1200px;margin:24px auto;padding:20px;background:#fff;border:1px solid #dce8e2;border-radius:16px;">
   <h2 style="margin:0 0 8px;">Related Solar Tool</h2>
   <p style="margin:0 0 12px;">Want to estimate how much energy your solar panels can generate based on your location and weather?</p>
