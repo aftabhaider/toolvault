@@ -132,7 +132,7 @@ Public keyword and SERP research used for this roadmap:
 3. Board Foot Calculator — completed.
 4. Stair Calculator — completed.
 5. AC / BTU Calculator.
-6. Square Footage Calculator.
+6. Square Footage Calculator — completed.
 7. Deepen existing construction/engineering clusters based on Search Console data.
 8. Age/date tools after ToolVault has stronger domain authority and a larger internal-link network.
 
@@ -170,3 +170,11 @@ Primary reference used for the calculator:
 
 Next portfolio target:
 6. Research the next high-demand / low-availability calculator opportunity before implementation.
+
+
+## Current Square Footage research notes
+
+Square Footage Calculator is now implemented at /calculators/square-footage-calculator.html. The page targets the broad room/floor area calculation intent with a beginner-first rectangle workflow plus triangle and circle options, multiple-room totals, visible unit selectors and exact area conversions. Current competing tools also emphasize multiple rooms and simple shapes, so ToolVault differentiates through clear measurement language, global units, transparent formulas and an area-only scope that does not mix material takeoffs into the core calculation.
+
+Next portfolio target:
+7. Deepen an existing construction or engineering cluster using Search Console data before creating another broad calculator.
