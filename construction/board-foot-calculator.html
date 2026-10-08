@@ -116,7 +116,7 @@ footer{border-top:1px solid var(--line);padding:25px 0;background:#fff;color:#74
 <p>For a lumber order with several different sizes, calculate each size separately and combine the results. ToolVault lets you add mixed rows so a project can include, for example, 4/4 hardwood boards, 5/4 stock and dimensional lumber in one estimate.</p>
 
 <h2>Nominal vs Actual Lumber Dimensions</h2>
-<p>This is one of the most important sources of mistakes. A board sold as a 2×4 may not measure exactly 2 inches × 4 inches after surfacing. For hardwood, quarter notation such as 4/4, 5/4, 6/4 and 8/4 refers to nominal thickness categories. Use the dimensions or billing basis used by your lumber supplier. Current board-foot calculators also warn users to distinguish nominal from actual dimensions when estimating purchase quantities. citeturn873186search3turn873186search10</p>
+<p>This is one of the most important sources of mistakes. A board sold as a 2×4 may not measure exactly 2 inches × 4 inches after surfacing. For hardwood, quarter notation such as 4/4, 5/4, 6/4 and 8/4 refers to nominal thickness categories. Use the dimensions or billing basis used by your lumber supplier. Current board-foot calculators also emphasize the importance of distinguishing nominal from actual dimensions when estimating purchase quantities. See <a href="https://nestquantum.com/calculators/board-foot-calculator/" target="_blank" rel="noopener">Nest Quantum</a> and <a href="https://lumbermetric.online/board-foot-calculator" target="_blank" rel="noopener">LumberMetric</a> for examples of this warning.</p>
 
 <h2>Worked Example: 1 × 6 × 8 Lumber</h2>
 <div class="example">
@@ -250,20 +250,26 @@ function calculate(){
 
 function convertUnit(next){
   if(next===unit)return;
+  const oldUnit=unit;
   document.querySelectorAll(".board").forEach(box=>{
     box.querySelectorAll("input[data-kind]").forEach(input=>{
       const kind=input.dataset.kind,val=input.value;
       if(kind==="quantity")return;
       if(kind==="length"){
-        const ft=toFt(val);input.value=String(Number(fromFt(ft).toFixed(4)));
+        const oldFt=oldUnit==="imperial"?parseFraction(val):parseFraction(val)/0.3048;
+        input.value=next==="imperial"
+          ? String(Number(oldFt.toFixed(4)))
+          : String(Number((oldFt*0.3048).toFixed(4)));
       }else{
-        const inches=toIn(val,kind);input.value=String(Number(fromIn(inches).toFixed(4)));
+        const oldIn=oldUnit==="imperial"?parseFraction(val):parseFraction(val)/25.4;
+        input.value=next==="imperial"
+          ? String(Number(oldIn.toFixed(4)))
+          : String(Number((oldIn*25.4).toFixed(4)));
       }
     });
   });
   unit=next;
   document.querySelectorAll(".unit").forEach(x=>x.classList.toggle("active",x.dataset.unit===unit));
-  // Rerender labels while preserving dimensions.
   document.querySelectorAll(".board").forEach(box=>{
     const vals={};
     box.querySelectorAll("input[data-key]").forEach(i=>vals[i.dataset.key]=i.value);
