@@ -209,14 +209,32 @@ function convert(id,unitId,nextUnit){
 function setQuick(next){
   quick=next;
   const target=next==="metric"?"cm":"in";
-  convert("rise","riseUnit",target); convert("run","runUnit",target);
+  convert("rise","riseUnit",target);
+  convert("run","runUnit",target);
+  convert("horizontalRun","horizontalRunUnit",target);
   document.querySelectorAll("[data-quick]").forEach(b=>b.classList.toggle("active",b.dataset.quick===next));
   calculate();
 }
 document.querySelectorAll("[data-quick]").forEach(b=>b.addEventListener("click",()=>setQuick(b.dataset.quick)));
 
 ["rise","run","ratio","angle","percent","horizontalRun"].forEach(id=>$(id).addEventListener("input",calculate));
-["riseUnit","runUnit","horizontalRunUnit"].forEach(id=>$(id).addEventListener("change",calculate));
+function bindUnitPreservingValue(inputId,unitId){
+  const input=$(inputId), sel=$(unitId);
+  sel.dataset.previous=sel.value;
+  sel.addEventListener("change",()=>{
+    const old=sel.dataset.previous||sel.value;
+    const v=Number(input.value);
+    if(Number.isFinite(v)&&v>=0&&old!==sel.value){
+      const metres=v*factors[old];
+      input.value=String(Number(fromMetres(metres,sel.value).toFixed(8)));
+    }
+    sel.dataset.previous=sel.value;
+    calculate();
+  });
+}
+bindUnitPreservingValue("rise","riseUnit");
+bindUnitPreservingValue("run","runUnit");
+bindUnitPreservingValue("horizontalRun","horizontalRunUnit");
 
 $("reset").addEventListener("click",()=>{
   $("rise").value="6";$("run").value="12";$("riseUnit").value="in";$("runUnit").value="in";
