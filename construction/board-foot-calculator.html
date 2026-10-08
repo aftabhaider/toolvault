@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Board Foot Calculator — Lumber Volume, Waste & Cost | ToolVault</title>
+<meta name="description" content="Free board foot calculator for lumber and hardwood. Calculate board feet for single or mixed board sizes, fractional dimensions, waste allowance, cubic volume and optional cost in metric or imperial units.">
+<link rel="canonical" href="https://toolvault.aftabjordan1.workers.dev/construction/board-foot-calculator.html">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="theme-color" content="#0b8f78">
+<meta property="og:site_name" content="ToolVault">
+<meta property="og:title" content="Board Foot Calculator — Lumber Volume, Waste & Cost | ToolVault">
+<meta property="og:description" content="Calculate board feet for lumber, mixed board sizes, waste allowance, cubic volume and optional cost.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://toolvault.aftabjordan1.workers.dev/construction/board-foot-calculator.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Board Foot Calculator — Lumber Volume, Waste & Cost | ToolVault">
+<meta name="twitter:description" content="Calculate board feet for lumber, mixed board sizes, waste allowance, cubic volume and optional cost.">
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"WebApplication","@id":"https://toolvault.aftabjordan1.workers.dev/construction/board-foot-calculator.html#app","name":"Board Foot Calculator","url":"https://toolvault.aftabjordan1.workers.dev/construction/board-foot-calculator.html","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires a modern web browser","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
+{"@type":"WebPage","@id":"https://toolvault.aftabjordan1.workers.dev/construction/board-foot-calculator.html#page","url":"https://toolvault.aftabjordan1.workers.dev/construction/board-foot-calculator.html","name":"Board Foot Calculator — Lumber Volume, Waste & Cost","isPartOf":{"@type":"WebSite","name":"ToolVault","url":"https://toolvault.aftabjordan1.workers.dev/"}},
+{"@type":"BreadcrumbList","itemListElement":[
+{"@type":"ListItem","position":1,"name":"ToolVault","item":"https://toolvault.aftabjordan1.workers.dev/"},
+{"@type":"ListItem","position":2,"name":"Construction","item":"https://toolvault.aftabjordan1.workers.dev/construction/"},
+{"@type":"ListItem","position":3,"name":"Board Foot Calculator","item":"https://toolvault.aftabjordan1.workers.dev/construction/board-foot-calculator.html"}]}
+]}
+</script>
+
+<style>
+:root{--page:#edf5f2;--surface:#fff;--surface2:#f7fbfa;--ink:#202927;--muted:#697672;--line:#d5e1dd;--brand:#0b8f78;--brand2:#086c5b;--soft:#e4f6f0;--wood:#8b6648;--woodsoft:#f6eee7;--shadow:0 8px 24px rgba(25,42,38,.07)}
+*{box-sizing:border-box}body{margin:0;background:var(--page);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.55}a{text-decoration:none;color:inherit}.wrap{max-width:1120px;margin:auto;padding:0 20px}
+header{background:rgba(255,255,255,.97);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20;backdrop-filter:blur(10px)}.nav{min-height:68px;display:flex;align-items:center;justify-content:space-between}.logo{font-size:24px;font-weight:950}.logo span{color:var(--brand)}.nav a{font-size:13px;color:var(--brand2);font-weight:850}
+main{padding:24px 0 58px}.crumb{font-size:12px;color:var(--muted);margin-bottom:14px}.crumb a{color:var(--brand2);font-weight:800}.hero{background:linear-gradient(135deg,#fff,#f6fbf9);border:1px solid var(--line);border-radius:21px;padding:29px;box-shadow:var(--shadow)}.eyebrow{display:inline-flex;background:var(--woodsoft);color:var(--wood);padding:7px 11px;border-radius:999px;font-size:11px;font-weight:900}.hero h1{font-size:clamp(35px,5vw,53px);line-height:1.03;letter-spacing:-2px;margin:13px 0 8px}.hero p{max-width:850px;color:var(--muted);font-size:15px;margin:0}
+.tool{display:grid;grid-template-columns:minmax(0,1.16fr) minmax(320px,.84fr);gap:17px;margin-top:18px}.card{background:var(--surface);border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);overflow:hidden}.head{padding:19px 21px;border-bottom:1px solid var(--line)}.head h2{margin:0;font-size:20px}.head p{margin:5px 0 0;font-size:12px;color:var(--muted)}.body{padding:19px 21px}
+.unitbar{display:flex;gap:8px;margin-bottom:14px}.unit{border:1px solid var(--line);background:var(--surface2);color:#56645f;padding:9px 13px;border-radius:10px;font-size:12px;font-weight:900;cursor:pointer}.unit.active{background:#24282a;border-color:#24282a;color:#fff}
+.board-list{display:grid;gap:11px}.board{border:1px solid var(--line);border-radius:13px;background:#fbfdfc;padding:13px}.board-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.board-top strong{font-size:12px}.remove{border:1px solid #ead2cc;background:#fff7f4;color:#a14b35;border-radius:8px;padding:5px 8px;font-size:10px;font-weight:900;cursor:pointer}
+.fields{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:9px}.field label{display:block;font-size:10px;font-weight:900;margin-bottom:5px}.field input,.field select{width:100%;border:1px solid #c8dad4;border-radius:9px;padding:10px;background:#fbfefd;color:var(--ink);font-size:12px;outline:none}.field input:focus,.field select:focus{border-color:#7bbcad;box-shadow:0 0 0 3px rgba(11,143,120,.08)}.hint{font-size:9px;color:#84918c;margin-top:4px;line-height:1.35}.result-line{display:flex;justify-content:space-between;gap:10px;margin-top:9px;padding-top:9px;border-top:1px dashed #d9e4e0;font-size:10px;color:var(--muted)}.result-line b{color:var(--brand2);font-size:12px}
+.add{width:100%;margin-top:10px;border:1px dashed #9fcfc2;background:#f6fcfa;color:var(--brand2);border-radius:10px;padding:10px;font-size:12px;font-weight:900;cursor:pointer}
+.preset-note{margin-top:12px;padding:11px 12px;border:1px solid #d9e6e2;background:#f8fbfa;border-radius:10px;font-size:10px;color:var(--muted);line-height:1.45}
+.advanced{margin-top:12px;border:1px solid var(--line);border-radius:11px;overflow:hidden}.advanced summary{cursor:pointer;list-style:none;padding:12px 14px;background:#f8fbfa;color:var(--brand2);font-size:12px;font-weight:900}.advanced summary::-webkit-details-marker{display:none}.advanced summary:before{content:'+';display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;background:var(--soft);margin-right:8px}.advanced[open] summary:before{content:'−'}.advanced-body{padding:14px;border-top:1px solid var(--line)}
+.action-row{display:flex;gap:8px;margin-top:14px}.primary{border:0;border-radius:10px;padding:12px 15px;background:var(--brand);color:#fff;font-weight:900;cursor:pointer}.secondary{border:1px solid var(--line);border-radius:10px;padding:12px 15px;background:#fff;color:var(--brand2);font-weight:900;cursor:pointer}
+.result-head{padding:20px;background:linear-gradient(135deg,#0d3029,#087f6b);color:#fff}.result-head small{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;opacity:.72}.result-head h2{font-size:21px;margin:5px 0 0}.results{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:13px}.metric{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--surface2)}.metric.primary{background:var(--soft);border-color:#c3e7dd}.metric span{display:block;font-size:10px;color:var(--muted);font-weight:850;text-transform:uppercase;letter-spacing:.04em}.metric b{display:block;font-size:19px;margin-top:4px}.metric small{font-size:10px;color:var(--muted)}.cost{margin:0 13px 13px;padding:12px;border:1px solid var(--line);border-radius:11px;background:#fbfdfc}.cost strong{display:block;font-size:11px;color:var(--brand2)}.cost span{display:block;font-size:15px;font-weight:900;margin-top:3px}.note{padding:0 13px 15px;color:var(--muted);font-size:10px;line-height:1.5}
+.seo{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:17px;overflow:hidden;box-shadow:var(--shadow)}.seo summary{list-style:none;cursor:pointer;background:#f8fbfa;padding:15px 18px;color:var(--brand2);font-size:13px;font-weight:900}.seo summary::-webkit-details-marker{display:none}.seo summary:before{content:'+';display:inline-grid;place-items:center;width:21px;height:21px;border-radius:7px;background:var(--soft);margin-right:8px}.seo[open] summary:before{content:'−'}.seo-body{padding:23px}.seo-body h2{font-size:24px;letter-spacing:-.7px;margin:0 0 8px}.seo-body h2:not(:first-child){margin-top:27px}.seo-body h3{font-size:16px;margin:20px 0 6px}.seo-body p,.seo-body li{font-size:14px;color:#566760}.formula{padding:12px 14px;border-radius:11px;background:var(--soft);border:1px solid #c6e6dd;color:#245d52;font-weight:850;margin:11px 0}.example{padding:14px;border:1px solid var(--line);border-radius:11px;background:#fbfdfc}.related{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.rel{padding:13px;border:1px solid var(--line);border-radius:11px;background:#f7fbfa}.rel strong{display:block;font-size:12px;color:var(--brand2)}.rel span{font-size:10px;color:var(--muted)}
+footer{border-top:1px solid var(--line);padding:25px 0;background:#fff;color:#74807b;font-size:12px}
+@media(max-width:900px){.fields{grid-template-columns:1fr 1fr}.tool{grid-template-columns:1fr}.related{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.wrap{padding:0 14px}.hero{padding:23px 18px}.fields,.results,.related{grid-template-columns:1fr}.action-row{flex-direction:column}}
+</style>
+</head>
+<body>
+<header><div class="wrap nav"><a class="logo" href="/">Tool<span>Vault</span></a><a href="/construction/">← Construction tools</a></div></header>
+<main class="wrap">
+<div class="crumb"><a href="/">ToolVault</a> / <a href="/construction/">Construction</a> / Board Foot Calculator</div>
+<section class="hero"><span class="eyebrow">🪵 Free lumber volume calculator</span><h1>Board Foot Calculator</h1><p>Calculate board feet for one board or a mixed lumber project. Enter fractional thickness and width, length, quantity, optional waste and price to estimate lumber volume and purchase quantity.</p></section>
+
+<div class="tool">
+<section class="card">
+<div class="head"><h2>Lumber list</h2><p>Add one row for each different board size. Fractional dimensions such as 3/4 are supported.</p></div>
+<div class="body">
+<div class="unitbar"><button class="unit active" type="button" data-unit="imperial">Imperial (in / ft)</button><button class="unit" type="button" data-unit="metric">Metric (mm / m)</button></div>
+<div class="board-list" id="boards"></div>
+<button class="add" id="addBoard" type="button">＋ Add another board size</button>
+<div class="preset-note"><strong>Important:</strong> board feet is a volume measure. For hardwood pricing, use the thickness and width that your supplier uses for billing. Standard lumber names such as 2×4 can refer to nominal sizes rather than the actual surfaced dimensions.</div>
+
+<details class="advanced">
+<summary>Advanced settings: common lumber presets, waste & price</summary>
+<div class="advanced-body">
+<div class="fields">
+<div class="field"><label for="globalWaste">Waste allowance (%)</label><input id="globalWaste" type="number" min="0" max="100" step="1" value="10"><div class="hint">Add allowance for cuts, defects or unusable pieces.</div></div>
+<div class="field"><label for="price">Price per board foot</label><input id="price" type="number" min="0" step="0.01" placeholder="Optional"></div>
+<div class="field"><label for="currency">Currency</label><input id="currency" type="text" maxlength="8" value="$" placeholder="$, €, £, Rs"></div>
+<div class="field"><label for="preset"><span id="presetLabel">Preset reference</span></label><select id="preset"><option value="">Choose a common size</option><option value="2x4">2×4 actual 1.5 × 3.5 in</option><option value="2x6">2×6 actual 1.5 × 5.5 in</option><option value="2x8">2×8 actual 1.5 × 7.25 in</option><option value="2x10">2×10 actual 1.5 × 9.25 in</option><option value="2x12">2×12 actual 1.5 × 11.25 in</option><option value="4/4">4/4 nominal thickness = 1 in</option><option value="5/4">5/4 nominal thickness = 1.25 in</option><option value="6/4">6/4 nominal thickness = 1.5 in</option><option value="8/4">8/4 nominal thickness = 2 in</option><option value="12/4">12/4 nominal thickness = 3 in</option></select></div>
+</div>
+</div>
+</details>
+
+<div class="action-row"><button class="primary" id="calculate" type="button">Calculate Board Feet</button><button class="secondary" id="reset" type="button">Reset</button></div>
+</div>
+</section>
+
+<aside class="card">
+<div class="result-head"><small>Project estimate</small><h2 id="resultTitle">Enter your lumber</h2></div>
+<div class="results">
+<div class="metric primary"><span>Board feet to buy</span><b id="purchaseBF">—</b><small>including waste</small></div>
+<div class="metric primary"><span>Raw board feet</span><b id="rawBF">—</b><small>before waste</small></div>
+<div class="metric"><span>Total pieces</span><b id="pieces">—</b><small>boards</small></div>
+<div class="metric"><span>Waste allowance</span><b id="wasteBF">—</b><small>additional BF</small></div>
+<div class="metric"><span>Cubic feet</span><b id="cubicFt">—</b><small>purchase volume</small></div>
+<div class="metric"><span>Cubic metres</span><b id="cubicM">—</b><small>purchase volume</small></div>
+</div>
+<div class="cost"><strong>Estimated lumber cost</strong><span id="cost">Add an optional price per board foot</span></div>
+<div class="note">Calculations use the exact dimensions entered. Display values are rounded only after calculation. Confirm whether your supplier prices lumber by nominal or actual dimensions.</div>
+</aside>
+</div>
+
+<section class="seo">
+<details open>
+<summary>How to use, formulas, worked example, FAQs & lumber buying notes</summary>
+<div class="seo-body">
+<h2>How to Use the Board Foot Calculator</h2>
+<p>Add a row for each different lumber size. Enter thickness, width and length, then set the number of pieces. Use fractions such as <strong>3/4</strong>, <strong>1 1/2</strong> and <strong>6 1/2</strong> when needed. Add a waste allowance and price per board foot in Advanced settings when you are planning a purchase.</p>
+
+<h2>Board Foot Formula</h2>
+<p>One board foot is a volume of <strong>144 cubic inches</strong>. When thickness and width are in inches and length is in feet:</p>
+<div class="formula">Board feet per board = Thickness (in) × Width (in) × Length (ft) ÷ 12</div>
+<p>For multiple boards:</p>
+<div class="formula">Total board feet = Board feet per board × Quantity</div>
+<p>With an allowance:</p>
+<div class="formula">Board feet to buy = Total board feet × (1 + Waste% ÷ 100)</div>
+
+<h2>What Is a Board Foot?</h2>
+<p>A board foot measures <strong>lumber volume</strong>, not just length or surface area. It is equal to 144 cubic inches, or a piece of wood measuring 1 inch thick × 12 inches wide × 12 inches long. Board feet are commonly used when measuring and pricing hardwood lumber because boards can have different widths and thicknesses. <a href="https://www.procore.com/library/calculators/board-foot-calculator" target="_blank" rel="noopener">Procore's board foot guide</a> provides the same definition and formula.</p>
+
+<h2>Board Foot Calculator for Lumber</h2>
+<p>For a lumber order with several different sizes, calculate each size separately and combine the results. ToolVault lets you add mixed rows so a project can include, for example, 4/4 hardwood boards, 5/4 stock and dimensional lumber in one estimate.</p>
+
+<h2>Nominal vs Actual Lumber Dimensions</h2>
+<p>This is one of the most important sources of mistakes. A board sold as a 2×4 may not measure exactly 2 inches × 4 inches after surfacing. For hardwood, quarter notation such as 4/4, 5/4, 6/4 and 8/4 refers to nominal thickness categories. Use the dimensions or billing basis used by your lumber supplier. Current board-foot calculators also warn users to distinguish nominal from actual dimensions when estimating purchase quantities. citeturn873186search3turn873186search10</p>
+
+<h2>Worked Example: 1 × 6 × 8 Lumber</h2>
+<div class="example">
+<p>Thickness = 1 in, width = 6 in, length = 8 ft.</p>
+<p>Board feet = 1 × 6 × 8 ÷ 12 = <strong>4.00 board feet</strong>.</p>
+<p>For 10 identical boards, total = <strong>40.00 board feet</strong>. With a 10% allowance, purchase quantity = <strong>44.00 board feet</strong>.</p>
+</div>
+
+<h2>Worked Example: 2×4 Using Actual Dimensions</h2>
+<div class="example">
+<p>If your supplier asks you to calculate from actual surfaced dimensions of 1.5 in × 3.5 in × 8 ft:</p>
+<p>Board feet = 1.5 × 3.5 × 8 ÷ 12 = <strong>3.50 board feet per board</strong>.</p>
+<p>That is different from using nominal 2 × 4 dimensions. This is why the supplier's billing convention matters.</p>
+</div>
+
+<h2>Board Feet to Cubic Feet and Cubic Metres</h2>
+<p>Because one board foot is 144 cubic inches, 12 board feet equals 1 cubic foot. ToolVault also reports the purchase quantity as cubic metres for users working in metric workflows.</p>
+
+<h2>How Much Waste Should I Add?</h2>
+<p>Waste depends on the project, cut plan, board quality and how much defect can be removed. There is no universal percentage that is correct for every woodworking or construction job. Use the allowance field as a planning assumption and adjust it to your project.</p>
+
+<h2>Frequently Asked Questions</h2>
+<h3>How many board feet are in a 1×6×8 board?</h3>
+<p>Using the dimensions 1 inch × 6 inches × 8 feet, the answer is 4 board feet.</p>
+<h3>How do I calculate board feet from inches?</h3>
+<p>If length is also in inches, convert it to feet by dividing by 12, or use the equivalent cubic-inch definition: board feet = thickness × width × length in inches ÷ 144.</p>
+<h3>Can I calculate multiple board sizes?</h3>
+<p>Yes. Add a row for each different thickness, width or length and ToolVault totals them into one project estimate.</p>
+<h3>Can I use fractions such as 3/4 inch?</h3>
+<p>Yes. The calculator accepts fractional thickness and width values such as 3/4 and 1 1/2.</p>
+<h3>Should I use nominal or actual dimensions?</h3>
+<p>Use the dimension basis your supplier uses to price the lumber. Do not assume a nominal size is the same as the measured surfaced size.</p>
+<h3>Can I estimate lumber cost?</h3>
+<p>Yes. Enter your supplier's price per board foot. ToolVault multiplies it by the board feet to buy after the selected waste allowance.</p>
+
+<h2>Related Construction Calculators</h2>
+<div class="related">
+<a class="rel" href="/construction/mulch-calculator.html"><strong>Mulch Calculator</strong><span>Estimate landscaping material volume and bags.</span></a>
+<a class="rel" href="/construction/paint-calculator.html"><strong>Paint Calculator</strong><span>Estimate paint quantity from area and coverage.</span></a>
+<a class="rel" href="/construction/concrete-calculator.html"><strong>Concrete Calculator</strong><span>Calculate concrete quantity for slabs and footings.</span></a>
+<a class="rel" href="/construction/"><strong>Construction Tools</strong><span>Browse the construction calculator library.</span></a>
+</div>
+</div>
+</details>
+</section>
+</main>
+<footer><div class="wrap">© 2026 ToolVault · Free practical tools for the web.</div></footer>
+
+<script type="module">
+import {calculateProject,calculateBoard,parseFraction} from './board-foot-engine.js';
+
+const $=id=>document.getElementById(id);
+let unit="imperial",nextId=1,lastPresetTarget=null;
+
+function num(v,f=0){const n=Number(v);return Number.isFinite(n)?Math.max(0,n):f}
+function fmt(v,max=2){return new Intl.NumberFormat("en-US",{minimumFractionDigits:0,maximumFractionDigits:max}).format(v)}
+
+function toIn(value,field){
+  if(unit==="imperial") return parseFraction(value,0);
+  return parseFraction(value,0)/25.4;
+}
+function toFt(value){
+  if(unit==="imperial") return parseFraction(value,0);
+  return parseFraction(value,0)/0.3048;
+}
+function fromIn(v){return unit==="imperial"?v:v*25.4}
+function fromFt(v){return unit==="imperial"?v:v*0.3048}
+
+function fieldHtml(label,key,value,kind){
+  const suffix=kind==="length"?(unit==="imperial"?"ft":"m"):(unit==="imperial"?"in":"mm");
+  return '<div class="field"><label>'+label+' <span style="color:#87938f;font-weight:700">('+suffix+')</span></label><input data-key="'+key+'" data-kind="'+kind+'" type="text" inputmode="decimal" value="'+value+'"></div>';
+}
+
+function addBoard(initial={},preserve=false){
+  const box=document.createElement("div");
+  box.className="board";box.dataset.id=String(nextId++);
+  box.innerHTML=
+    '<div class="board-top"><strong>Board '+box.dataset.id+'</strong><button class="remove" type="button">Remove</button></div>'+
+    '<div class="fields" data-fields></div>'+
+    '<div class="result-line"><span>Board feet for this row</span><b data-row-result>— BF</b></div>';
+  $("boards").appendChild(box);
+
+  function values(){
+    const get=k=>box.querySelector('[data-key="'+k+'"]')?.value||"";
+    return {name:"Board "+box.dataset.id,thickness:get("thickness"),width:get("width"),length:get("length"),quantity:get("quantity")};
+  }
+  function render(){
+    const v=values();
+    const defaults=unit==="imperial"
+      ? {thickness:v.thickness||"1",width:v.width||"6",length:v.length||"8",quantity:v.quantity||"1"}
+      : {thickness:v.thickness? v.thickness : "25.4",width:v.width? v.width : "152.4",length:v.length? v.length : "2.4384",quantity:v.quantity||"1"};
+    box.querySelector("[data-fields]").innerHTML=
+      fieldHtml("Thickness","thickness",defaults.thickness,"thickness")+
+      fieldHtml("Width","width",defaults.width,"width")+
+      fieldHtml("Length","length",defaults.length,"length")+
+      fieldHtml("Quantity","quantity",defaults.quantity,"quantity");
+    box.querySelectorAll("input").forEach(i=>i.addEventListener("input",()=>{lastPresetTarget=box;calculate()}));
+  }
+  box.querySelector(".remove").addEventListener("click",()=>{box.remove();calculate()});
+  render();calculate();
+  return box;
+}
+
+function getRows(){
+  return [...document.querySelectorAll(".board")].map(box=>{
+    const get=k=>box.querySelector('[data-key="'+k+'"]')?.value||"";
+    const thicknessIn=toIn(get("thickness"),"thickness");
+    const widthIn=toIn(get("width"),"width");
+    const lengthFt=toFt(get("length"));
+    const quantity=Math.max(0,Math.floor(num(get("quantity"),1)));
+    return {name:"Board "+box.dataset.id,thicknessIn,widthIn,lengthFt,quantity,box};
+  });
+}
+function calculate(){
+  const raw=getRows();
+  const project=calculateProject({rows:raw.map(x=>({name:x.name,thicknessIn:x.thicknessIn,widthIn:x.widthIn,lengthFt:x.lengthFt,quantity:x.quantity})),wastePercent:num($("globalWaste").value,10),pricePerBF:num($("price").value,0)});
+  raw.forEach((row,i)=>{
+    const item=project.items[i];
+    if(row.box) row.box.querySelector("[data-row-result]").textContent=fmt(item.boardFeet,2)+" BF";
+  });
+  $("resultTitle").textContent=project.totalPieces>0?"Lumber quantity estimate":"Enter your lumber";
+  $("rawBF").textContent=fmt(project.rawBoardFeet,2);
+  $("wasteBF").textContent=fmt(project.wasteBoardFeet,2);
+  $("purchaseBF").textContent=fmt(project.purchaseBoardFeet,2);
+  $("pieces").textContent=fmt(project.totalPieces,0);
+  $("cubicFt").textContent=fmt(project.cubicFeet,3);
+  $("cubicM").textContent=fmt(project.cubicMeters,4);
+  const currency=($("currency").value||"$").trim();
+  $("cost").textContent=project.cost==null?"Add an optional price per board foot":currency+" "+fmt(project.cost,2);
+}
+
+function convertUnit(next){
+  if(next===unit)return;
+  document.querySelectorAll(".board").forEach(box=>{
+    box.querySelectorAll("input[data-kind]").forEach(input=>{
+      const kind=input.dataset.kind,val=input.value;
+      if(kind==="quantity")return;
+      if(kind==="length"){
+        const ft=toFt(val);input.value=String(Number(fromFt(ft).toFixed(4)));
+      }else{
+        const inches=toIn(val,kind);input.value=String(Number(fromIn(inches).toFixed(4)));
+      }
+    });
+  });
+  unit=next;
+  document.querySelectorAll(".unit").forEach(x=>x.classList.toggle("active",x.dataset.unit===unit));
+  // Rerender labels while preserving dimensions.
+  document.querySelectorAll(".board").forEach(box=>{
+    const vals={};
+    box.querySelectorAll("input[data-key]").forEach(i=>vals[i.dataset.key]=i.value);
+    box.querySelector("[data-fields]").innerHTML=
+      fieldHtml("Thickness","thickness",vals.thickness,"thickness")+
+      fieldHtml("Width","width",vals.width,"width")+
+      fieldHtml("Length","length",vals.length,"length")+
+      fieldHtml("Quantity","quantity",vals.quantity,"quantity");
+    box.querySelectorAll("input").forEach(i=>i.addEventListener("input",calculate));
+  });
+  calculate();
+}
+
+function applyPreset(value){
+  const box=lastPresetTarget||document.querySelector(".board");
+  if(!box||!value)return;
+  const set=(key,val)=>{const i=box.querySelector('[data-key="'+key+'"]');if(i)i.value=unit==="imperial"?val:String(Number((val*25.4).toFixed(4)))};
+  const presets={
+    "2x4":[1.5,3.5],
+    "2x6":[1.5,5.5],
+    "2x8":[1.5,7.25],
+    "2x10":[1.5,9.25],
+    "2x12":[1.5,11.25],
+    "4/4":[1, null],
+    "5/4":[1.25,null],
+    "6/4":[1.5,null],
+    "8/4":[2,null],
+    "12/4":[3,null]
+  };
+  const p=presets[value];if(!p)return;
+  set("thickness",p[0]);
+  if(p[1]!=null)set("width",p[1]);
+  calculate();
+}
+function reset(){
+  $("boards").innerHTML="";nextId=1;unit="imperial";lastPresetTarget=null;
+  $("globalWaste").value=10;$("price").value="";$("currency").value="$";$("preset").value="";
+  document.querySelectorAll(".unit").forEach(x=>x.classList.toggle("active",x.dataset.unit===unit));
+  addBoard();calculate();
+}
+
+document.querySelectorAll(".unit").forEach(btn=>btn.addEventListener("click",()=>convertUnit(btn.dataset.unit)));
+$("addBoard").addEventListener("click",()=>{lastPresetTarget=addBoard();});
+$("preset").addEventListener("change",e=>{applyPreset(e.target.value);e.target.value=""});
+["globalWaste","price","currency"].forEach(id=>$(id).addEventListener("input",calculate));
+$("calculate").addEventListener("click",calculate);$("reset").addEventListener("click",reset);
+addBoard();calculate();
+</script>
+</body>
+</html>
