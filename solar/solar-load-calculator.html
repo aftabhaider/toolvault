@@ -271,7 +271,7 @@ function addAppliance(name="Other",qty=1,watts=100,hours=1){
  const tdHours=document.createElement("td"),hoursInput=makeInput("hours","number",hours,0,"","0.25");tdHours.appendChild(group(hoursInput,H_PER,"h"));
  const tdRemove=document.createElement("td"),remove=document.createElement("button");remove.type="button";remove.className="remove";remove.textContent="×";remove.title="Remove appliance";tdRemove.appendChild(remove);
  tr.append(tdName,tdQty,tdWatts,tdHours,tdRemove);tbody.appendChild(tr);
- select.addEventListener("change",function(){const option=this.options[this.selectedIndex];watt.value=option.dataset.watts;update()});
+ select.addEventListener("change",function(){const option=this.options[this.selectedIndex],wSel=watt.parentElement.querySelector("select"),w=Number(option.dataset.watts)||0;watt.value=String(Number((w/W_PER[wSel.value]).toFixed(4)));update()});
  [qtyInput,watt,hoursInput].forEach(input=>{input.addEventListener("input",update);input.addEventListener("change",update)});
  remove.addEventListener("click",()=>{tr.remove();update()});return tr;
 }
