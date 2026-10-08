@@ -63,19 +63,19 @@ footer{border-top:1px solid var(--line);padding:25px 0;background:#fff;color:#74
 
 <div class="simple-row">
 <div class="simple-card"><div class="field"><label for="depth">Target mulch depth</label><div class="measure"><input id="depth" type="number" min="0" step="any" value="3"><select id="depthUnit" aria-label="Target mulch depth unit"><option value="in" selected>in</option><option value="cm">cm</option><option value="mm">mm</option><option value="ft">ft</option><option value="m">m</option></select></div></div><div class="hint" id="depthHint">Enter the desired mulch depth and follow product/landscape guidance.</div></div>
-<div class="simple-card"><div class="field"><label for="quantity">Default repeated-area count</label><input id="quantity" type="number" min="1" step="1" value="1"></div><div class="hint">Used when a new area is added.</div></div>
+<div class="simple-card"><div class="field"><label for="quantity">How many identical areas?</label><input id="quantity" type="number" min="1" step="1" value="1"></div><div class="hint">Used when a new area is added.</div></div>
 </div>
 
 <details class="advanced">
 <summary>Advanced settings: existing mulch, waste, bags, weight & cost</summary>
 <div class="advanced-body">
 <div class="fields">
-<div class="field"><label for="existing">Existing mulch depth</label><div class="measure"><input id="existing" type="number" min="0" step="any" value="0"><select id="existingUnit" aria-label="Existing mulch depth unit"><option value="in" selected>in</option><option value="cm">cm</option><option value="mm">mm</option><option value="ft">ft</option><option value="m">m</option></select></div><div class="hint" id="existingHint">Subtracts old settled mulch from the target depth.</div></div>
+<div class="field"><label for="existing">Mulch already on the ground</label><div class="measure"><input id="existing" type="number" min="0" step="any" value="0"><select id="existingUnit" aria-label="Existing mulch depth unit"><option value="in" selected>in</option><option value="cm">cm</option><option value="mm">mm</option><option value="ft">ft</option><option value="m">m</option></select></div><div class="hint" id="existingHint">Subtracts old settled mulch from the target depth.</div></div>
 <div class="field"><label for="waste">Extra allowance (%)</label><input id="waste" type="number" min="0" max="100" step="1" value="5"></div>
 <div class="field"><label for="bagSize">Bag size</label><div class="measure"><input id="bagSize" type="number" min="0.001" step="any" value="2"><select id="bagUnit" aria-label="Bag size unit"><option value="ft3" selected>ft³</option><option value="m3">m³</option><option value="L">L</option></select></div></div>
-<div class="field"><label for="density">Material density (t/m³)</label><input id="density" type="number" min="0" step="0.01" placeholder="Optional"></div>
-<div class="field"><label for="bagPrice">Price per bag</label><input id="bagPrice" type="number" min="0" step="0.01" placeholder="Optional"></div>
-<div class="field"><label for="bulkPrice">Bulk price per cubic yard</label><input id="bulkPrice" type="number" min="0" step="0.01" placeholder="Optional"></div>
+<div class="field"><label for="density">Weight per cubic metre (optional)</label><input id="density" type="number" min="0" step="0.01" placeholder="Optional"></div>
+<div class="field"><label for="bagPrice">Price of one bag</label><input id="bagPrice" type="number" min="0" step="0.01" placeholder="Optional"></div>
+<div class="field"><label for="bulkPrice">Bulk mulch price per cubic yard</label><input id="bulkPrice" type="number" min="0" step="0.01" placeholder="Optional"></div>
 </div>
 </div>
 </details>
