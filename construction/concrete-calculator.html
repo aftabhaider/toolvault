@@ -177,7 +177,7 @@ const M={mm:.001,cm:.01,m:1,in:.0254,ft:.3048};
 function n(v){const x=Number(v);return Number.isFinite(x)?Math.max(0,x):0}
 function inputNum(cls,value=''){return '<input class="'+cls+'" type="number" min="0" step="any" value="'+value+'">'}
 function opts(current){return ["mm","cm","m","in","ft"].map(u=>'<option value="'+u+'" '+(u===current?'selected':'')+'>'+u+'</option>').join("")}
-function measure(label,key,value,current,kind='length'){return '<div class="field '+kind+'Only"><span class="label">'+label+'</span><div class="measure"><input data-key="'+key+'" type="number" min="0" step="any" value="'+value+'"><select class="row-unit" data-unit-for="'+key+'">'+opts(current)+'</select></div></div>'}
+function measure(label,key,value,current,kind='length'){const hints={length:"Distance from one end to the other.",width:"Distance from one side to the other.",height:"How thick or deep this concrete section is.",diameter:"Distance straight across the round form.",outerDiameter:"Outside diameter of the ring.",innerDiameter:"Inside diameter of the ring.",ringHeight:"Vertical height of the ring or form."};return '<div class="field '+kind+'Only"><span class="label">'+label+'</span><div class="measure"><input data-key="'+key+'" type="number" min="0" step="any" value="'+value+'"><select class="row-unit" data-unit-for="'+key+'">'+opts(current)+'</select></div><div class="hint">'+(hints[key]||"")+'</div></div>'}
 function elementTemplate(id){
  const el=document.createElement('div');el.className='element';el.dataset.id=id;el.dataset.shape='slab';
  const planUnit=unitSystem==='metric'?'m':'ft',heightUnit=unitSystem==='metric'?'cm':'in';
