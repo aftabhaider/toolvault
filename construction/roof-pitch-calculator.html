@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Roof Pitch Calculator — Slope, Angle & Rafter Length | ToolVault</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="description" content="Free roof pitch calculator. Enter rise and run, a pitch ratio, angle or slope percentage to calculate roof pitch, degrees, slope, pitch multiplier and rafter length.">
+<link rel="canonical" href="https://toolvault.aftabjordan1.workers.dev/construction/roof-pitch-calculator.html">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="theme-color" content="#0b8f78">
+<meta property="og:site_name" content="ToolVault">
+<meta property="og:title" content="Roof Pitch Calculator — Slope, Angle & Rafter Length | ToolVault">
+<meta property="og:description" content="Calculate roof pitch, slope percentage, angle, pitch multiplier and rafter length from simple rise and run measurements.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://toolvault.aftabjordan1.workers.dev/construction/roof-pitch-calculator.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Roof Pitch Calculator">
+<meta name="twitter:description" content="Calculate roof pitch, angle, slope percentage, multiplier and rafter length.">
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"WebApplication","@id":"https://toolvault.aftabjordan1.workers.dev/construction/roof-pitch-calculator.html#app","name":"Roof Pitch Calculator","url":"https://toolvault.aftabjordan1.workers.dev/construction/roof-pitch-calculator.html","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","browserRequirements":"Requires a modern web browser","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
+{"@type":"WebPage","@id":"https://toolvault.aftabjordan1.workers.dev/construction/roof-pitch-calculator.html#page","name":"Roof Pitch Calculator — Slope, Angle & Rafter Length","url":"https://toolvault.aftabjordan1.workers.dev/construction/roof-pitch-calculator.html","isPartOf":{"@type":"WebSite","name":"ToolVault","url":"https://toolvault.aftabjordan1.workers.dev/"}},
+{"@type":"BreadcrumbList","itemListElement":[
+{"@type":"ListItem","position":1,"name":"ToolVault","item":"https://toolvault.aftabjordan1.workers.dev/"},
+{"@type":"ListItem","position":2,"name":"Construction","item":"https://toolvault.aftabjordan1.workers.dev/construction/"},
+{"@type":"ListItem","position":3,"name":"Roof Pitch Calculator","item":"https://toolvault.aftabjordan1.workers.dev/construction/roof-pitch-calculator.html"}]}
+]}
+</script>
+
+<style>
+:root{--page:#edf5f2;--surface:#fff;--surface2:#f7fbfa;--ink:#202927;--muted:#697672;--line:#d5e1dd;--brand:#0b8f78;--brand2:#086c5b;--soft:#e4f6f0;--dark:#0d3029;--shadow:0 8px 24px rgba(25,42,38,.07)}
+*{box-sizing:border-box}body{margin:0;background:var(--page);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.55}a{text-decoration:none;color:inherit}.wrap{max-width:1120px;margin:auto;padding:0 20px}
+header{background:rgba(255,255,255,.97);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20;backdrop-filter:blur(10px)}.nav{min-height:68px;display:flex;align-items:center;justify-content:space-between}.logo{font-size:24px;font-weight:950}.logo span{color:var(--brand)}.nav a{font-size:13px;color:var(--brand2);font-weight:850}
+main{padding:24px 0 58px}.crumb{font-size:12px;color:var(--muted);margin-bottom:14px}.crumb a{color:var(--brand2);font-weight:800}.hero{background:linear-gradient(135deg,#fff,#f5fbf9);border:1px solid var(--line);border-radius:21px;padding:29px;box-shadow:var(--shadow)}.eyebrow{display:inline-flex;background:var(--soft);color:var(--brand2);padding:7px 11px;border-radius:999px;font-size:11px;font-weight:900}.hero h1{font-size:clamp(35px,5vw,53px);line-height:1.03;letter-spacing:-2px;margin:13px 0 8px}.hero p{max-width:900px;color:var(--muted);font-size:15px;margin:0}
+.tool{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(320px,.92fr);gap:17px;margin-top:18px}.card{background:var(--surface);border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);overflow:hidden}.head{padding:19px 21px;border-bottom:1px solid var(--line)}.head h2{margin:0;font-size:20px}.head p{margin:5px 0 0;font-size:12px;color:var(--muted)}.body{padding:19px 21px}
+.modes{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}.mode{border:1px solid var(--line);background:#f8fcfa;border-radius:11px;padding:11px 7px;cursor:pointer;text-align:center}.mode strong{display:block;font-size:11px}.mode span{display:block;font-size:9px;color:var(--muted);margin-top:2px}.mode.active{background:var(--soft);border-color:#99cdbf;color:var(--brand2)}
+.quick{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}.quick button{border:1px solid var(--line);background:var(--surface2);color:#56645f;padding:9px 12px;border-radius:10px;font-size:11px;font-weight:900;cursor:pointer}.quick button.active{background:#24282a;border-color:#24282a;color:#fff}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field label{display:block;font-size:11px;font-weight:900;margin-bottom:5px}.measure{display:grid;grid-template-columns:minmax(0,1fr) 78px}.measure input,.field input,.field select{width:100%;border:1px solid #c8dad4;padding:10px;background:#fbfefd;color:var(--ink);font-size:12px;outline:none}.measure input{border-radius:9px 0 0 9px}.measure select{border-left:0;border-radius:0 9px 9px 0;color:var(--brand2);font-weight:850}.field input,.field select{border-radius:9px}.field input:focus,.field select:focus,.measure select:focus{border-color:#7bbcad;box-shadow:0 0 0 3px rgba(11,143,120,.08)}.hint{font-size:9px;color:#84918c;margin-top:4px;line-height:1.4}.advanced{margin-top:13px;border:1px solid var(--line);border-radius:11px;overflow:hidden}.advanced summary{cursor:pointer;list-style:none;padding:12px 14px;background:#f8fbfa;color:var(--brand2);font-size:12px;font-weight:900}.advanced summary::-webkit-details-marker{display:none}.advanced summary:before{content:'+';display:inline-grid;place-items:center;width:21px;height:21px;border-radius:7px;background:var(--soft);margin-right:8px}.advanced[open] summary:before{content:'−'}
+.action{display:flex;gap:8px;margin-top:15px}.primary,.secondary{border-radius:10px;padding:12px 16px;font-weight:900;cursor:pointer}.primary{border:0;background:var(--brand);color:#fff}.secondary{border:1px solid var(--line);background:#fff;color:var(--brand2)}
+.quick-result{margin:13px;background:var(--dark);color:#fff;border-radius:17px;padding:20px}.quick-result small{display:block;text-transform:uppercase;letter-spacing:.08em;font-size:10px;opacity:.72}.quick-result h2{font-size:31px;margin:5px 0 2px}.quick-result p{margin:0;color:#c4d8d3;font-size:12px}.results{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:0 13px 13px}.metric{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--surface2)}.metric.primary{background:var(--soft);border-color:#c3e7dd}.metric span{display:block;font-size:10px;color:var(--muted);font-weight:850;text-transform:uppercase;letter-spacing:.04em}.metric b{display:block;font-size:21px;margin-top:4px}.metric small{font-size:10px;color:var(--muted)}.notice{margin:0 13px 13px;padding:11px 12px;border-radius:10px;background:#f7f1e8;color:#765d43;font-size:10px;border:1px solid #eadbc9}
+.seo{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:17px;overflow:hidden;box-shadow:var(--shadow)}.seo summary{list-style:none;cursor:pointer;background:#f8fbfa;padding:15px 18px;color:var(--brand2);font-size:13px;font-weight:900}.seo summary::-webkit-details-marker{display:none}.seo summary:before{content:'+';display:inline-grid;place-items:center;width:21px;height:21px;border-radius:7px;background:var(--soft);margin-right:8px}.seo[open] summary:before{content:'−'}.seo-body{padding:23px}.seo-body h2{font-size:24px;letter-spacing:-.7px;margin:0 0 8px}.seo-body h2:not(:first-child){margin-top:27px}.seo-body h3{font-size:16px;margin:20px 0 6px}.seo-body p,.seo-body li{font-size:14px;color:#566760}.formula{padding:12px 14px;border-radius:11px;background:var(--soft);border:1px solid #c6e6dd;color:#245d52;font-weight:850;margin:11px 0}.example{padding:14px;border:1px solid var(--line);border-radius:11px;background:#fbfdfc}.related{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.rel{padding:13px;border:1px solid var(--line);border-radius:11px;background:#f7fbfa}.rel strong{display:block;font-size:12px;color:var(--brand2)}.rel span{font-size:10px;color:var(--muted)}
+footer{border-top:1px solid var(--line);padding:25px 0;background:#fff;color:#74807b;font-size:12px}
+@media(max-width:900px){.tool{grid-template-columns:1fr}.related{grid-template-columns:1fr 1fr}}@media(max-width:600px){.wrap{padding:0 14px}.hero{padding:23px 18px}.fields,.modes,.results,.related{grid-template-columns:1fr}.action{flex-direction:column}}
+</style>
+</head>
+<body>
+<header><div class="wrap nav"><a class="logo" href="/">Tool<span>Vault</span></a><a href="/construction/">← Construction</a></div></header>
+<main class="wrap">
+<div class="crumb"><a href="/">ToolVault</a> / <a href="/construction/">Construction</a> / Roof Pitch Calculator</div>
+<section class="hero"><span class="eyebrow">🏠 Roof geometry</span><h1>Roof Pitch Calculator</h1><p>Calculate roof pitch from rise and run, or enter a pitch ratio, angle or slope percentage. See the equivalent angle, slope, pitch multiplier and optional rafter length.</p></section>
+
+<div class="tool">
+<section class="card">
+<div class="head"><h2>Enter what you know</h2><p>If you measured the roof with a level, use Rise &amp; Run. If you already know the pitch, choose the matching mode.</p></div>
+<div class="body">
+<div class="modes">
+<button class="mode active" data-mode="rise-run" type="button"><strong>Rise &amp; Run</strong><span>Measured values</span></button>
+<button class="mode" data-mode="ratio" type="button"><strong>Pitch ratio</strong><span>e.g. 6 / 12</span></button>
+<button class="mode" data-mode="angle" type="button"><strong>Angle</strong><span>degrees</span></button>
+<button class="mode" data-mode="percent" type="button"><strong>Slope %</strong><span>percentage</span></button>
+</div>
+
+<div id="riseRunPanel">
+<div class="quick"><button type="button" data-quick="imperial" class="active">Quick set: inches</button><button type="button" data-quick="metric">Quick set: centimetres</button></div>
+<div class="fields">
+<div class="field"><label for="rise">Rise — vertical height</label><div class="measure"><input id="rise" type="number" min="0" step="any" value="6"><select id="riseUnit"><option value="in" selected>in</option><option value="cm">cm</option><option value="mm">mm</option><option value="ft">ft</option><option value="m">m</option></select></div><div class="hint">Measure the vertical change over the same horizontal run.</div></div>
+<div class="field"><label for="run">Run — horizontal distance</label><div class="measure"><input id="run" type="number" min="0" step="any" value="12"><select id="runUnit"><option value="in" selected>in</option><option value="cm">cm</option><option value="mm">mm</option><option value="ft">ft</option><option value="m">m</option></select></div><div class="hint">Use the horizontal distance, not the sloped rafter length.</div></div>
+</div>
+</div>
+
+<div id="ratioPanel" hidden>
+<div class="field"><label for="ratio">Rise per 12 units of run — pitch ratio</label><input id="ratio" type="number" min="0" step="any" value="6"><div class="hint">For example, 6 means a 6/12 roof pitch.</div></div>
+</div>
+
+<div id="anglePanel" hidden>
+<div class="field"><label for="angle">Roof angle — degrees</label><input id="angle" type="number" min="0" max="89.999999" step="any" value="26.565051"><div class="hint">0° is flat. A vertical surface approaches 90°.</div></div>
+</div>
+
+<div id="percentPanel" hidden>
+<div class="field"><label for="percent">Slope — percent (%)</label><input id="percent" type="number" min="0" step="any" value="50"><div class="hint">50% slope means the rise is half the horizontal run.</div></div>
+</div>
+
+<details class="advanced">
+<summary>Optional: calculate rafter length</summary>
+<div style="padding:14px">
+<div class="field"><label for="horizontalRun">Horizontal run for the rafter — measured flat</label><div class="measure"><input id="horizontalRun" type="number" min="0" step="any" value="12"><select id="horizontalRunUnit"><option value="in" selected>in</option><option value="ft">ft</option><option value="cm">cm</option><option value="mm">mm</option><option value="m">m</option></select></div><div class="hint">For a simple roof plane, this is the horizontal distance used to find the sloped rafter length. Overhangs and complex roof geometry are separate.</div></div>
+</div>
+</details>
+
+<div class="action"><button class="primary" id="calculate" type="button">Calculate roof pitch</button><button class="secondary" id="reset" type="button">Reset</button></div>
+</div>
+</section>
+
+<section class="card">
+<div class="quick-result"><small>Roof pitch</small><h2 id="primaryResult">—</h2><p id="resultNote">Enter a rise and run to calculate.</p></div>
+<div id="results" class="results"></div>
+<div class="notice">This is exact geometry for the values you enter. It does not determine structural capacity, safe roof access, drainage requirements, material coverage or building-code compliance.</div>
+</section>
+</div>
+
+<details class="seo" open>
+<summary>How to calculate roof pitch, formulas, examples &amp; FAQs</summary>
+<div class="seo-body">
+<h2>How to use the roof pitch calculator</h2>
+<ol><li>Measure a vertical <strong>rise</strong> and a horizontal <strong>run</strong> over the same section of roof.</li><li>Enter both values in the Rise &amp; Run mode, or choose Pitch Ratio, Angle or Slope % if you already know one of those values.</li><li>Read the equivalent roof pitch, angle, slope percentage and pitch multiplier.</li><li>Open the optional rafter-length field when you also need the sloped length for a known horizontal run.</li></ol>
+
+<h2>What is roof pitch?</h2>
+<p>Roof pitch describes how much a roof rises compared with its horizontal run. In common U.S. roofing notation, it is written as rise over 12—for example, 6/12 means the roof rises 6 inches for every 12 inches of horizontal run. The underlying ratio is dimensionless, so the same geometry can be measured in inches, centimetres, feet or metres.</p>
+
+<h2>Roof pitch formulas</h2>
+<div class="formula">Pitch rise per 12 = (rise ÷ run) × 12</div>
+<div class="formula">Angle = arctan(rise ÷ run)</div>
+<div class="formula">Slope % = (rise ÷ run) × 100</div>
+<div class="formula">Pitch multiplier = √(1 + (rise ÷ run)²)</div>
+<div class="formula">Rafter length = horizontal run × pitch multiplier</div>
+
+<h2>Worked example: 6/12 roof pitch</h2>
+<div class="example"><strong>Rise = 6 in, run = 12 in.</strong><br>Rise/run = 6 ÷ 12 = 0.5.<br>Pitch = 0.5 × 12 = <strong>6/12</strong>.<br>Angle = arctan(0.5) ≈ <strong>26.57°</strong>.<br>Slope = 0.5 × 100 = <strong>50%</strong>.<br>Pitch multiplier = √(1 + 0.5²) ≈ <strong>1.118</strong>.<br>For a 12 ft horizontal run, rafter length ≈ 12 × 1.118 = <strong>13.42 ft</strong>.</div>
+
+<h2>How to measure roof pitch</h2>
+<p>For a simple field measurement, use a level and measure the vertical rise over a known horizontal distance. Keep the rise and run measurements perpendicular: the run is horizontal, while the rafter or roof surface is sloped. A digital level can also report an angle directly, which can be entered in Angle mode.</p>
+
+<h2>Roof pitch vs slope percentage</h2>
+<p>They describe the same geometric steepness in different formats. A 6/12 pitch has a rise/run ratio of 0.5, so its slope is 50%. The angle is about 26.57°. Converting between these representations does not change the roof geometry.</p>
+
+<h2>Accuracy and limitations</h2>
+<p>The formulas are exact for a straight roof plane with a uniform slope. Display values are rounded only after calculation. A real roof may contain several planes, hips, valleys, dormers, overhangs or irregular geometry; calculate each relevant plane separately when estimating surface area.</p>
+<p>Rafter length from this calculator is geometric length along the slope for the horizontal run entered. It is not a finished cut length: birdsmouth cuts, ridge details, overhangs, seat cuts, ridge-board deductions and construction tolerances are separate.</p>
+
+<h2>Frequently asked questions</h2>
+<h3>What is the angle of a 6/12 roof?</h3><p>A 6/12 roof has a rise/run ratio of 0.5, which corresponds to about 26.57 degrees.</p>
+<h3>What is a 4/12 roof in degrees?</h3><p>A 4/12 pitch has rise/run = 4/12, so the angle is about 18.43 degrees and the slope is 33.33%.</p>
+<h3>How do I convert roof pitch to slope percentage?</h3><p>Divide the rise by the run and multiply by 100. For a 6/12 roof: 6 ÷ 12 × 100 = 50%.</p>
+<h3>How do I calculate rafter length from roof pitch?</h3><p>For a simple uniform slope, multiply the horizontal run by the pitch multiplier: √(1 + (rise/run)²). The result is the sloped geometric length before construction cuts or overhang details.</p>
+<h3>Is roof pitch the same as roof angle?</h3><p>No. Pitch is commonly expressed as a rise/run ratio such as 6/12, while angle is measured in degrees. They describe the same slope and can be converted exactly.</p>
+<h3>Does this calculator check building codes?</h3><p>No. Building-code requirements depend on the jurisdiction, roof system, structure, climate and adopted code edition. This tool is a geometry calculator, not a code-compliance checker.</p>
+
+<h2>Related ToolVault calculators</h2>
+<div class="related">
+<a class="rel" href="/calculators/square-footage-calculator.html"><strong>Square Footage Calculator</strong><span>Calculate flat area for rooms and simple shapes.</span></a>
+<a class="rel" href="/construction/stair-calculator.html"><strong>Stair Calculator</strong><span>Use similar rise, run and angle geometry for stairs.</span></a>
+<a class="rel" href="/construction/board-foot-calculator.html"><strong>Board Foot Calculator</strong><span>Estimate lumber volume for construction projects.</span></a>
+</div>
+</div>
+</details>
+</main>
+<footer><div class="wrap">© 2026 ToolVault · Free practical tools for the web.</div></footer>
+
+<script type="module">
+import {calculateRoofPitch} from "./roof-pitch-engine.js";
+const $=id=>document.getElementById(id);
+const modes=[...document.querySelectorAll(".mode")];
+const panels={ "rise-run":"riseRunPanel", "ratio":"ratioPanel", "angle":"anglePanel", "percent":"percentPanel" };
+const factors={mm:.001,cm:.01,m:1,in:.0254,ft:.3048};
+let mode="rise-run", quick="imperial";
+
+function fmt(n,d=2){return new Intl.NumberFormat(undefined,{maximumFractionDigits:d}).format(n)}
+function toMetres(value,unit){return Number(value)*factors[unit]}
+function fromMetres(value,unit){return Number(value)/factors[unit]}
+function safe(v){return Number.isFinite(Number(v))?Number(v):0}
+
+function read(){
+  if(mode==="rise-run"){
+    return {mode,rise:toMetres(safe($("rise").value),$("riseUnit").value),run:toMetres(safe($("run").value),$("runUnit").value)};
+  }
+  if(mode==="ratio") return {mode,ratio:safe($("ratio").value)};
+  if(mode==="angle") return {mode,angleDeg:safe($("angle").value)};
+  return {mode,percent:safe($("percent").value)};
+}
+
+function calculate(){
+  const result=calculateRoofPitch({...read(),horizontalRun:toMetres(safe($("horizontalRun").value),$("horizontalRunUnit").value)});
+  const primary=$("primaryResult"),note=$("resultNote"),out=$("results");
+  if(!result.ok){
+    primary.textContent="—"; note.textContent=result.error;
+    out.innerHTML='<div class="metric primary" style="grid-column:1/-1"><span>Input check</span><b>Enter valid values</b><small>'+result.error+'</small></div>';
+    return;
+  }
+  primary.textContent=fmt(result.pitchRisePer12,2)+"/12";
+  note.textContent=fmt(result.angleDeg,2)+"° angle · "+fmt(result.slopePercent,2)+"% slope";
+  const u=$("horizontalRunUnit").value;
+  const rafter=result.horizontalRun>0?fmt(fromMetres(result.rafterLength,u),2)+" "+u:"—";
+  out.innerHTML=
+    '<div class="metric primary"><span>Pitch ratio</span><b>'+fmt(result.pitchRisePer12,2)+"/12</b><small>rise per 12 units of run</small></div>'+
+    '<div class="metric"><span>Angle</span><b>'+fmt(result.angleDeg,2)+"°</b><small>measured from horizontal</small></div>"+
+    '<div class="metric"><span>Slope</span><b>'+fmt(result.slopePercent,2)+"%</b><small>rise ÷ run × 100</small></div>"+
+    '<div class="metric"><span>Pitch multiplier</span><b>'+fmt(result.pitchMultiplier,4)+'</b><small>surface length ÷ horizontal run</small></div>'+
+    '<div class="metric"><span>Rafter per unit run</span><b>'+fmt(result.rafterPerUnitRun,4)+'</b><small>sloped length for 1 unit of horizontal run</small></div>'+
+    '<div class="metric primary"><span>Rafter length</span><b>'+rafter+'</b><small>for the optional horizontal run entered</small></div>';
+}
+
+function setMode(next){
+  mode=next;
+  modes.forEach(b=>b.classList.toggle("active",b.dataset.mode===next));
+  Object.entries(panels).forEach(([key,id])=>$(id).hidden=key!==next);
+  calculate();
+}
+modes.forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.mode)));
+
+function convert(id,unitId,nextUnit){
+  const input=$(id),sel=$(unitId),old=sel.value,v=Number(input.value);
+  if(!Number.isFinite(v)||v<0){sel.value=nextUnit;return}
+  const metres=v*factors[old];
+  input.value=String(Number(fromMetres(metres,nextUnit).toFixed(8)));
+  sel.value=nextUnit;
+}
+function setQuick(next){
+  quick=next;
+  const target=next==="metric"?"cm":"in";
+  convert("rise","riseUnit",target); convert("run","runUnit",target);
+  document.querySelectorAll("[data-quick]").forEach(b=>b.classList.toggle("active",b.dataset.quick===next));
+  calculate();
+}
+document.querySelectorAll("[data-quick]").forEach(b=>b.addEventListener("click",()=>setQuick(b.dataset.quick)));
+
+["rise","run","ratio","angle","percent","horizontalRun"].forEach(id=>$(id).addEventListener("input",calculate));
+["riseUnit","runUnit","horizontalRunUnit"].forEach(id=>$(id).addEventListener("change",calculate));
+
+$("reset").addEventListener("click",()=>{
+  $("rise").value="6";$("run").value="12";$("riseUnit").value="in";$("runUnit").value="in";
+  $("ratio").value="6";$("angle").value="26.565051";$("percent").value="50";
+  $("horizontalRun").value="12";$("horizontalRunUnit").value="ft";
+  quick="imperial";document.querySelectorAll("[data-quick]").forEach(b=>b.classList.toggle("active",b.dataset.quick==="imperial"));
+  setMode("rise-run");
+});
+$("calculate").addEventListener("click",calculate);
+calculate();
+</script>
+</body>
+</html>
