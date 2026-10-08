@@ -42,3 +42,8 @@ Before merging:
 8. verify the calculator still works without external APIs unless an API is explicitly required.
 
 This standard is intentionally stricter for ToolVault because calculation correctness is the product itself.
+
+
+## Unit input and conversion QA
+
+Every physical measurement input must show its unit. Multi-unit inputs use a value + unit selector. Quick metric/imperial presets, where provided, convert existing values before changing the displayed unit. The calculation engine must receive canonical units, and unit changes must preserve the physical quantity. Known metric and imperial examples must be rechecked after any unit-UI change.
