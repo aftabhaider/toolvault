@@ -129,7 +129,8 @@ Public keyword and SERP research used for this roadmap:
 
 1. Paint Calculator — completed.
 2. Mulch Calculator — completed.
-3. Board Foot Calculator — next opportunity to evaluate/build.
+3. Board Foot Calculator — completed.
+4. Stair Calculator — next opportunity to evaluate/build.
 4. Stair Calculator.
 5. AC / BTU Calculator.
 6. Square Footage Calculator.
@@ -138,7 +139,7 @@ Public keyword and SERP research used for this roadmap:
 
 ## Current status
 
-Paint and Mulch are now implemented as dedicated calculator pages with dedicated engines, category links, homepage links and sitemap entries. The next portfolio decision should be based on current search demand/SERP opportunity rather than simply following the old order.
+Paint, Mulch and Board Foot are now implemented as dedicated calculator pages with dedicated engines, category links, homepage links and sitemap entries. The next portfolio decision should be based on current search demand/SERP opportunity rather than simply following the old order.
 
 ## Measurement loop
 
