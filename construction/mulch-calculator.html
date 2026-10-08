@@ -57,12 +57,12 @@ footer{border-top:1px solid var(--line);padding:25px 0;background:#fff;color:#74
 <section class="card">
 <div class="head"><h2>Mulch project</h2><p>Enter each area, choose its shape and use one target mulch depth for the project.</p></div>
 <div class="body">
-<div class="unitbar"><button class="unit active" type="button" data-unit="imperial">Imperial (ft / in)</button><button class="unit" type="button" data-unit="metric">Metric (m / cm)</button></div>
+<div class="unitbar"><button class="unit active" type="button" data-unit="imperial">Quick set: Imperial</button><button class="unit" type="button" data-unit="metric">Quick set: Metric</button></div><div class="unit-note">Each measured input has its own unit selector. Mixed units are converted to metres before volume is calculated.</div>
 <div class="bed-list" id="beds"></div>
 <button class="add" id="addBed" type="button">＋ Add another area</button>
 
 <div class="simple-row">
-<div class="simple-card"><div class="field"><label for="depth">Target mulch depth</label><input id="depth" type="number" min="0" step="0.1" value="3"></div><div class="hint" id="depthHint">2–3 in is a common depth for planting areas.</div></div>
+<div class="simple-card"><div class="field"><label for="depth">Target mulch depth</label><div class="measure"><input id="depth" type="number" min="0" step="any" value="3"><select id="depthUnit" aria-label="Target mulch depth unit"><option value="in" selected>in</option><option value="cm">cm</option><option value="mm">mm</option><option value="ft">ft</option><option value="m">m</option></select></div></div><div class="hint" id="depthHint">Enter the desired mulch depth and follow product/landscape guidance.</div></div>
 <div class="simple-card"><div class="field"><label for="quantity">Default repeated-area count</label><input id="quantity" type="number" min="1" step="1" value="1"></div><div class="hint">Used when a new area is added.</div></div>
 </div>
 
