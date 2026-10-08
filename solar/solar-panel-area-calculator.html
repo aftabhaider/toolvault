@@ -50,7 +50,7 @@ body{background:#edf5f2!important}
 input,select,.control{background:#fbfefd;border-color:#c9ddd7}
 .unitChoice,.shape,.seg,.choice{background:#f7fcfa}
 .unitChoice.active,.shape.active,.seg.active,.choice.active{background:#e3f6f0;border-color:#99cdbf;color:#086c5b}
-</style>
+.measure{display:grid;grid-template-columns:minmax(0,1fr) 80px}.measure input{border-radius:9px 0 0 9px}.measure select{border:1px solid #c8dad4;border-left:0;border-radius:0 9px 9px 0;padding:10px 6px;background:#f7fcfa;color:#086c5b;font-size:11px;font-weight:850;outline:none}.measure select:focus{border-color:#7bbcad;box-shadow:0 0 0 3px rgba(11,143,120,.08)}</style>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"WebApplication","name":"Solar Panel Area Calculator","url":"https://toolvault.aftabjordan1.workers.dev/solar/solar-panel-area-calculator.html","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
@@ -176,8 +176,11 @@ input,select,.control{background:#fbfefd;border-color:#c9ddd7}
 const el={
 panels:document.getElementById('panels'),
 watt:document.getElementById('watt'),
+wattUnit:document.getElementById('wattUnit'),
 length:document.getElementById('length'),
+lengthUnit:document.getElementById('lengthUnit'),
 width:document.getElementById('width'),
+widthUnit:document.getElementById('widthUnit'),
 spacing:document.getElementById('spacing'),
 unit:document.getElementById('unit'),
 system:document.getElementById('system'),
@@ -188,19 +191,25 @@ installFt:document.getElementById('installFt'),
 quickArea:document.getElementById('quickArea'),
 quickText:document.getElementById('quickText')
 };
+const MM_PER={mm:1,cm:10,m:1000,in:25.4,ft:304.8};
+const W_PER={W:1,kW:1000};
 function fmt(n){return new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n)}
+function convertOnUnitChange(input,select,map){
+  const raw=Number(input.value)||0,old=select.dataset.prev||select.value,next=select.value;
+  if(raw>0){input.value=(raw*map[old]/map[next]).toFixed(6).replace(/.?0+$/,'');}
+  select.dataset.prev=next;
+}
 function calculate(){
 const panels=Math.max(0,Number(el.panels.value)||0);
-const watt=Math.max(0,Number(el.watt.value)||0);
-const length=Math.max(0,Number(el.length.value)||0);
-const width=Math.max(0,Number(el.width.value)||0);
+const watt=Math.max(0,Number(el.watt.value)||0)*W_PER[el.wattUnit.value];
+const length=Math.max(0,Number(el.length.value)||0)*MM_PER[el.lengthUnit.value];
+const width=Math.max(0,Number(el.width.value)||0)*MM_PER[el.widthUnit.value];
 const factor=Number(el.spacing.value)||1.2;
 const oneArea=(length/1000)*(width/1000);
 const totalArea=oneArea*panels;
 const installation=totalArea*factor;
 const feet=installation*10.7639104167;
 const capacity=panels*watt/1000;
-
 el.system.textContent=fmt(capacity);
 el.oneArea.textContent=fmt(oneArea);
 el.totalArea.textContent=fmt(totalArea);
@@ -209,10 +218,16 @@ el.installFt.textContent=fmt(feet);
 el.quickArea.textContent=fmt(installation)+' m²';
 el.quickText.textContent=fmt(feet)+' ft² estimated installation area for '+fmt(panels)+' panels.';
 }
-Object.values(el).forEach(x=>{if(x && (x.tagName==='INPUT'||x.tagName==='SELECT')){x.addEventListener('input',calculate);x.addEventListener('change',calculate)}});
-
+[el.wattUnit,el.lengthUnit,el.widthUnit].forEach(x=>x.dataset.prev=x.value);
+el.wattUnit.addEventListener('change',()=>{convertOnUnitChange(el.watt,el.wattUnit,W_PER);calculate()});
+el.lengthUnit.addEventListener('change',()=>{convertOnUnitChange(el.length,el.lengthUnit,MM_PER);calculate()});
+el.widthUnit.addEventListener('change',()=>{convertOnUnitChange(el.width,el.widthUnit,MM_PER);calculate()});
+Object.values(el).forEach(x=>{if(x&&x.tagName==='INPUT'){x.addEventListener('input',calculate)}});
+el.spacing.addEventListener('change',calculate);el.unit.addEventListener('change',calculate);
 calculate();
 })();
 </script>
+</body>
+</html>
 </body>
 </html>
