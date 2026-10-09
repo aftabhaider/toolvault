@@ -1,12 +1,14 @@
 import os
 import tempfile
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-from pdf2docx import Converter
 from starlette.background import BackgroundTask
+from starlette.concurrency import run_in_threadpool
+from pdf2docx import Converter
 
 APP_ORIGINS = [
     origin.strip()
@@ -17,11 +19,12 @@ APP_ORIGINS = [
     if origin.strip()
 ]
 MAX_UPLOAD_BYTES = int(os.getenv("MAX_UPLOAD_MB", "25")) * 1024 * 1024
+CONVERSION_TIMEOUT_SECONDS = int(os.getenv("CONVERSION_TIMEOUT_SECONDS", "120"))
 
 app = FastAPI(
     title="ToolVault PDF-to-Word Engine",
     description="Self-hosted PDF to editable DOCX conversion using open-source tooling.",
-    version="1.0.0",
+    version="1.1.0",
 )
 
 app.add_middleware(
@@ -40,9 +43,17 @@ def cleanup(*paths: str) -> None:
             pass
 
 
+def convert_file(source_path: str, output_path: str) -> None:
+    converter = Converter(source_path)
+    try:
+        converter.convert(output_path, multi_processing=False)
+    finally:
+        converter.close()
+
+
 @app.get("/health")
 def health():
-    return {"ok": True, "service": "toolvault-pdf-to-word"}
+    return {"ok": True, "service": "toolvault-pdf-to-word", "version": "1.1.0"}
 
 
 @app.post("/api/convert")
@@ -72,7 +83,6 @@ async def convert_pdf(file: UploadFile = File(...)):
         if total == 0:
             raise HTTPException(status_code=400, detail="The uploaded file is empty.")
 
-        # Check the PDF signature rather than trusting the extension alone.
         with open(temp_pdf, "rb") as source:
             if not source.read(5).startswith(b"%PDF-"):
                 raise HTTPException(status_code=400, detail="The file does not appear to be a valid PDF.")
@@ -80,11 +90,9 @@ async def convert_pdf(file: UploadFile = File(...)):
         with tempfile.NamedTemporaryFile(suffix=".docx", delete=False) as target:
             temp_docx = target.name
 
-        converter = Converter(temp_pdf)
-        try:
-            converter.convert(temp_docx, multi_processing=False)
-        finally:
-            converter.close()
+        # Run CPU-bound conversion away from the async event loop.
+        # The platform should also enforce an upstream request timeout.
+        await run_in_threadpool(convert_file, temp_pdf, temp_docx)
 
         if not os.path.exists(temp_docx) or os.path.getsize(temp_docx) == 0:
             raise HTTPException(status_code=422, detail="No Word document could be generated from this PDF.")
