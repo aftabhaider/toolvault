@@ -94,7 +94,7 @@ convert.addEventListener("click",async()=>{
       progress(pct,"Uploading PDF…",size(event.loaded)+" of "+size(event.total)+" uploaded. Keep this page open.");
      }
     });
-    xhr.upload.addEventListener("load",()=>progress(100,"Upload complete","ToolVault is converting your PDF into an editable Word document…"));
+    xhr.upload.addEventListener("load",()=>{progress(85,"Converting PDF to Word…","Upload complete. The server is now processing your PDF; this can take a little while. The bar will reach 100% when the Word file is ready.");msg("Upload complete. Converting your PDF into an editable Word document…","info");});
     xhr.addEventListener("load",async()=>{
      if(xhr.status<200||xhr.status>=300){
       let detail="Server conversion failed ("+xhr.status+").";
