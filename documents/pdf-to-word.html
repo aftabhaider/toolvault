@@ -88,6 +88,7 @@ convert.addEventListener("click",async()=>{
     const xhr=new XMLHttpRequest();
     xhr.open("POST","https://converter.toolvault-pdf.blitz.cloud/api/convert");
     xhr.responseType="blob";
+    xhr.timeout=120000;
     xhr.upload.addEventListener("progress",event=>{
      if(event.lengthComputable){
       const pct=event.total?event.loaded/event.total*100:0;
@@ -103,7 +104,8 @@ convert.addEventListener("click",async()=>{
      }
      resolve(xhr.response);
     });
-    xhr.addEventListener("error",()=>reject(new Error("Upload failed. Check your connection and try again.")));
+    xhr.addEventListener("error",()=>reject(new Error("The conversion service could not be reached. Check that the backend is online, then try again.")));
+    xhr.addEventListener("timeout",()=>reject(new Error("The conversion request timed out. Try a smaller PDF or retry when the service is online.")));
     xhr.addEventListener("abort",()=>reject(new Error("Upload was cancelled.")));
     xhr.send(form);
    });
@@ -172,7 +174,7 @@ convert.addEventListener("click",async()=>{
   a.href=url;a.download=(file.name.replace(/\.pdf$/i,"").replace(/[\\/:*?\"<>|]/g,"-").slice(0,100)||"converted-document")+".docx";
   document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
   msg(mode==="visual"?"Done. Your layout-preserving Word file is downloading. Each page is an image to retain its original appearance; text is not directly editable.":"Done. Your editable-text Word file is downloading. Review the formatting because it may differ from the PDF.","success");
- }catch(e){msg("Could not convert this PDF. It may be encrypted, damaged, too large, or use an unsupported structure. "+(e&&e.message?e.message:""),"error")}
+ }catch(e){progressBox.className="progressbox show";uploadProgress.value=0;progressPercent.textContent="—";progressLabel.textContent="Conversion stopped";progressHint.textContent="No completed Word file was received.";msg("Could not convert this PDF. "+(e&&e.message?e.message:"Check the file and try again."),"error")}
  finally{convert.disabled=!file;choose.disabled=false;clear.disabled=false;const selectedMode=document.querySelector('input[name="mode"]:checked')?.value||"visual";convert.textContent=selectedMode==="visual"?"Convert with original layout (.docx)":selectedMode==="server"?"Convert with server engine (.docx)":"Convert editable text (.docx)"}
 });
 })();
