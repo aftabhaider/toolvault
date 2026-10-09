@@ -87,7 +87,7 @@ function message(text,type){status.textContent=text;status.className="status sho
 function render(){
  list.innerHTML="";
  files.forEach((file,i)=>{
-  const row=document.createElement("article");row.className="file";row.draggable=true;row.dataset.index=String(i);
+  const row=document.createElement("article");row.className="file";row.dataset.index=String(i);
   row._pdfFile=file;
   
   const order=document.createElement("span");order.className="order-label";order.textContent=String(i+1);
