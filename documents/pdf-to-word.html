@@ -37,22 +37,23 @@
 <section class="panel">
 <div class="drop" id="drop"><strong>Choose a PDF to convert</strong><p>Best for text-based PDFs. Scanned documents require OCR and are not converted by this tool.</p><input id="fileInput" type="file" accept="application/pdf,.pdf" hidden><button class="btn secondary" id="choose" type="button">Choose PDF file</button></div>
 <div class="fileinfo" id="fileInfo" aria-live="polite"></div>
-<div class="toolbar"><button class="btn primary" id="convert" type="button" disabled>Convert to Word (.docx)</button><button class="btn secondary" id="clear" type="button">Clear file</button></div>
+<div class="fileinfo show" style="margin-top:14px"><strong>Conversion mode</strong><br><label style="display:flex;gap:9px;align-items:flex-start;margin-top:9px;cursor:pointer"><input type="radio" name="mode" value="visual" checked style="margin-top:4px"><span><strong>Preserve original layout (recommended)</strong><br><span style="color:var(--muted)">Keeps each page looking like the PDF, including logos, fonts, headers, footers and spacing. Pages are images inside Word, so text is not directly editable.</span></span></label><label style="display:flex;gap:9px;align-items:flex-start;margin-top:12px;cursor:pointer"><input type="radio" name="mode" value="text" style="margin-top:4px"><span><strong>Extract editable text</strong><br><span style="color:var(--muted)">Creates editable paragraphs, but formatting and page layout may change.</span></span></label></div><div class="toolbar"><button class="btn primary" id="convert" type="button" disabled>Convert with original layout (.docx)</button><button class="btn secondary" id="clear" type="button">Clear file</button></div>
 <div id="status" class="status" role="status" aria-live="polite"></div>
 <div class="privacy"><h2>Privacy note</h2><p>The selected PDF is read and converted in this browser; this page does not upload it to ToolVault. PDF.js and the DOCX generation library load from third-party CDNs, so an internet connection is needed to load the tools.</p></div>
 </section>
 <section class="content">
 <h2>Convert PDF to Word online for free</h2>
-<p>This PDF to DOCX converter extracts selectable text from each PDF page and places it into an editable Word document. It is useful when you need to reuse text from reports, notes, letters, or simple documents.</p>
+<p>Choose Preserve original layout to keep each page visually faithful to the PDF, including branding, typography, headers, footers, tables and page positioning. This mode places a high-resolution image of each PDF page into a Word document. Choose Extract editable text if you need to edit the words directly, understanding that layout and styling may change.</p>
 <h3>How to convert PDF to Word</h3>
 <ul><li>Select a PDF file from your device.</li><li>Choose Convert to Word and wait while the pages are processed.</li><li>Download the generated DOCX file and open it in Microsoft Word or a compatible editor.</li></ul>
 <h3>Important conversion limits</h3>
-<p>This is a text-focused conversion, not a pixel-perfect layout reconstruction. Columns, tables, images, fonts, page positioning, headers, footers, and complex formatting may not be preserved. Scanned PDFs that contain page images rather than selectable text need OCR first. Password-protected, damaged, or unusually large PDFs may fail.</p>
+<p>Preserve original layout mode keeps the appearance by embedding each rendered page as an image; text, logos and other page elements are not individually editable in that mode. Editable text mode extracts text and may not preserve columns, tables, images, fonts, headers, footers or exact positioning. Scanned PDFs can still be preserved visually, but their text is not made editable by OCR. Very large PDFs may require substantial browser memory.</p>
 <h3>Frequently asked questions</h3>
 <p><strong>Is the PDF to Word converter free?</strong><br>Yes. You can use it without creating an account.</p>
 <p><strong>Are my documents uploaded?</strong><br>The selected PDF is processed in your browser and is not sent to ToolVault by this page. Supporting libraries are loaded from third-party CDNs.</p>
 <p><strong>Can it convert scanned PDFs?</strong><br>Not directly. Scanned pages need optical character recognition (OCR) before their text can be extracted.</p>
-<p><strong>Will the Word document look exactly like the PDF?</strong><br>No. This tool focuses on extracting text into editable paragraphs. Complex page layouts and visual elements may change or be omitted.</p>
+<p><strong>How do I keep the same layout, logo, header, footer and fonts?</strong><br>Select Preserve original layout. Each page is inserted as a high-resolution image, so its appearance is retained. The page contents will not be individually editable as Word text.</p>
+<p><strong>Can I preserve the layout and edit all text?</strong><br>Not reliably in one automatic conversion. Exact visual fidelity and fully editable text are different goals; choose the mode that matters most for your document.</p>
 <p><strong>Why is the output empty?</strong><br>The PDF may contain scanned images instead of selectable text, or its text layer may be unsupported. Try selecting and copying text from the PDF in a reader to check whether a text layer exists.</p>
 <h3>Explore more PDF tools</h3><div class="related"><a href="/documents/merge-pdf.html">Merge PDF files</a><a href="/documents/">All PDF tools</a><a href="/">ToolVault homepage</a></div>
 </section>
@@ -67,6 +68,7 @@ let file=null;
 function msg(t,type){status.textContent=t;status.className="status show "+type}
 function size(n){return n<1048576?(n/1024).toFixed(1)+" KB":(n/1048576).toFixed(2)+" MB"}
 function setFile(f){file=null;if(!f){info.textContent="";info.className="fileinfo";convert.disabled=true;return}if(!(f.type==="application/pdf"||f.name.toLowerCase().endsWith(".pdf"))){msg("Please choose a PDF file.","error");info.textContent="";info.className="fileinfo";convert.disabled=true;return}file=f;info.textContent=f.name+" · "+size(f.size);info.className="fileinfo show";convert.disabled=false;status.className="status";msg("PDF selected. Ready to convert.","info")}
+document.querySelectorAll('input[name="mode"]').forEach(el=>el.addEventListener("change",()=>{convert.textContent=el.value==="visual"?"Convert with original layout (.docx)":"Convert editable text (.docx)"}));
 choose.addEventListener("click",()=>input.click());
 document.getElementById("drop").addEventListener("click",e=>{if(e.target!==choose)input.click()});
 input.addEventListener("change",()=>{setFile(input.files&&input.files[0]);input.value=""});
@@ -74,42 +76,69 @@ clear.addEventListener("click",()=>{file=null;info.textContent="";info.className
 convert.addEventListener("click",async()=>{
  if(!file)return;
  if(!window.pdfjsLib||!window.docx){msg("Conversion libraries did not load. Check your internet connection and reload the page.","error");return}
+ const mode=document.querySelector('input[name="mode"]:checked')?.value||"visual";
  convert.disabled=true;choose.disabled=true;clear.disabled=true;convert.textContent="Converting…";
  try{
   window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-  msg("Opening PDF and extracting selectable text…","info");
   const pdf=await window.pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;
-  const paragraphs=[];
-  for(let n=1;n<=pdf.numPages;n++){
-   msg("Extracting text from page "+n+" of "+pdf.numPages+"…","info");
-   const page=await pdf.getPage(n),content=await page.getTextContent();
-   const lines=[];let current="",lastY=null;
-   for(const item of content.items){
-    if(!item.str)continue;
-    const y=item.transform?item.transform[5]:null;
-    if(lastY!==null&&y!==null&&Math.abs(y-lastY)>3){if(current.trim())lines.push(current.trim());current="";}
-    if(current&&item.str&&!/\s$/.test(current)&&!/^\s/.test(item.str))current+=" ";
-    current+=item.str;
-    if(y!==null)lastY=y;
+  const sections=[];
+  if(mode==="visual"){
+   const first=await pdf.getPage(1);
+   const firstView=first.getViewport({scale:1});
+   const pageWidth=Math.round(firstView.width*20),pageHeight=Math.round(firstView.height*20);
+   first.cleanup();
+   const children=[];
+   for(let n=1;n<=pdf.numPages;n++){
+    msg("Preserving original appearance — rendering page "+n+" of "+pdf.numPages+"…","info");
+    const page=await pdf.getPage(n);
+    const view=page.getViewport({scale:2});
+    const canvas=document.createElement("canvas");
+    canvas.width=Math.ceil(view.width);canvas.height=Math.ceil(view.height);
+    const ctx=canvas.getContext("2d",{alpha:false});
+    await page.render({canvasContext:ctx,viewport:view,background:"#ffffff"}).promise;
+    const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error("Could not render page "+n)),"image/png"));
+    const bytes=new Uint8Array(await blob.arrayBuffer());
+    children.push(new window.docx.Paragraph({
+     children:[new window.docx.ImageRun({data:bytes,type:"png",transformation:{width:Math.round(view.width*0.75),height:Math.round(view.height*0.75)}})],
+     spacing:{before:0,after:0,line:1},
+     ...(n>1?{pageBreakBefore:true}:{})
+    }));
+    canvas.width=1;canvas.height=1;page.cleanup();
    }
-   if(current.trim())lines.push(current.trim());
-   if(n>1)paragraphs.push(new window.docx.Paragraph({children:[new window.docx.TextRun({text:"",break:1})]}));
-   if(lines.length){for(const line of lines)paragraphs.push(new window.docx.Paragraph({children:[new window.docx.TextRun({text:line})],spacing:{after:100}}))}
-   else paragraphs.push(new window.docx.Paragraph({children:[new window.docx.TextRun({text:"[No selectable text found on this page. It may be a scanned page.]"})]}));
-   page.cleanup();
+   sections.push({properties:{page:{size:{width:pageWidth,height:pageHeight},margin:{top:0,right:0,bottom:0,left:0,header:0,footer:0}}},children});
+  }else{
+   const paragraphs=[];
+   for(let n=1;n<=pdf.numPages;n++){
+    msg("Extracting editable text from page "+n+" of "+pdf.numPages+"…","info");
+    const page=await pdf.getPage(n),content=await page.getTextContent();
+    const lines=[];let current="",lastY=null;
+    for(const item of content.items){
+     if(!item.str)continue;
+     const y=item.transform?item.transform[5]:null;
+     if(lastY!==null&&y!==null&&Math.abs(y-lastY)>3){if(current.trim())lines.push(current.trim());current="";}
+     if(current&&item.str&&!/\s$/.test(current)&&!/^\s/.test(item.str))current+=" ";
+     current+=item.str;if(y!==null)lastY=y;
+    }
+    if(current.trim())lines.push(current.trim());
+    if(n>1)paragraphs.push(new window.docx.Paragraph({children:[new window.docx.TextRun({text:"",break:1})]}));
+    if(lines.length){for(const line of lines)paragraphs.push(new window.docx.Paragraph({children:[new window.docx.TextRun({text:line})],spacing:{after:100}}))}
+    else paragraphs.push(new window.docx.Paragraph({children:[new window.docx.TextRun({text:"[No selectable text found on this page. It may be a scanned page.]"})]}));
+    page.cleanup();
+   }
+   sections.push({properties:{},children:paragraphs});
   }
   await pdf.destroy();
-  if(!paragraphs.length)throw new Error("No pages or text could be extracted.");
-  msg("Building editable Word document…","info");
-  const doc=new window.docx.Document({sections:[{properties:{},children:paragraphs}]});
-  const blob=await window.docx.Packer.toBlob(doc);
-  const url=URL.createObjectURL(blob),a=document.createElement("a");
+  if(!sections.length)throw new Error("No pages could be converted.");
+  msg("Building Word document…","info");
+  const doc=new window.docx.Document({sections});
+  const out=await window.docx.Packer.toBlob(doc);
+  const url=URL.createObjectURL(out),a=document.createElement("a");
   a.href=url;a.download=(file.name.replace(/\.pdf$/i,"").replace(/[\\/:*?\"<>|]/g,"-").slice(0,100)||"converted-document")+".docx";
-  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
-  msg("Done. Your DOCX download should begin now. Review formatting and extracted text before relying on the document.","success");
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
+  msg(mode==="visual"?"Done. Your layout-preserving Word file is downloading. Each page is an image to retain its original appearance; text is not directly editable.":"Done. Your editable-text Word file is downloading. Review the formatting because it may differ from the PDF.","success");
  }catch(e){msg("Could not convert this PDF. It may be encrypted, damaged, too large, or use an unsupported structure. "+(e&&e.message?e.message:""),"error")}
- finally{convert.disabled=!file;choose.disabled=false;clear.disabled=false;convert.textContent="Convert to Word (.docx)"}
-});
+ finally{convert.disabled=!file;choose.disabled=false;clear.disabled=false;convert.textContent=(document.querySelector('input[name="mode"]:checked')?.value||"visual")==="visual"?"Convert with original layout (.docx)":"Convert editable text (.docx)"}
+};
 })();
 </script>
 </body>
