@@ -171,8 +171,20 @@ function read(){
 }
 
 function calculate(){
-  const result=calculateRoofPitch({...read(),horizontalRun:toMetres(safe($("horizontalRun").value),$("horizontalRunUnit").value)});
   const primary=$("primaryResult"),note=$("resultNote"),out=$("results");
+  const rawRun=safe($("run").value), rawAngle=safe($("angle").value), rawRafterRun=safe($("horizontalRun").value);
+  let inputError="";
+  if(mode==="rise-run" && (Number($("rise").value)<0 || Number($("run").value)<0 || rawRun<=0)) inputError="Enter a non-negative rise and a horizontal run greater than zero.";
+  if(mode==="ratio" && Number($("ratio").value)<0) inputError="Pitch ratio cannot be negative.";
+  if(mode==="angle" && (!Number.isFinite(Number($("angle").value)) || rawAngle<0 || rawAngle>=90)) inputError="Enter an angle from 0° up to, but not including, 90°.";
+  if(mode==="percent" && Number($("percent").value)<0) inputError="Slope percentage cannot be negative.";
+  if(Number($("horizontalRun").value)<0) inputError="Optional horizontal rafter run cannot be negative.";
+  if(inputError){
+    primary.textContent="Check inputs"; note.textContent=inputError;
+    out.innerHTML='<div class="metric primary" style="grid-column:1/-1"><span>Input check</span><b>Correct the measurement</b><small>'+inputError+'</small></div>';
+    return;
+  }
+  const result=calculateRoofPitch({...read(),horizontalRun:toMetres(rawRafterRun,$("horizontalRunUnit").value)});
   if(!result.ok){
     primary.textContent="—"; note.textContent=result.error;
     out.innerHTML='<div class="metric primary" style="grid-column:1/-1"><span>Input check</span><b>Enter valid values</b><small>'+result.error+'</small></div>';
@@ -239,7 +251,7 @@ bindUnitPreservingValue("horizontalRun","horizontalRunUnit");
 $("reset").addEventListener("click",()=>{
   $("rise").value="6";$("run").value="12";$("riseUnit").value="in";$("runUnit").value="in";
   $("ratio").value="6";$("angle").value="26.565051";$("percent").value="50";
-  $("horizontalRun").value="12";$("horizontalRunUnit").value="ft";
+  $("horizontalRun").value="12";$("horizontalRunUnit").value="in";
   quick="imperial";document.querySelectorAll("[data-quick]").forEach(b=>b.classList.toggle("active",b.dataset.quick==="imperial"));
   setMode("rise-run");
 });
