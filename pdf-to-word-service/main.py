@@ -19,7 +19,6 @@ APP_ORIGINS = [
     if origin.strip()
 ]
 MAX_UPLOAD_BYTES = int(os.getenv("MAX_UPLOAD_MB", "25")) * 1024 * 1024
-CONVERSION_TIMEOUT_SECONDS = int(os.getenv("CONVERSION_TIMEOUT_SECONDS", "120"))
 
 app = FastAPI(
     title="ToolVault PDF-to-Word Engine",
