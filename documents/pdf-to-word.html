@@ -5,18 +5,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PDF to Word Converter Online Free — PDF to DOCX | ToolVault</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<meta name="description" content="Convert PDF to Word online for free. Extract selectable text from PDF pages into an editable DOCX document in your browser. No PDF upload to ToolVault; scanned PDFs need OCR.">
+<meta name="description" content="Convert PDF to Word online for free. Preserve the original page appearance in a Word DOCX, including logos, headers, footers and fonts, or extract selectable text for editing. Process files in your browser.">
 <link rel="canonical" href="https://toolvault.aftabjordan1.workers.dev/documents/pdf-to-word.html">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 <meta name="theme-color" content="#0b8f78">
 <meta property="og:site_name" content="ToolVault">
 <meta property="og:title" content="PDF to Word Converter Online Free | ToolVault">
-<meta property="og:description" content="Convert selectable PDF text into an editable Word DOCX file in your browser. Free, with no PDF upload to ToolVault.">
+<meta property="og:description" content="Preserve PDF page appearance in Word, including logos, headers, footers and fonts, or extract selectable text for editing. Free browser-based conversion.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://toolvault.aftabjordan1.workers.dev/documents/pdf-to-word.html">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="PDF to Word Converter Online Free | ToolVault">
-<meta name="twitter:description" content="Extract text from PDFs into an editable DOCX document in your browser.">
+<meta name="twitter:description" content="Preserve PDF page layout in Word or extract text into an editable DOCX document.">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"WebApplication","name":"PDF to Word Converter","url":"https://toolvault.aftabjordan1.workers.dev/documents/pdf-to-word.html","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
@@ -33,9 +33,9 @@
 <header><div class="wrap nav"><a class="logo" href="/">Tool<span>Vault</span></a><a href="/documents/">← All PDF Tools</a></div></header>
 <main class="wrap">
 <div class="crumb"><a href="/">ToolVault</a> / <a href="/documents/">PDF & Documents</a> / PDF to Word</div>
-<section class="hero"><span class="eyebrow">Free · Browser-based</span><h1>PDF to Word Converter</h1><p>Convert selectable text from a PDF into an editable Microsoft Word DOCX document. Choose a PDF, extract its text page by page, then download your Word file. Your PDF is processed locally in your browser.</p></section>
+<section class="hero"><span class="eyebrow">Free · Browser-based</span><h1>PDF to Word Converter</h1><p>Convert PDF to Word with two modes: preserve the original page appearance as high-resolution images, or extract selectable text into editable paragraphs. Your PDF is processed locally in your browser.</p></section>
 <section class="panel">
-<div class="drop" id="drop"><strong>Choose a PDF to convert</strong><p>Best for text-based PDFs. Scanned documents require OCR and are not converted by this tool.</p><input id="fileInput" type="file" accept="application/pdf,.pdf" hidden><button class="btn secondary" id="choose" type="button">Choose PDF file</button></div>
+<div class="drop" id="drop"><strong>Choose a PDF to convert</strong><p>Works with text-based and scanned PDFs. Scanned pages are preserved visually in layout mode; their text is not made editable without OCR.</p><input id="fileInput" type="file" accept="application/pdf,.pdf" hidden><button class="btn secondary" id="choose" type="button">Choose PDF file</button></div>
 <div class="fileinfo" id="fileInfo" aria-live="polite"></div>
 <div class="fileinfo show" style="margin-top:14px"><strong>Conversion mode</strong><br><label style="display:flex;gap:9px;align-items:flex-start;margin-top:9px;cursor:pointer"><input type="radio" name="mode" value="visual" checked style="margin-top:4px"><span><strong>Preserve original layout (recommended)</strong><br><span style="color:var(--muted)">Keeps each page looking like the PDF, including logos, fonts, headers, footers and spacing. Pages are images inside Word, so text is not directly editable.</span></span></label><label style="display:flex;gap:9px;align-items:flex-start;margin-top:12px;cursor:pointer"><input type="radio" name="mode" value="text" style="margin-top:4px"><span><strong>Extract editable text</strong><br><span style="color:var(--muted)">Creates editable paragraphs, but formatting and page layout may change.</span></span></label></div><div class="toolbar"><button class="btn primary" id="convert" type="button" disabled>Convert with original layout (.docx)</button><button class="btn secondary" id="clear" type="button">Clear file</button></div>
 <div id="status" class="status" role="status" aria-live="polite"></div>
@@ -99,7 +99,7 @@ convert.addEventListener("click",async()=>{
     const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error("Could not render page "+n)),"image/png"));
     const bytes=new Uint8Array(await blob.arrayBuffer());
     children.push(new window.docx.Paragraph({
-     children:[new window.docx.ImageRun({data:bytes,type:"png",transformation:{width:Math.round(view.width*0.75),height:Math.round(view.height*0.75)}})],
+     children:[new window.docx.ImageRun({data:bytes,type:"png",transformation:{width:Math.round(view.width*0.66),height:Math.round(view.height*0.66)}})],
      spacing:{before:0,after:0,line:1},
      ...(n>1?{pageBreakBefore:true}:{})
     }));
