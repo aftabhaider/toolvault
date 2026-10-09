@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: toolvault-pdf-to-word
+    runtime: docker
+    rootDir: pdf-to-word-service
+    plan: starter
+    healthCheckPath: /health
+    envVars:
+      - key: ALLOWED_ORIGINS
+        value: https://toolvault.aftabjordan1.workers.dev
+      - key: MAX_UPLOAD_MB
+        value: "25"
