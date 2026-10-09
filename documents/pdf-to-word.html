@@ -37,9 +37,9 @@
 <section class="panel">
 <div class="drop" id="drop"><strong>Choose a PDF to convert</strong><p>Works with text-based and scanned PDFs. Scanned pages are preserved visually in layout mode; their text is not made editable without OCR.</p><input id="fileInput" type="file" accept="application/pdf,.pdf" hidden><button class="btn secondary" id="choose" type="button">Choose PDF file</button></div>
 <div class="fileinfo" id="fileInfo" aria-live="polite"></div>
-<div class="fileinfo show" style="margin-top:14px"><strong>Conversion mode</strong><br><label style="display:flex;gap:9px;align-items:flex-start;margin-top:9px;cursor:pointer"><input type="radio" name="mode" value="visual" checked style="margin-top:4px"><span><strong>Preserve original layout (recommended)</strong><br><span style="color:var(--muted)">Keeps each page looking like the PDF, including logos, fonts, headers, footers and spacing. Pages are images inside Word, so text is not directly editable.</span></span></label><label style="display:flex;gap:9px;align-items:flex-start;margin-top:12px;cursor:pointer"><input type="radio" name="mode" value="text" style="margin-top:4px"><span><strong>Extract editable text</strong><br><span style="color:var(--muted)">Creates editable paragraphs, but formatting and page layout may change.</span></span></label></div><div class="toolbar"><button class="btn primary" id="convert" type="button" disabled>Convert with original layout (.docx)</button><button class="btn secondary" id="clear" type="button">Clear file</button></div>
+<div class="fileinfo show" style="margin-top:14px"><strong>Conversion mode</strong><br><label style="display:flex;gap:9px;align-items:flex-start;margin-top:9px;cursor:pointer"><input type="radio" name="mode" value="visual" checked style="margin-top:4px"><span><strong>Preserve original layout (recommended)</strong><br><span style="color:var(--muted)">Keeps each page looking like the PDF, including logos, fonts, headers, footers and spacing. Pages are images inside Word, so text is not directly editable.</span></span></label><label style="display:flex;gap:9px;align-items:flex-start;margin-top:12px;cursor:pointer"><input type="radio" name="mode" value="text" style="margin-top:4px"><span><strong>Extract editable text (in browser)</strong><br><span style="color:var(--muted)">Creates editable paragraphs, but formatting and page layout may change. The PDF stays in your browser.</span></span></label><label style="display:flex;gap:9px;align-items:flex-start;margin-top:12px;cursor:pointer"><input type="radio" name="mode" value="server" style="margin-top:4px"><span><strong>Convert to editable Word (conversion engine)</strong><br><span style="color:var(--muted)">Uses ToolVault’s server-side converter to reconstruct editable text and layout. Results vary by PDF; logos, tables, headers and fonts may need manual correction.</span></span></label></div><div class="toolbar"><button class="btn primary" id="convert" type="button" disabled>Convert with original layout (.docx)</button><button class="btn secondary" id="clear" type="button">Clear file</button></div>
 <div id="status" class="status" role="status" aria-live="polite"></div>
-<div class="privacy"><h2>Privacy note</h2><p>The selected PDF is read and converted in this browser; this page does not upload it to ToolVault. PDF.js and the DOCX generation library load from third-party CDNs, so an internet connection is needed to load the tools.</p></div>
+<div class="privacy"><h2>Privacy note</h2><p>Preserve original layout and Extract editable text (in browser) process the PDF locally in your browser. The server-side editable Word mode uploads the selected PDF to ToolVault’s conversion service for processing and deletes temporary files after conversion. Do not upload confidential documents unless you are comfortable with server processing. Conversion libraries load from third-party CDNs.</p></div>
 </section>
 <section class="content">
 <h2>Convert PDF to Word online for free</h2>
@@ -68,17 +68,29 @@ let file=null;
 function msg(t,type){status.textContent=t;status.className="status show "+type}
 function size(n){return n<1048576?(n/1024).toFixed(1)+" KB":(n/1048576).toFixed(2)+" MB"}
 function setFile(f){file=null;if(!f){info.textContent="";info.className="fileinfo";convert.disabled=true;return}if(!(f.type==="application/pdf"||f.name.toLowerCase().endsWith(".pdf"))){msg("Please choose a PDF file.","error");info.textContent="";info.className="fileinfo";convert.disabled=true;return}file=f;info.textContent=f.name+" · "+size(f.size);info.className="fileinfo show";convert.disabled=false;status.className="status";msg("PDF selected. Ready to convert.","info")}
-document.querySelectorAll('input[name="mode"]').forEach(el=>el.addEventListener("change",()=>{convert.textContent=el.value==="visual"?"Convert with original layout (.docx)":"Convert editable text (.docx)"}));
+document.querySelectorAll('input[name="mode"]').forEach(el=>el.addEventListener("change",()=>{convert.textContent=el.value==="visual"?"Convert with original layout (.docx)":el.value==="server"?"Convert with server engine (.docx)":"Convert editable text (.docx)"}));
 choose.addEventListener("click",()=>input.click());
 document.getElementById("drop").addEventListener("click",e=>{if(e.target!==choose)input.click()});
 input.addEventListener("change",()=>{setFile(input.files&&input.files[0]);input.value=""});
 clear.addEventListener("click",()=>{file=null;info.textContent="";info.className="fileinfo";convert.disabled=true;status.className="status";status.textContent="";input.value=""});
 convert.addEventListener("click",async()=>{
  if(!file)return;
- if(!window.pdfjsLib||!window.docx){msg("Conversion libraries did not load. Check your internet connection and reload the page.","error");return}
  const mode=document.querySelector('input[name="mode"]:checked')?.value||"visual";
  convert.disabled=true;choose.disabled=true;clear.disabled=true;convert.textContent="Converting…";
  try{
+  if(mode==="server"){
+   msg("Uploading PDF to ToolVault’s conversion service…","info");
+   const form=new FormData();form.append("file",file,file.name);
+   const response=await fetch("https://converter.toolvault-pdf.blitz.cloud/api/convert",{method:"POST",body:form});
+   if(!response.ok){let detail="Server conversion failed ("+response.status+").";try{const payload=await response.json();if(payload.detail)detail=payload.detail}catch(_){}throw new Error(detail)}
+   const out=await response.blob();
+   if(!out.size)throw new Error("The server returned an empty Word document.");
+   const url=URL.createObjectURL(out),a=document.createElement("a");
+   a.href=url;a.download=(file.name.replace(/\\.pdf$/i,"").replace(/[\\\\/:*?"<>|]/g,"-").slice(0,100)||"converted-document")+".docx";
+   document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);
+   msg("Server conversion finished. Open the downloaded DOCX and check text, tables, logos and page layout. Some manual correction may be needed.","success");return;
+  }
+  if(!window.pdfjsLib||!window.docx){throw new Error("Browser conversion libraries did not load. Check your internet connection and reload the page.")}
   window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
   const pdf=await window.pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;
   const sections=[];
@@ -137,7 +149,7 @@ convert.addEventListener("click",async()=>{
   document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
   msg(mode==="visual"?"Done. Your layout-preserving Word file is downloading. Each page is an image to retain its original appearance; text is not directly editable.":"Done. Your editable-text Word file is downloading. Review the formatting because it may differ from the PDF.","success");
  }catch(e){msg("Could not convert this PDF. It may be encrypted, damaged, too large, or use an unsupported structure. "+(e&&e.message?e.message:""),"error")}
- finally{convert.disabled=!file;choose.disabled=false;clear.disabled=false;convert.textContent=(document.querySelector('input[name="mode"]:checked')?.value||"visual")==="visual"?"Convert with original layout (.docx)":"Convert editable text (.docx)"}
+ finally{convert.disabled=!file;choose.disabled=false;clear.disabled=false;const selectedMode=document.querySelector('input[name="mode"]:checked')?.value||"visual";convert.textContent=selectedMode==="visual"?"Convert with original layout (.docx)":selectedMode==="server"?"Convert with server engine (.docx)":"Convert editable text (.docx)"}
 });
 })();
 </script>
