@@ -86,7 +86,7 @@ convert.addEventListener("click",async()=>{
    const out=await response.blob();
    if(!out.size)throw new Error("The server returned an empty Word document.");
    const url=URL.createObjectURL(out),a=document.createElement("a");
-   a.href=url;a.download=(file.name.replace(/\\.pdf$/i,"").replace(/[\\\\/:*?"<>|]/g,"-").slice(0,100)||"converted-document")+".docx";
+   a.href=url;a.download=(file.name.replace(/\.pdf$/i,"").replace(/[\\/:*?"<>|]/g,"-").slice(0,100)||"converted-document")+".docx";
    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);
    msg("Server conversion finished. Open the downloaded DOCX and check text, tables, logos and page layout. Some manual correction may be needed.","success");return;
   }
