@@ -10,14 +10,9 @@ from starlette.background import BackgroundTask
 from starlette.concurrency import run_in_threadpool
 from pdf2docx import Converter
 
-APP_ORIGINS = [
-    origin.strip()
-    for origin in os.getenv(
-        "ALLOWED_ORIGINS",
-        "https://toolvault.aftabjordan1.workers.dev"
-    ).split(",")
-    if origin.strip()
-]
+# This endpoint is a public, cookie-free utility API. Allow browser requests
+# from ToolVault's current and future frontend hostnames; do not enable credentials.
+APP_ORIGINS = ["*"]
 MAX_UPLOAD_BYTES = int(os.getenv("MAX_UPLOAD_MB", "25")) * 1024 * 1024
 
 app = FastAPI(
