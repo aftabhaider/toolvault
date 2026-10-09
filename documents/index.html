@@ -40,6 +40,7 @@ main{padding:30px 0 48px}.crumb{font-size:12px;color:var(--muted);margin-bottom:
 <main class="wrap">
 <div class="crumb"><a href="/">ToolVault</a> / PDF & Documents</div>
 <section class="hero"><span class="badge">Free browser-based tools</span><h1>PDF &amp; document tools in one place</h1><p>Merge, split, convert and organize PDF files with simple tools. We prioritize roomy workspaces, clear controls and local processing wherever practical.</p></section>
+<div style="max-width:560px;margin:22px auto 15px;position:relative"><input id="toolSearch" type="search" placeholder="Search PDF tools…" aria-label="Search PDF tools" style="width:100%;padding:14px 16px;border:1px solid #d9dbe5;border-radius:14px;font:inherit;box-shadow:0 5px 20px #182a260a"></div>
 <div class="filters" role="group" aria-label="Filter PDF tools">
 <button class="filter" type="button" data-filter="all" aria-pressed="true">All tools</button>
 <button class="filter" type="button" data-filter="organize" aria-pressed="false">Organize PDF</button>
@@ -48,6 +49,7 @@ main{padding:30px 0 48px}.crumb{font-size:12px;color:var(--muted);margin-bottom:
 <button class="filter" type="button" data-filter="edit" aria-pressed="false">Edit PDF</button>
 <button class="filter" type="button" data-filter="security" aria-pressed="false">PDF security</button>
 </div>
+<p id="resultCount" style="font-size:12px;color:#777985;margin:0 0 12px">12 tools available</p>
 <section class="grid" id="toolGrid" aria-label="PDF tools">
 <a class="tool" href="/documents/merge-pdf.html" data-category="organize" aria-label="Open Merge PDF"><span class="tool-icon" aria-hidden="true">⇆</span><h2>Merge PDF</h2><p>Combine PDFs in the order you want, with first-page thumbnails and drag-and-drop ordering.</p><span class="tool-foot">Open tool →</span></a>
 <div class="tool coming" data-category="organize"><span class="tool-icon" aria-hidden="true">↗</span><h2>Split PDF</h2><p>Separate selected pages or divide a large document into smaller PDF files.</p><span class="tool-foot">Coming soon</span></div>
@@ -68,11 +70,12 @@ main{padding:30px 0 48px}.crumb{font-size:12px;color:var(--muted);margin-bottom:
 (function(){
  const buttons=Array.from(document.querySelectorAll("[data-filter]"));
  const cards=Array.from(document.querySelectorAll("#toolGrid .tool"));
- buttons.forEach(button=>button.addEventListener("click",()=>{
-  const filter=button.dataset.filter;
-  buttons.forEach(item=>item.setAttribute("aria-pressed",String(item===button)));
-  cards.forEach(card=>{card.hidden=filter!=="all"&&card.dataset.category!==filter});
- }));
+ const search=document.getElementById("toolSearch");
+ const count=document.getElementById("resultCount");
+ let activeFilter="all";
+ function update(){const q=search.value.trim().toLowerCase();let n=0;cards.forEach(card=>{const visible=(activeFilter==="all"||card.dataset.category===activeFilter)&&(card.innerText+" "+card.dataset.category).toLowerCase().includes(q);card.hidden=!visible;if(visible)n++});count.textContent=n+" tool"+(n===1?"":"s")+" shown";}
+ buttons.forEach(button=>button.addEventListener("click",()=>{activeFilter=button.dataset.filter;buttons.forEach(item=>item.setAttribute("aria-pressed",String(item===button)));update()}));
+ search.addEventListener("input",update);
 })();
 </script>
 <footer><div class="wrap">© 2026 ToolVault · Free practical tools for the web.</div></footer>
