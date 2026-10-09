@@ -138,7 +138,7 @@ convert.addEventListener("click",async()=>{
   msg(mode==="visual"?"Done. Your layout-preserving Word file is downloading. Each page is an image to retain its original appearance; text is not directly editable.":"Done. Your editable-text Word file is downloading. Review the formatting because it may differ from the PDF.","success");
  }catch(e){msg("Could not convert this PDF. It may be encrypted, damaged, too large, or use an unsupported structure. "+(e&&e.message?e.message:""),"error")}
  finally{convert.disabled=!file;choose.disabled=false;clear.disabled=false;convert.textContent=(document.querySelector('input[name="mode"]:checked')?.value||"visual")==="visual"?"Convert with original layout (.docx)":"Convert editable text (.docx)"}
-};
+});
 })();
 </script>
 </body>
