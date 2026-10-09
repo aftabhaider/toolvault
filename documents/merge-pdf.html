@@ -144,9 +144,9 @@ document.getElementById("choose").addEventListener("click",()=>input.click());
 drop.addEventListener("click",e=>{if(e.target.id!=="choose")input.click()});
 drop.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();input.click()}});
 input.addEventListener("change",()=>{addFiles(Array.from(input.files||[]));input.value=""});
-drop.addEventListener("dragover",e=>{e.preventDefault();drop.style.background="#e4f6f0"});
-drop.addEventListener("dragleave",()=>{drop.style.background="#f8fcfa"});
-drop.addEventListener("drop",e=>{e.preventDefault();drop.style.background="#f8fcfa";addFiles(Array.from(e.dataTransfer.files||[]))});
+drop.addEventListener("dragover",e=>{e.preventDefault();drop.classList.add("drag-active")});
+drop.addEventListener("dragleave",()=>drop.classList.remove("drag-active"));
+drop.addEventListener("drop",e=>{e.preventDefault();drop.classList.remove("drag-active");addFiles(Array.from(e.dataTransfer.files||[]))});
 document.getElementById("clear").addEventListener("click",()=>{files=[];render();status.className="status";status.textContent=""});
 mergeBtn.addEventListener("click",async()=>{
  if(files.length<2)return;
