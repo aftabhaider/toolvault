@@ -3,7 +3,7 @@ services:
     name: toolvault-pdf-to-word
     runtime: docker
     rootDir: pdf-to-word-service
-    plan: starter
+    plan: free
     healthCheckPath: /health
     envVars:
       - key: ALLOWED_ORIGINS
