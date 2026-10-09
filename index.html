@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ToolVault — Free Calculators, Converters & Online Tools</title>
+<title>Free Online Calculators, Converters &amp; PDF Tools | ToolVault</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<meta name="description" content="ToolVault is a growing library of free calculators, converters, generators and practical online tools for everyday tasks, study and professional work.">
+<meta name="description" content="Use free online calculators, unit converters, solar and construction tools, and merge PDF files in your browser. Practical tools with clear results, formulas and examples.">
 <link rel="canonical" href="https://toolvault.aftabjordan1.workers.dev/">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 <meta name="theme-color" content="#0b8f78">
 <meta property="og:site_name" content="ToolVault">
-<meta property="og:title" content="ToolVault — Free Calculators, Converters & Online Tools">
-<meta property="og:description" content="Free calculators, converters and practical online tools in one place.">
+<meta property="og:title" content="Free Online Calculators, Converters &amp; PDF Tools | ToolVault">
+<meta property="og:description" content="Use free online calculators, unit converters, solar and construction tools, and merge PDF files in your browser.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://toolvault.aftabjordan1.workers.dev/">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ToolVault — Free Calculators, Converters & Online Tools">
-<meta name="twitter:description" content="Free calculators, converters and practical online tools in one place.">
+<meta name="twitter:title" content="Free Online Calculators, Converters &amp; PDF Tools | ToolVault">
+<meta name="twitter:description" content="Free calculators, unit converters, solar and construction tools, and browser-based PDF merging.">
 
 <script type="application/ld+json">
 {
@@ -29,16 +29,15 @@
    "name":"ToolVault",
    "alternateName":["Tool Vault","ToolVault — Free Practical Tools"],
    "description":"ToolVault is a global library of free calculators, converters, generators and practical online tools.",
-   "publisher":{"@id":"https://toolvault.aftabjordan1.workers.dev/#organization"},
-   "potentialAction":{"@type":"SearchAction","target":"https://toolvault.aftabjordan1.workers.dev/?q={search_term_string}","query-input":"required name=search_term_string"}
+   "publisher":{"@id":"https://toolvault.aftabjordan1.workers.dev/#organization"}
   },
   {
    "@type":"WebPage",
    "@id":"https://toolvault.aftabjordan1.workers.dev/#webpage",
    "url":"https://toolvault.aftabjordan1.workers.dev/",
-   "name":"ToolVault — Free Calculators, Converters & Online Tools",
+   "name":"Free Online Calculators, Converters & PDF Tools | ToolVault",
    "isPartOf":{"@id":"https://toolvault.aftabjordan1.workers.dev/#website"},
-   "description":"A global library of free practical tools for calculations, conversions, planning and everyday work."
+   "description":"Free online calculators, unit converters, solar and construction tools, and browser-based PDF merging."
   },
   {
    "@type":"Organization",
@@ -65,7 +64,9 @@
     {"@type":"ListItem","position":12,"name":"Board Foot Calculator","url":"https://toolvault.aftabjordan1.workers.dev/construction/board-foot-calculator.html"},
     {"@type":"ListItem","position":13,"name":"Stair Calculator","url":"https://toolvault.aftabjordan1.workers.dev/construction/stair-calculator.html"},
     {"@type":"ListItem","position":14,"name":"AC BTU Calculator","url":"https://toolvault.aftabjordan1.workers.dev/calculators/ac-btu-calculator.html"},
-    {"@type":"ListItem","position":15,"name":"Square Footage Calculator","url":"https://toolvault.aftabjordan1.workers.dev/calculators/square-footage-calculator.html"}
+    {"@type":"ListItem","position":15,"name":"Square Footage Calculator","url":"https://toolvault.aftabjordan1.workers.dev/calculators/square-footage-calculator.html"},
+    {"@type":"ListItem","position":16,"name":"Roof Pitch Calculator","url":"https://toolvault.aftabjordan1.workers.dev/construction/roof-pitch-calculator.html"},
+    {"@type":"ListItem","position":17,"name":"Merge PDF","url":"https://toolvault.aftabjordan1.workers.dev/documents/merge-pdf.html"}
    ]
   }
  ]
@@ -148,8 +149,8 @@ footer{border-top:1px solid var(--line);padding:26px 0;color:#74807b;font-size:1
 <section class="hero">
  <div class="wrap hero-inner">
   <span class="eyebrow">✦ Free online tools for real-world tasks</span>
-  <h1>Every tool you need, in one place.</h1>
-  <p>Calculate, convert, plan, estimate and solve with simple tools built for students, professionals, businesses and everyday users.</p>
+  <h1>Free Online Calculators, Converters &amp; Practical Tools</h1>
+  <p>Calculate measurements, estimate construction materials, plan solar systems, check electrical values and merge PDF files with free tools designed for clear, practical results.</p>
   <form class="search" id="searchForm">
    <input id="search" aria-label="Search ToolVault tools" autocomplete="off" placeholder="Search a tool — e.g. concrete, solar, voltage drop">
    <button type="submit">Search</button>
@@ -166,6 +167,7 @@ footer{border-top:1px solid var(--line);padding:26px 0;color:#74807b;font-size:1
    <button class="filter" type="button" data-filter="engineering" role="tab" aria-selected="false">Engineering</button>
    <button class="filter" type="button" data-filter="calculators" role="tab" aria-selected="false">Calculators</button>
    <button class="filter" type="button" data-filter="guides" role="tab" aria-selected="false">Guides</button>
+   <button class="filter" type="button" data-filter="documents" role="tab" aria-selected="false">PDF &amp; Documents</button>
   </div>
 
   <div class="section-head">
@@ -236,7 +238,12 @@ footer{border-top:1px solid var(--line);padding:26px 0;color:#74807b;font-size:1
    </a>
   </div>
 
-  <div id="empty" class="empty">No matching tools found. Try a calculator name, category, or keyword such as “solar”, “concrete”, “gravel” or “voltage”.</div>
+  <a class="tool-card" data-category="documents" data-name="merge pdf merge pdf files combine pdf online free join pdf documents privately browser" href="/documents/merge-pdf.html" style="--accent:#0b8f78;--iconbg:#e4f6f0">
+    <div class="tool-top"><div class="tool-icon">📄</div><span class="tool-badge">PDF Tool</span></div>
+    <h3>Merge PDF Files</h3><p>Combine PDF documents into one file, arrange the file order and download the result in your browser.</p><span class="tool-open">Merge PDFs →</span>
+   </a>
+
+  <div id="empty" class="empty">No matching tools found. Try a calculator name, category, or keyword such as “solar”, “concrete”, “gravel”, “PDF” or “voltage”.</div>
 
   <section class="cluster">
    <h2>Explore ToolVault categories</h2>
@@ -293,7 +300,7 @@ footer{border-top:1px solid var(--line);padding:26px 0;color:#74807b;font-size:1
    card.style.display=show?"flex":"none";
    if(show)visible++;
   });
-  heading.textContent=active==="all"?"All tools":active==="calculators"?"Calculators":active==="guides"?"Guides":active==="solar"?"Solar & Energy":active.charAt(0).toUpperCase()+active.slice(1);
+  heading.textContent=active==="all"?"All tools":active==="calculators"?"Calculators":active==="guides"?"Guides":active==="solar"?"Solar & Energy":active==="documents"?"PDF & Documents":active.charAt(0).toUpperCase()+active.slice(1);
   count.textContent=visible+" tool"+(visible===1?"":"s");
   empty.style.display=visible?"none":"block";
  }
