@@ -199,7 +199,12 @@
     }
 
     const multiCellLines = region.filter(entry => entry.cells.length >= 2).length;
+    const maxLineColumns = Math.max(0, ...region.map(entry => entry.cells.length));
     if (multiCellLines < 2) return null;
+
+    // Short two-column forms are valid tables, but a longer text block whose
+    // inferred anchors drift across the page should remain ordinary paragraphs.
+    if (maxLineColumns < 3 && region.length > 3) return null;
 
     // Choose the visual row with the most text fragments as the column
     // reference; merge fragments on the same horizontal column across wrapped
@@ -335,7 +340,7 @@
     } else if (columnCount >= 4) {
       // The first column is usually a wide description column; the remaining
       // columns are typically near-uniform numeric/code fields.
-      const firstWidth = Math.max(100, Math.min(availableWidth * 0.6, starts[1] - leftPoints - 22));
+      const firstWidth = Math.max(180, Math.min(availableWidth * 0.6, starts[1] - leftPoints - 22));
       const remaining = availableWidth - firstWidth;
       const otherWidth = remaining / (columnCount - 1);
       widthsPoints = [firstWidth, ...Array(columnCount - 1).fill(otherWidth)];
