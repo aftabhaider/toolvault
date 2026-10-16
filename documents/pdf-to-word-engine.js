@@ -588,13 +588,13 @@
             runs.push(new docx.TextRun({ text: " " }));
           }
         }
-        const fontStyle = styleFromFontName(part.fontName);
+        const fontStyle = { bold: Boolean(part.bold) || styleFromFontName(part.pdfFontStyleName || part.fontFamily || part.fontName).bold, italics: Boolean(part.italics) || styleFromFontName(part.pdfFontStyleName || part.fontFamily || part.fontName).italics };
         const returnFormTitle = /114\s*\(1\)|return of income filed voluntarily/i.test(line.text || "");
     const billTitle = /^bill$/i.test(String(line.text || "").trim()) && line.top < pageHeight * 0.4;
     const titleLine = returnFormTitle || billTitle;
         const token = String(part.str || "").replace(/[.:]/g, "").trim().toLowerCase();
-        const metadataLabel = line.top < 175 &&
-          /^(name|address|registration(\s*no)?|no|tax(\s*year)?|year|period|medium|contact(\s*no)?|due(\s*date)?|date|document(\s*date)?)(\s*:)?$/.test(token);
+        const metadataLabel =
+          /^(name|address|registration(\s*no)?|no|tax(\s*year)?|year|period|medium|contact(\s*no)?|due(\s*date)?|date|document(\s*date)?|invoice(\s*(date|number|no))?|email)(\s*:)?$/.test(token);
         runs.push(new docx.TextRun({
           text: part.str,
           size: Math.round(clampFontSize(part.fontSize) * 2),
@@ -795,10 +795,10 @@
 
     const imageOps = new Set([
       ops.paintImageXObject,
-      ops.paintJpegXObject,
-      ops.paintImageXObjectRepeat
+      ops.paintJpegXObject
     ].filter(value => value !== undefined));
     const stack = [];
+    const formStack = [];
     let transform = [1, 0, 0, 1, 0, 0];
     let header = null;
     let footer = null;
@@ -820,10 +820,15 @@
         transform = multiplyPdfMatrix(transform, args.slice(0, 6));
         continue;
       }
-      if (ops.paintFormXObjectBegin !== undefined &&
-          operation === ops.paintFormXObjectBegin &&
-          Array.isArray(args[0]) && args[0].length >= 6) {
-        transform = multiplyPdfMatrix(transform, args[0].slice(0, 6));
+      if (ops.paintFormXObjectBegin !== undefined && operation === ops.paintFormXObjectBegin) {
+        formStack.push(transform.slice());
+        if (Array.isArray(args[0]) && args[0].length >= 6) {
+          transform = multiplyPdfMatrix(transform, args[0].slice(0, 6));
+        }
+        continue;
+      }
+      if (ops.paintFormXObjectEnd !== undefined && operation === ops.paintFormXObjectEnd) {
+        transform = formStack.pop() || transform;
         continue;
       }
       if (!imageOps.has(operation) || typeof args[0] !== "string") continue;
