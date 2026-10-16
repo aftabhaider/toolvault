@@ -337,12 +337,19 @@
             return center >= cell.left - 1.5 && center < cell.right + 1.5;
           });
           if (!items.length) continue;
+          const itemLeft = Math.min(...items.map(item => item.x));
+          const itemRight = Math.max(...items.map(item => item.x + item.width));
+          const itemCenter = (itemLeft + itemRight) / 2;
+          const cellCenter = (cell.left + cell.right) / 2;
+          const centeredText = Math.abs(itemCenter - cellCenter) <=
+            Math.max(4.5, Math.min(line.fontSize * 1.35, (cell.right - cell.left) * 0.12));
           const fragment = {
             items,
             text: items.map(item => item.str).join(" "),
-            x: Math.min(...items.map(item => item.x)),
-            end: Math.max(...items.map(item => item.x + item.width)),
-            center: (cell.left + cell.right) / 2,
+            x: itemLeft,
+            end: itemRight,
+            center: itemCenter,
+            centered: centeredText,
             fontSize: line.fontSize,
             lineTop: line.top,
             height: line.height
@@ -589,7 +596,8 @@
     const cellText = String(cell.text || (cell.items || []).map(item => item.str).join(" ")).trim();
     const numericCell = /^[-(]?\d[\d,]*(?:\.\d+)?%?\)?$/.test(cellText.replace(/\s/g, ""));
     let alignment;
-    if (cell.centered || (headerRow && columnIndex > 0) || (numericCell && columnIndex === 1)) {
+    const descriptionFirstHeader = headerRow && columnIndex === 0 && /^(description|particulars|item description)$/i.test(cellText);
+    if (cell.centered || (headerRow && !descriptionFirstHeader) || (numericCell && columnIndex === 1)) {
       alignment = docx.AlignmentType ? docx.AlignmentType.CENTER : "center";
     } else if (numericCell && columnIndex >= 2) {
       alignment = docx.AlignmentType ? docx.AlignmentType.RIGHT : "right";
@@ -1733,6 +1741,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.4.1-local"
+    version: "2.5.0-local"
   };
 })();
