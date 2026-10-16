@@ -164,6 +164,9 @@ function waitForController(timeoutMs){
 }
 async function registerLocalAssetCache(){
   if(!("serviceWorker" in navigator)) return false;
+  // If this page is already controlled by the offline worker, don't try to
+  // update/re-register it on every visit; this allows offline reopening.
+  if(navigator.serviceWorker.controller) return true;
   try{
     await navigator.serviceWorker.register("/documents/pdf-to-word-sw.js",{scope:"/documents/"});
     await navigator.serviceWorker.ready;
