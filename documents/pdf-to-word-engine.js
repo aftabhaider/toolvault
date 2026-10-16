@@ -751,6 +751,12 @@
     const runs = [];
     const tabStops = [];
     const items = line.items && line.items.length ? line.items : [];
+    const fontSize = clampFontSize(line.fontSize);
+    const leftX = items.length ? Math.min(...items.map(item => item.x)) : Math.max(0, line.left || 0);
+    const rightX = items.length
+      ? Math.max(...items.map(item => item.x + item.width))
+      : leftX + String(line.text || "").length * fontSize * 0.45;
+    const lineCenter = (leftX + rightX) / 2;
     const returnFormTitle = /114\s*\(1\)|return of income filed voluntarily/i.test(line.text || "");
     const billTitle = /^bill$/i.test(String(line.text || "").trim()) && line.top < pageHeight * 0.4;
     const invoiceHeading = /^installation of .*solar system/i.test(String(line.text || "").trim());
@@ -797,13 +803,6 @@
         previous = part;
       }
     }
-
-    const fontSize = clampFontSize(line.fontSize);
-    const leftX = items.length ? Math.min(...items.map(item => item.x)) : Math.max(0, line.left || 0);
-    const rightX = items.length
-      ? Math.max(...items.map(item => item.x + item.width))
-      : leftX + String(line.text || "").length * fontSize * 0.45;
-    const lineCenter = (leftX + rightX) / 2;
 
     // Infer alignment from the original text box instead of assuming every
     // PDF line is left-aligned. Centered titles and right-hand form fields are
@@ -1744,6 +1743,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.5.1-local"
+    version: "2.5.2-local"
   };
 })();
