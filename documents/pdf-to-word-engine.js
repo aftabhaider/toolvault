@@ -131,13 +131,17 @@
   }
 
   function splitLineIntoCells(line) {
-    const items = line && Array.isArray(line.items) ? line.items.slice().sort((a, b) => a.x - b.x) : [];
-    if (items.length < 2) return null;
+    const items = line && Array.isArray(line.items)
+      ? line.items.slice().sort((a, b) => a.x - b.x)
+      : [];
+    if (!items.length) return [];
 
     const cells = [];
     let current = [];
     let previous = null;
-    const splitGap = Math.max(32, clampFontSize(line.fontSize) * 3.1);
+    // PDF table columns are often separated by less than 32pt. A smaller
+    // threshold helps keep adjacent columns separate without splitting words.
+    const splitGap = Math.max(22, clampFontSize(line.fontSize) * 2.4);
 
     for (const item of items) {
       const gap = previous ? item.x - (previous.x + previous.width) : 0;
@@ -149,10 +153,11 @@
       previous = item;
     }
     if (current.length) cells.push({ items: current });
-    if (cells.length < 2) return null;
 
     for (const cell of cells) {
       cell.x = cell.items[0].x;
+      cell.end = Math.max(...cell.items.map(part => part.x + part.width));
+      cell.center = (cell.x + cell.end) / 2;
       cell.text = "";
       let last = null;
       for (const part of cell.items) {
@@ -168,56 +173,106 @@
   }
 
   function detectTableAt(lines, startIndex, pageWidth) {
-    const firstLine = lines[startIndex];
-    const firstCells = splitLineIntoCells(firstLine);
-    if (!firstCells || firstCells.length < 2) return null;
-
-    const columnCount = firstCells.length;
-    const rows = [{ line: firstLine, cells: firstCells }];
-    const starts = firstCells.map(cell => cell.x);
-    const alignmentTolerance = Math.max(12, pageWidth * 0.025);
-    let previous = firstLine;
-
-    for (let index = startIndex + 1; index < lines.length; index++) {
+    // Treat nearby text lines as one layout region. Unlike the old detector,
+    // this permits wrapped headers, wrapped descriptions and blank cells.
+    const region = [];
+    let previous = null;
+    for (let index = startIndex; index < lines.length; index++) {
       const line = lines[index];
-      const rowGap = line.top - (previous.top + previous.height);
-      if (rowGap > Math.max(42, clampFontSize(previous.fontSize) * 4.2)) break;
-
-      const cells = splitLineIntoCells(line);
-      if (!cells || cells.length !== columnCount) break;
-      let aligned = true;
-      for (let column = 0; column < columnCount; column++) {
-        if (Math.abs(cells[column].x - starts[column]) > alignmentTolerance) {
-          aligned = false;
-          break;
-        }
-      }
-      if (!aligned) break;
-
-      rows.push({ line, cells });
+      if (previous && line.top - previous.top > 30) break;
+      region.push({ line, cells: splitLineIntoCells(line) });
       previous = line;
     }
 
-    // Only treat a clear multi-row pattern as a table. This reduces accidental
-    // conversion of isolated large gaps into table cells.
-    if (rows.length < 3) return null;
+    if (region.length < 2) return null;
+    const multiCellLines = region.filter(entry => entry.cells.length >= 2).length;
+    const columnCount = Math.max(0, ...region.map(entry => entry.cells.length));
+    if (columnCount < 2 || multiCellLines < 2 || columnCount > 12) return null;
 
-    // Two long text blocks aligned side by side are more likely to be a
-    // multi-column article than a data table. Keep them as text paragraphs.
-    if (columnCount === 2) {
-      const everyCellLooksLikeLongBodyText = rows.every(row =>
-        row.cells.every(cell => cell.text.replace(/\s/g, "").length >= 28)
-      );
-      if (everyCellLooksLikeLongBodyText) return null;
+    const anchorEntry = region.reduce((best, entry) =>
+      entry.cells.length > best.cells.length ? entry : best
+    , region[0]);
+    const anchorCells = anchorEntry.cells;
+    const columnCenters = anchorCells.map(cell => cell.center);
+    const columnStarts = anchorCells.map(cell => cell.x);
+    if (columnCenters.length !== columnCount) return null;
+
+    // Combine physical text lines that occupy the same visual table row.
+    // This rejoins headers such as "Total" + "Amount" and wrapped descriptions.
+    const rowGroups = [];
+    for (const entry of region) {
+      const current = rowGroups[rowGroups.length - 1];
+      if (current && entry.line.top - current[current.length - 1].line.top <= 13) {
+        current.push(entry);
+      } else {
+        rowGroups.push([entry]);
+      }
     }
 
-    return { rows, endIndex: startIndex + rows.length };
+    const rows = rowGroups.map(group => {
+      const fragments = group.flatMap(entry => entry.cells.map(cell => ({
+        ...cell,
+        fontSize: entry.line.fontSize,
+        lineTop: entry.line.top
+      })));
+      const isMerged = fragments.length > 0 && group.every(entry => entry.cells.length <= 1);
+      const cells = Array.from({ length: columnCount }, () => ({ fragments: [], text: "" }));
+
+      if (isMerged) {
+        cells[0].fragments = fragments;
+        cells[0].text = fragments.map(cell => cell.text).join(" ").trim();
+      } else {
+        for (const entry of group) {
+          for (const cell of entry.cells) {
+            const column = columnCenters.reduce((bestIndex, center, index) =>
+              Math.abs(cell.center - center) < Math.abs(cell.center - columnCenters[bestIndex])
+                ? index
+                : bestIndex
+            , 0);
+            cells[column].fragments.push(cell);
+            cells[column].text = [cells[column].text, cell.text].filter(Boolean).join(" ").trim();
+          }
+        }
+      }
+
+      const rowText = cells.map(cell => cell.text).join(" ").toLowerCase();
+      const isHeader = /description/.test(rowText) && /code/.test(rowText);
+      const firstFragment = fragments[0];
+      return {
+        cells,
+        merged: isMerged,
+        centered: Boolean(isMerged && firstFragment && firstFragment.x > pageWidth * 0.28),
+        isHeader,
+        line: {
+          fontSize: group.reduce((sum, entry) => sum + entry.line.fontSize, 0) / group.length,
+          top: group[0].line.top,
+          height: Math.max(...group.map(entry => entry.line.height || entry.line.fontSize || 10))
+        }
+      };
+    }).filter(row => row.cells.some(cell => cell.fragments.length));
+
+    // Require that the region contains actual multi-column structure. This
+    // keeps ordinary single-column paragraphs in normal editable paragraphs.
+    if (rows.length < 2) return null;
+
+    const leftPoints = Math.max(0, Math.min(pageWidth - 30,
+      Math.min(...region.flatMap(entry => entry.line.items || []).map(item => item.x).filter(Number.isFinite))
+    ));
+    return {
+      rows,
+      endIndex: startIndex + region.length,
+      columnCount,
+      columnStarts,
+      columnCenters,
+      leftPoints,
+      lastLine: region[region.length - 1].line
+    };
   }
 
   function createCellParagraph(cell, docx, fallbackFontSize) {
     const children = [];
     let previous = null;
-    for (const part of cell.items) {
+    for (const part of cell.items || []) {
       if (previous) {
         const gap = part.x - (previous.x + previous.width);
         if (gap > Math.max(1.2, clampFontSize(fallbackFontSize) * 0.18)) {
@@ -235,37 +290,76 @@
     }
     return new docx.Paragraph({
       children: children.length ? children : [new docx.TextRun({ text: cell.text || "" })],
+      alignment: cell.centered && docx.AlignmentType ? docx.AlignmentType.CENTER : undefined,
       spacing: { before: 0, after: 0 }
     });
   }
 
-  function createTable(rows, pageWidth, docx) {
-    const columnCount = rows[0].cells.length;
-    const columnStarts = [];
-    for (let column = 0; column < columnCount; column++) {
-      columnStarts.push(rows.reduce((sum, row) => sum + row.cells[column].x, 0) / rows.length);
+  function createTable(rows, pageWidth, docx, tableInfo) {
+    const columnCount = tableInfo.columnCount;
+    const leftPoints = tableInfo.leftPoints;
+    const availableWidth = Math.max(120, pageWidth - leftPoints - 20);
+    const starts = tableInfo.columnStarts;
+    let widthsPoints = [];
+
+    if (columnCount === 2) {
+      const firstWidth = Math.max(60, Math.min(availableWidth - 40, starts[1] - leftPoints - 5));
+      widthsPoints = [firstWidth, availableWidth - firstWidth];
+    } else if (columnCount >= 4) {
+      // The first column is usually a wide description column; the remaining
+      // columns are typically near-uniform numeric/code fields.
+      const firstWidth = Math.max(100, Math.min(availableWidth * 0.6, starts[1] - leftPoints - 22));
+      const remaining = availableWidth - firstWidth;
+      const otherWidth = remaining / (columnCount - 1);
+      widthsPoints = [firstWidth, ...Array(columnCount - 1).fill(otherWidth)];
+    } else {
+      for (let column = 0; column < columnCount - 1; column++) {
+        widthsPoints.push(Math.max(30, starts[column + 1] - starts[column] - (column === 0 ? 14 : 0)));
+      }
+      widthsPoints.push(Math.max(30, availableWidth - widthsPoints.reduce((sum, width) => sum + width, 0)));
+      const sum = widthsPoints.reduce((total, width) => total + width, 0);
+      widthsPoints = widthsPoints.map(width => width * availableWidth / sum);
     }
 
-    const leftPoints = Math.max(0, Math.min(pageWidth - 30, columnStarts[0]));
-    const widthsPoints = [];
-    for (let column = 0; column < columnCount - 1; column++) {
-      widthsPoints.push(Math.max(18, columnStarts[column + 1] - columnStarts[column]));
-    }
-    widthsPoints.push(Math.max(18, pageWidth - columnStarts[columnCount - 1]));
-
-    // Keep the grid and preferred table width internally consistent.
     const widths = widthsPoints.map(width => Math.max(360, Math.round(width * 20)));
     const totalWidth = widths.reduce((sum, width) => sum + width, 0);
     const widthType = docx.WidthType ? docx.WidthType.DXA : "dxa";
     const edge = { style: docx.BorderStyle ? docx.BorderStyle.SINGLE : "single", size: 2, color: "D7E2DE", space: 0 };
 
-    const tableRows = rows.map(row => new docx.TableRow({
-      children: row.cells.map((cell, column) => new docx.TableCell({
-        children: [createCellParagraph(cell, docx, row.line.fontSize)],
-        width: { size: widths[column], type: widthType },
-        margins: { top: 25, bottom: 25, left: 45, right: 45 }
-      }))
-    }));
+    const makeCellParagraphs = (cell, fallbackFontSize) => {
+      const fragments = cell && cell.fragments ? cell.fragments : [];
+      if (!fragments.length) {
+        return [new docx.Paragraph({
+          children: [new docx.TextRun({ text: "" })],
+          spacing: { before: 0, after: 0 }
+        })];
+      }
+      return fragments.map(fragment => createCellParagraph(fragment, docx, fallbackFontSize));
+    };
+
+    const tableRows = rows.map(row => {
+      if (row.merged) {
+        const cell = row.cells[0];
+        return new docx.TableRow({
+          children: [new docx.TableCell({
+            columnSpan: columnCount,
+            children: makeCellParagraphs(cell, row.line.fontSize),
+            width: { size: totalWidth, type: widthType },
+            shading: { fill: "EAF2F8" },
+            margins: { top: 25, bottom: 25, left: 45, right: 45 }
+          })]
+        });
+      }
+
+      return new docx.TableRow({
+        children: row.cells.map((cell, column) => new docx.TableCell({
+          children: makeCellParagraphs(cell, row.line.fontSize),
+          width: { size: widths[column], type: widthType },
+          shading: row.isHeader ? { fill: "EAF2F8" } : undefined,
+          margins: { top: 25, bottom: 25, left: 45, right: 45 }
+        }))
+      });
+    });
 
     return new docx.Table({
       rows: tableRows,
@@ -287,8 +381,8 @@
     while (index < lines.length) {
       const table = detectTableAt(lines, index, metrics.width);
       if (table) {
-        children.push(createTable(table.rows, metrics.width, docx));
-        previousLine = table.rows[table.rows.length - 1].line;
+        children.push(createTable(table.rows, metrics.width, docx, table));
+        previousLine = table.lastLine;
         index = table.endIndex;
         continue;
       }
@@ -301,7 +395,7 @@
     return children;
   }
 
-  function createLineParagraph(line, previousLine, docx, pageHeight, isOcr) {
+    function createLineParagraph(line, previousLine, docx, pageHeight, isOcr) {
     const runs = [];
     if (isOcr || !line.items || !line.items.length) {
       if (line.text) {
