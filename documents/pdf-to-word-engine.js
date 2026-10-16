@@ -12,7 +12,7 @@
   const OCR_SCRIPT_CDN = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
   const TESSERACT_WORKER_CDN = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js";
   const TESSERACT_CORE_CDN = "https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1";
-  const TESSERACT_LANG_CDN = "https://tessdata.projectnaptha.com/4.0.0/";
+  const TESSERACT_LANG_CDN = "https://tessdata.projectnaptha.com/4.0.0";
   let ocrScriptPromise = null;
 
   function localAssetCacheActive() {
