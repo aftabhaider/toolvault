@@ -8,7 +8,7 @@
 
   const MAX_FILE_BYTES = 60 * 1024 * 1024;
   const MAX_PAGES = 150;
-  const OCR_SCRIPT = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
+  const OCR_SCRIPT = "/documents/vendor/tesseract.min.js";
   let ocrScriptPromise = null;
 
   function report(onProgress, percent, label, hint) {
@@ -240,7 +240,7 @@
     }
 
     report(onProgress, 2, "Opening PDF…", "The file stays in your browser; it is not uploaded to a conversion server.");
-    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "/documents/vendor/pdf.worker.min.js";
 
     let pdf;
     try {
@@ -310,6 +310,10 @@
         if (useOcr) {
           const Tesseract = await loadTesseract();
           ocrWorker = await Tesseract.createWorker("eng", 1, {
+            workerPath: "/documents/vendor/tesseract.worker.min.js",
+            corePath: "/documents/vendor/tesseract-core",
+            langPath: "/documents/vendor/lang/",
+            workerBlobURL: false,
             logger: (event) => {
               if (event && event.status === "recognizing text") {
                 report(onProgress, 10, "Starting browser OCR…", "Recognizing scanned English text. First-time OCR may download language data.");
