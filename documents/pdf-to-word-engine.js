@@ -420,17 +420,18 @@
       }
 
       const line = lines[index];
-      children.push(createLineParagraph(line, previousLine, docx, metrics.height, false));
+      children.push(createLineParagraph(line, previousLine, docx, metrics.width, metrics.height, false));
       previousLine = line;
       index++;
     }
     return children;
   }
 
-    function createLineParagraph(line, previousLine, docx, pageHeight, isOcr) {
+    function createLineParagraph(line, previousLine, docx, pageWidth, pageHeight, isOcr) {
     const runs = [];
     const tabStops = [];
-    if (isOcr || !line.items || !line.items.length) {
+    const items = line.items && line.items.length ? line.items : [];
+    if (isOcr || !items.length) {
       if (line.text) {
         runs.push(new docx.TextRun({
           text: line.text,
@@ -439,13 +440,11 @@
       }
     } else {
       let previous = null;
-      for (const part of line.items) {
+      for (const part of items) {
         if (previous) {
           const gap = part.x - (previous.x + previous.width);
           if (gap > Math.max(9, line.fontSize * 1.7)) {
             runs.push(new docx.TextRun({ text: "\t" }));
-            // Anchor tab-separated fields to the PDF's original horizontal
-            // position instead of relying on Word's default half-inch tabs.
             tabStops.push({
               type: docx.TabStopType ? docx.TabStopType.LEFT : "left",
               position: Math.max(20, Math.round(part.x * 20))
@@ -466,14 +465,41 @@
     }
 
     const fontSize = clampFontSize(line.fontSize);
+    const leftX = items.length ? Math.min(...items.map(item => item.x)) : Math.max(0, line.left || 0);
+    const rightX = items.length
+      ? Math.max(...items.map(item => item.x + item.width))
+      : leftX + String(line.text || "").length * fontSize * 0.45;
+    const lineCenter = (leftX + rightX) / 2;
+
+    // Infer alignment from the original text box instead of assuming every
+    // PDF line is left-aligned. Centered titles and right-hand form fields are
+    // common in official returns and other pre-printed forms.
+    const centered = items.length > 0 &&
+      leftX > pageWidth * 0.08 &&
+      rightX < pageWidth * 0.92 &&
+      Math.abs(lineCenter - pageWidth / 2) <= Math.max(14, fontSize * 1.6);
+    const rightAligned = !centered &&
+      leftX > pageWidth * 0.48 &&
+      rightX > pageWidth * 0.78;
+
     const priorBottom = previousLine ? previousLine.top + previousLine.height : 0;
     const rawGap = previousLine ? line.top - priorBottom : line.top;
     const before = Math.round(Math.max(0, Math.min(pageHeight * 0.4, rawGap)) * 20);
-    const leftIndent = Math.round(Math.max(0, Math.min(pageHeight * 1.5, line.left || 0)) * 20);
+    const leftIndent = centered || rightAligned
+      ? 0
+      : Math.round(Math.max(0, Math.min(pageWidth * 0.95, leftX)) * 20);
+    const rightIndent = rightAligned
+      ? Math.round(Math.max(0, Math.min(pageWidth * 0.5, pageWidth - rightX)) * 20)
+      : 0;
 
     return new docx.Paragraph({
       children: runs.length ? runs : [new docx.TextRun({ text: "" })],
-      indent: { left: leftIndent },
+      alignment: centered && docx.AlignmentType
+        ? docx.AlignmentType.CENTER
+        : rightAligned && docx.AlignmentType
+          ? docx.AlignmentType.RIGHT
+          : undefined,
+      indent: { left: leftIndent, right: rightIndent },
       tabStops: tabStops.length ? tabStops : undefined,
       spacing: { before: before, after: 0 }
     });
@@ -542,7 +568,7 @@
 
   async function renderPageBands(page, metrics) {
     // Preserve form logos and footer artwork while reconstructing editable body text.
-    const scale = 1.5;
+    const scale = 3;
     const viewport = page.getViewport({ scale });
     const canvas = document.createElement("canvas");
     canvas.width = Math.max(1, Math.ceil(viewport.width));
@@ -779,7 +805,7 @@
           }
 
           const children = useOcr && lines.some(line => !line.items || !line.items.length)
-            ? lines.map((line, lineIndex) => createLineParagraph(line, lineIndex ? lines[lineIndex - 1] : null, docx, metrics.height, !line.items || !line.items.length))
+            ? lines.map((line, lineIndex) => createLineParagraph(line, lineIndex ? lines[lineIndex - 1] : null, docx, metrics.width, metrics.height, !line.items || !line.items.length))
             : createEditableChildren(lines, metrics, docx);
 
           const sectionHeaders = pageBands.header ? { default: makeBandHeader(pageBands.header, docx) } : undefined;
