@@ -327,7 +327,7 @@
               ? "/documents/vendor/tesseract-core"
               : TESSERACT_CORE_CDN,
             langPath: localAssetCacheActive()
-              ? "/documents/vendor/lang/"
+              ? "/documents/vendor/lang"
               : TESSERACT_LANG_CDN,
             workerBlobURL: false,
             logger: (event) => {
