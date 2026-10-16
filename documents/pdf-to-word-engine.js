@@ -788,7 +788,14 @@
             properties: {
               page: {
                 size: { width: Math.round(metrics.width * 20), height: Math.round(metrics.height * 20) },
-                margin: { top: 0, right: 0, bottom: 0, left: 0, header: 0, footer: 0 }
+                margin: {
+                  top: pageBands.header ? HEADER_BAND_POINTS * 20 : 0,
+                  right: 0,
+                  bottom: pageBands.footer ? FOOTER_BAND_POINTS * 20 : 0,
+                  left: 0,
+                  header: 0,
+                  footer: 0
+                }
               }
             },
             headers: sectionHeaders,
