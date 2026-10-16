@@ -88,3 +88,8 @@ The 2.3.0 local test branch positions page header/footer artwork relative to the
 ## Editable reconstruction improvements (2.4.0)
 
 This iteration maps PDF.js text-style metadata into Word font families (Arial is used only when the source family is generic or unavailable), keeps bold/italic traits when the PDF exposes them, and recognizes the standalone "Bill" page title as bold text. It disables weak inferred-table guesses near the top of a page unless a ruled grid is detected, preventing invoice metadata from becoming an artificial table. Individual embedded page images can now be extracted from PDF.js image objects and positioned as floating Word images; this avoids cropping an entire top band for documents whose logos and title are separate elements. Image extraction and line detection remain best-effort and require end-to-end validation on the real PDF.
+
+
+## Runtime fix (2.4.1)
+
+Moved return-form and bill-title flags to the paragraph-builder scope so both title styling and alignment can access them without a ReferenceError. Bumped the service-worker cache and the local-test port for regression testing. JavaScript syntax passes; the Word output still needs an end-to-end test.
