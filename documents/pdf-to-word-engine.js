@@ -343,7 +343,7 @@
     };
   }
 
-    function createCellParagraph(cell, docx, fallbackFontSize) {
+    function createCellParagraph(cell, docx, fallbackFontSize, forceBold) {
     const children = [];
     let previous = null;
     for (const part of cell.items || []) {
@@ -357,19 +357,20 @@
       children.push(new docx.TextRun({
         text: part.str,
         size: Math.round(clampFontSize(part.fontSize || fallbackFontSize) * 2),
-        bold: fontStyle.bold,
-        italics: fontStyle.italics
+        bold: fontStyle.bold || Boolean(forceBold),
+        italics: fontStyle.italics,
+        underline: Boolean(part.underline)
       }));
       previous = part;
     }
     return new docx.Paragraph({
-      children: children.length ? children : [new docx.TextRun({ text: cell.text || "" })],
+      children: children.length ? children : [new docx.TextRun({ text: cell.text || "", bold: Boolean(forceBold) })],
       alignment: cell.centered && docx.AlignmentType ? docx.AlignmentType.CENTER : undefined,
       spacing: { before: 0, after: 0 }
     });
   }
 
-  function createTable(rows, pageWidth, docx, tableInfo) {
+    function createTable(rows, pageWidth, docx, tableInfo) {
     const columnCount = tableInfo.columnCount;
     const leftPoints = tableInfo.leftPoints;
     const availableWidth = Math.max(120, pageWidth - leftPoints - 20);
@@ -402,9 +403,9 @@
     const widths = widthsPoints.map(width => Math.max(360, Math.round(width * 20)));
     const totalWidth = widths.reduce((sum, width) => sum + width, 0);
     const widthType = docx.WidthType ? docx.WidthType.DXA : "dxa";
-    const edge = { style: docx.BorderStyle ? docx.BorderStyle.SINGLE : "single", size: 2, color: "444444", space: 0 };
+    const edge = { style: docx.BorderStyle ? docx.BorderStyle.SINGLE : "single", size: 4, color: "333333", space: 0 };
 
-    const makeCellParagraphs = (cell, fallbackFontSize) => {
+    const makeCellParagraphs = (cell, fallbackFontSize, forceBold) => {
       const fragments = cell && cell.fragments ? cell.fragments : [];
       if (!fragments.length) {
         return [new docx.Paragraph({
@@ -412,7 +413,7 @@
           spacing: { before: 0, after: 0 }
         })];
       }
-      return fragments.map(fragment => createCellParagraph(fragment, docx, fallbackFontSize));
+      return fragments.map(fragment => createCellParagraph(fragment, docx, fallbackFontSize, forceBold));
     };
 
     const tableRows = rows.map(row => {
@@ -421,7 +422,7 @@
         return new docx.TableRow({
           children: [new docx.TableCell({
             columnSpan: columnCount,
-            children: makeCellParagraphs(cell, row.line.fontSize),
+            children: makeCellParagraphs(cell, row.line.fontSize, row.isHeader || row.isSummary || row.merged),
             width: { size: totalWidth, type: widthType },
             shading: { fill: "EAF2F8" },
             margins: { top: 25, bottom: 25, left: 45, right: 45 }
@@ -431,9 +432,9 @@
 
       return new docx.TableRow({
         children: row.cells.map((cell, column) => new docx.TableCell({
-          children: makeCellParagraphs(cell, row.line.fontSize),
+          children: makeCellParagraphs(cell, row.line.fontSize, row.isHeader || row.isSummary || row.merged),
           width: { size: widths[column], type: widthType },
-          shading: row.isHeader ? { fill: "EAF2F8" } : undefined,
+          shading: row.isHeader || row.isSummary ? { fill: "EAF2F8" } : undefined,
           margins: { top: 25, bottom: 25, left: 45, right: 45 }
         }))
       });
@@ -516,9 +517,12 @@
     const items = line.items && line.items.length ? line.items : [];
     if (isOcr || !items.length) {
       if (line.text) {
+        const titleLine = /114\s*\(1\)|return of income filed voluntarily/i.test(line.text || "");
         runs.push(new docx.TextRun({
           text: line.text,
-          size: Math.round(clampFontSize(line.fontSize) * 2)
+          size: Math.round(clampFontSize(line.fontSize) * 2),
+          bold: titleLine,
+          underline: titleLine
         }));
       }
     } else {
@@ -537,11 +541,16 @@
           }
         }
         const fontStyle = styleFromFontName(part.fontName);
+        const titleLine = /114\s*\(1\)|return of income filed voluntarily/i.test(line.text || "");
+        const token = String(part.str || "").replace(/[.:]/g, "").trim().toLowerCase();
+        const metadataLabel = line.top < 175 &&
+          /^(name|address|registration|no|tax|year|period|medium|contact|due|date|document)$/.test(token);
         runs.push(new docx.TextRun({
           text: part.str,
           size: Math.round(clampFontSize(part.fontSize) * 2),
-          bold: fontStyle.bold,
-          italics: fontStyle.italics
+          bold: fontStyle.bold || titleLine || metadataLabel,
+          italics: fontStyle.italics,
+          underline: titleLine
         }));
         previous = part;
       }
