@@ -33,149 +33,173 @@
 <header><div class="wrap nav"><a class="logo" href="/">Tool<span>Vault</span></a><a href="/documents/">← All PDF Tools</a></div></header>
 <main class="wrap">
 <div class="crumb"><a href="/">ToolVault</a> / <a href="/documents/">PDF & Documents</a> / PDF to Word</div>
-<section class="hero"><span class="eyebrow">Free · Browser-based</span><h1>PDF to Word Converter</h1><p>Convert PDF to Word with two modes: preserve the original page appearance as high-resolution images, or extract selectable text into editable paragraphs. Your PDF is processed locally in your browser.</p></section>
+<section class="hero"><span class="eyebrow">Free · Browser-based</span><h1>PDF to Word Converter</h1><p>Convert PDF to Word with a server-independent browser engine. Preserve the original page appearance or reconstruct editable text and layout locally. Optional English OCR can help with scanned pages.</p></section>
 <section class="panel">
-<div class="drop" id="drop"><strong>Choose a PDF to convert</strong><p>Works with text-based and scanned PDFs. Scanned pages are preserved visually in layout mode; their text is not made editable without OCR.</p><input id="fileInput" type="file" accept="application/pdf,.pdf" hidden><button class="btn secondary" id="choose" type="button">Choose PDF file</button></div>
+<div class="drop" id="drop"><strong>Choose a PDF to convert</strong><p>Select a PDF to process on this device. Text-based PDFs can be reconstructed into editable Word content. For scanned pages, enable optional English OCR and review the results carefully.</p><input id="fileInput" type="file" accept="application/pdf,.pdf" hidden><button class="btn secondary" id="choose" type="button">Choose PDF file</button></div>
 <div class="fileinfo" id="fileInfo" aria-live="polite"></div>
-<div class="fileinfo show" style="margin-top:14px"><strong>Conversion mode</strong><br><label style="display:flex;gap:9px;align-items:flex-start;margin-top:9px;cursor:pointer"><input type="radio" name="mode" value="visual" checked style="margin-top:4px"><span><strong>Preserve original layout (recommended)</strong><br><span style="color:var(--muted)">Keeps each page looking like the PDF, including logos, fonts, headers, footers and spacing. Pages are images inside Word, so text is not directly editable.</span></span></label><label style="display:flex;gap:9px;align-items:flex-start;margin-top:12px;cursor:pointer"><input type="radio" name="mode" value="text" style="margin-top:4px"><span><strong>Extract editable text (in browser)</strong><br><span style="color:var(--muted)">Creates editable paragraphs, but formatting and page layout may change. The PDF stays in your browser.</span></span></label><label style="display:flex;gap:9px;align-items:flex-start;margin-top:12px;cursor:pointer"><input type="radio" name="mode" value="server" style="margin-top:4px"><span><strong>Convert to editable Word (conversion engine)</strong><br><span style="color:var(--muted)">Uses ToolVault’s server-side converter to reconstruct editable text and layout. Results vary by PDF; logos, tables, headers and fonts may need manual correction.</span></span></label></div><div class="toolbar"><button class="btn primary" id="convert" type="button" disabled>Convert with original layout (.docx)</button><button class="btn secondary" id="clear" type="button">Clear file</button></div>
+<div class="fileinfo show" style="margin-top:14px"><strong>Conversion mode</strong>
+<label style="display:flex;gap:9px;align-items:flex-start;margin-top:9px;cursor:pointer"><input type="radio" name="mode" value="editable" checked style="margin-top:4px"><span><strong>Editable Word (local engine — recommended)</strong><br><span style="color:var(--muted)">Reconstructs selectable text and approximate positions directly in your browser. It does not upload your PDF to a conversion server. Complex columns and tables may need correction.</span></span></label>
+<label style="display:flex;gap:9px;align-items:flex-start;margin-top:12px;cursor:pointer"><input type="radio" name="mode" value="visual" style="margin-top:4px"><span><strong>Preserve original page appearance</strong><br><span style="color:var(--muted)">Keeps each PDF page visually faithful by placing it as a high-resolution image inside Word. Page text is not individually editable.</span></span></label>
+<label style="display:flex;gap:9px;align-items:flex-start;margin-top:12px;cursor:pointer"><input type="checkbox" id="enableOcr" style="margin-top:4px"><span><strong>Run English OCR on scanned pages (optional)</strong><br><span style="color:var(--muted)">Uses a browser-based OCR engine for pages with little or no selectable text. The first run may download language data and can be slow. Check all names, dates, figures and amounts.</span></span></label>
+</div><div class="toolbar"><button class="btn primary" id="convert" type="button" disabled>Convert locally to Word (.docx)</button><button class="btn secondary" id="clear" type="button">Clear file</button></div>
 <div id="status" class="status" role="status" aria-live="polite"></div>
 <div id="progressBox" class="progressbox" aria-live="polite"><div class="progresshead"><span id="progressLabel">Uploading PDF…</span><span id="progressPercent">0%</span></div><progress id="uploadProgress" max="100" value="0">0%</progress><p id="progressHint" class="progresshint">Keep this page open while your PDF uploads.</p></div>
-<div class="privacy"><h2>Privacy note</h2><p>Preserve original layout and Extract editable text (in browser) process the PDF locally in your browser. The server-side editable Word mode uploads the selected PDF to ToolVault’s conversion service for processing and deletes temporary files after conversion. Do not upload confidential documents unless you are comfortable with server processing. Conversion libraries load from third-party CDNs.</p></div>
+<div class="privacy"><h2>Privacy note</h2><p>The PDF file is processed in your browser and is not sent to a ToolVault conversion API. PDF.js and docx.js are loaded from third-party CDNs. If you enable OCR, Tesseract.js and its English language data are also loaded from a CDN; these are software assets, not your PDF. For confidential documents, use a trusted device and browser.</p></div>
 </section>
 <section class="content">
 <h2>Convert PDF to Word online for free</h2>
-<p>Choose Preserve original layout to keep each page visually faithful to the PDF, including branding, typography, headers, footers, tables and page positioning. This mode places a high-resolution image of each PDF page into a Word document. Choose Extract editable text if you need to edit the words directly, understanding that layout and styling may change.</p>
+<p>Choose Editable Word to reconstruct selectable text and approximate page positioning into editable Word paragraphs. Choose Preserve original page appearance when the visual appearance matters most; this mode places a high-resolution image of each page into Word, so the page text is not individually editable. Optional English OCR can recognize text from scanned pages directly in your browser.</p>
 <h3>How to convert PDF to Word</h3>
-<ul><li>Select a PDF file from your device.</li><li>Choose Convert to Word and wait while the pages are processed.</li><li>Download the generated DOCX file and open it in Microsoft Word or a compatible editor.</li></ul>
+<ul><li>Select a PDF file from your device.</li><li>Choose a conversion mode. Optionally enable English OCR for scanned pages.</li><li>Convert in your browser and download the generated DOCX when it is ready.</li><li>Open the DOCX in Microsoft Word or a compatible editor and check layout and OCR text.</li></ul>
 <h3>Important conversion limits</h3>
-<p>Preserve original layout mode keeps the appearance by embedding each rendered page as an image; text, logos and other page elements are not individually editable in that mode. Editable text mode extracts text and may not preserve columns, tables, images, fonts, headers, footers or exact positioning. Scanned PDFs can still be preserved visually, but their text is not made editable by OCR. Very large PDFs may require substantial browser memory.</p>
+<p>The local engine supports PDFs up to 60 MB and 150 pages per conversion. Editable mode reconstructs selectable text and approximate positions; columns, complex tables, rotated text, forms, unusual fonts, images, headers and footers may not match the original. Visual mode embeds page images and is not individually editable. Optional English OCR may misread characters, names, dates, decimal points or amounts. Review important documents manually.</p>
 <h3>Frequently asked questions</h3>
 <p><strong>Is the PDF to Word converter free?</strong><br>Yes. You can use it without creating an account.</p>
-<p><strong>Are my documents uploaded?</strong><br>The selected PDF is processed in your browser and is not sent to ToolVault by this page. Supporting libraries are loaded from third-party CDNs.</p>
-<p><strong>Can it convert scanned PDFs?</strong><br>Not directly. Scanned pages need optical character recognition (OCR) before their text can be extracted.</p>
-<p><strong>How do I keep the same layout, logo, header, footer and fonts?</strong><br>Select Preserve original layout. Each page is inserted as a high-resolution image, so its appearance is retained. The page contents will not be individually editable as Word text.</p>
-<p><strong>Can I preserve the layout and edit all text?</strong><br>Not reliably in one automatic conversion. Exact visual fidelity and fully editable text are different goals; choose the mode that matters most for your document.</p>
-<p><strong>Why is the output empty?</strong><br>The PDF may contain scanned images instead of selectable text, or its text layer may be unsupported. Try selecting and copying text from the PDF in a reader to check whether a text layer exists.</p>
+<p><strong>Are my documents uploaded?</strong><br>Your PDF is processed in your browser and is not sent to a conversion API by this page. Required JavaScript libraries load from third-party CDNs. Optional OCR also downloads the English language data needed for recognition.</p>
+<p><strong>Can it convert scanned PDFs?</strong><br>Yes, with the optional English OCR setting. OCR runs in your browser and may take longer; accuracy varies, so review the converted text.</p>
+<p><strong>How do I keep the same layout, logo, header, footer and fonts?</strong><br>Select Preserve original page appearance. Each page is inserted as an image, so its appearance is retained; the page contents are not individually editable as Word text.</p>
+<p><strong>Can I preserve the layout and edit all text?</strong><br>Not reliably for every file. The local engine reconstructs text and approximate positions; visual mode preserves the page as an image. For exact documents, compare the output with the PDF and correct it in Word.</p>
+<p><strong>Why is the output empty?</strong><br>The PDF may be scanned or contain no usable text layer. Enable the optional English OCR setting and retry. OCR can misread content, so check the output.</p>
 <h3>Explore more PDF tools</h3><div class="related"><a href="/documents/merge-pdf">Merge PDF files</a><a href="/documents/">All PDF tools</a><a href="/">ToolVault homepage</a></div>
 </section>
 </main>
 <footer><div class="wrap">© 2026 ToolVault · Free practical tools for the web.</div></footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js" defer></script>
+<script src="/documents/pdf-to-word-engine.js" defer></script>
 <script>
 (function(){
-const input=document.getElementById("fileInput"),choose=document.getElementById("choose"),convert=document.getElementById("convert"),clear=document.getElementById("clear"),info=document.getElementById("fileInfo"),status=document.getElementById("status"),progressBox=document.getElementById("progressBox"),uploadProgress=document.getElementById("uploadProgress"),progressLabel=document.getElementById("progressLabel"),progressPercent=document.getElementById("progressPercent"),progressHint=document.getElementById("progressHint");
+"use strict";
+const input=document.getElementById("fileInput");
+const choose=document.getElementById("choose");
+const convert=document.getElementById("convert");
+const clear=document.getElementById("clear");
+const info=document.getElementById("fileInfo");
+const status=document.getElementById("status");
+const progressBox=document.getElementById("progressBox");
+const uploadProgress=document.getElementById("uploadProgress");
+const progressLabel=document.getElementById("progressLabel");
+const progressPercent=document.getElementById("progressPercent");
+const progressHint=document.getElementById("progressHint");
+const enableOcr=document.getElementById("enableOcr");
+const MAX_BYTES=60*1024*1024;
 let file=null;
-function progress(p,label,hint){progressBox.className="progressbox show";uploadProgress.value=p;progressPercent.textContent=Math.round(p)+"%";progressLabel.textContent=label;progressHint.textContent=hint||"";}
-function msg(t,type){status.textContent=t;status.className="status show "+type}
-function size(n){return n<1048576?(n/1024).toFixed(1)+" KB":(n/1048576).toFixed(2)+" MB"}
-function setFile(f){file=null;if(!f){info.textContent="";info.className="fileinfo";convert.disabled=true;return}if(!(f.type==="application/pdf"||f.name.toLowerCase().endsWith(".pdf"))){msg("Please choose a PDF file.","error");info.textContent="";info.className="fileinfo";convert.disabled=true;return}file=f;info.textContent=f.name+" · "+size(f.size);info.className="fileinfo show";convert.disabled=false;status.className="status";msg("PDF selected. Ready to convert.","info")}
-document.querySelectorAll('input[name="mode"]').forEach(el=>el.addEventListener("change",()=>{convert.textContent=el.value==="visual"?"Convert with original layout (.docx)":el.value==="server"?"Convert with server engine (.docx)":"Convert editable text (.docx)"}));
+let busy=false;
+
+function size(n){return n<1048576?(n/1024).toFixed(1)+" KB":(n/1048576).toFixed(2)+" MB";}
+function msg(text,type){status.textContent=text;status.className="status show "+type;}
+function progress(value,label,hint){
+  progressBox.className="progressbox show";
+  uploadProgress.value=value;
+  progressPercent.textContent=Math.round(value)+"%";
+  progressLabel.textContent=label||"Working…";
+  progressHint.textContent=hint||"";
+}
+function setBusy(value){
+  busy=value;
+  convert.disabled=value||!file;
+  choose.disabled=value;
+  clear.disabled=value;
+  document.querySelectorAll('input[name="mode"]').forEach(el=>el.disabled=value);
+  enableOcr.disabled=value;
+}
+function selectedMode(){return document.querySelector('input[name="mode"]:checked')?.value||"editable";}
+function refreshButton(){
+  const mode=selectedMode();
+  convert.textContent=mode==="visual"?"Preserve layout in Word (.docx)":"Convert locally to Word (.docx)";
+  if(!busy)convert.disabled=!file;
+}
+function setFile(f){
+  file=null;
+  progressBox.className="progressbox";
+  if(!f){
+    info.textContent="";
+    info.className="fileinfo";
+    convert.disabled=true;
+    return;
+  }
+  if(!(f.type==="application/pdf"||f.name.toLowerCase().endsWith(".pdf"))){
+    msg("Please choose a PDF file.","error");
+    info.textContent="";
+    info.className="fileinfo";
+    convert.disabled=true;
+    return;
+  }
+  if(f.size>MAX_BYTES){
+    msg("This browser engine supports PDFs up to 60 MB. Split a larger PDF into smaller parts and try again.","error");
+    info.textContent=f.name+" · "+size(f.size);
+    info.className="fileinfo show";
+    convert.disabled=true;
+    return;
+  }
+  file=f;
+  info.textContent=f.name+" · "+size(f.size);
+  info.className="fileinfo show";
+  msg("PDF selected. Ready for local conversion.","info");
+  refreshButton();
+}
 choose.addEventListener("click",()=>input.click());
-document.getElementById("drop").addEventListener("click",e=>{if(e.target!==choose)input.click()});
-input.addEventListener("change",()=>{setFile(input.files&&input.files[0]);input.value=""});
-clear.addEventListener("click",()=>{progressBox.className="progressbox";file=null;info.textContent="";info.className="fileinfo";convert.disabled=true;status.className="status";status.textContent="";input.value=""});
+document.getElementById("drop").addEventListener("click",e=>{if(e.target!==choose)input.click();});
+input.addEventListener("change",()=>{setFile(input.files&&input.files[0]);input.value="";});
+document.querySelectorAll('input[name="mode"]').forEach(el=>el.addEventListener("change",refreshButton));
+clear.addEventListener("click",()=>{
+  file=null;
+  input.value="";
+  info.textContent="";
+  info.className="fileinfo";
+  status.textContent="";
+  status.className="status";
+  progressBox.className="progressbox";
+  uploadProgress.value=0;
+  setBusy(false);
+  refreshButton();
+});
 convert.addEventListener("click",async()=>{
- if(!file)return;
- const mode=document.querySelector('input[name="mode"]:checked')?.value||"visual";
- convert.disabled=true;choose.disabled=true;clear.disabled=true;convert.textContent="Converting…";
- try{
-  if(mode==="server"){
-   msg("Uploading PDF to ToolVault’s conversion service…","info");
-   progress(0,"Uploading PDF…","Preparing your PDF for upload.");
-   const form=new FormData();form.append("file",file,file.name);
-   const out=await new Promise((resolve,reject)=>{
-    const xhr=new XMLHttpRequest();
-    xhr.open("POST","https://converter.toolvault-pdf.blitz.cloud/api/convert");
-    xhr.responseType="blob";
-    xhr.timeout=120000;
-    xhr.upload.addEventListener("progress",event=>{
-     if(event.lengthComputable){
-      const pct=event.total?event.loaded/event.total*100:0;
-      progress(pct,"Uploading PDF…",size(event.loaded)+" of "+size(event.total)+" uploaded. Keep this page open.");
-     }
-    });
-    xhr.upload.addEventListener("load",()=>{progress(85,"Converting PDF to Word…","Upload complete. The server is now processing your PDF; this can take a little while. The bar will reach 100% when the Word file is ready.");msg("Upload complete. Converting your PDF into an editable Word document…","info");});
-    xhr.addEventListener("load",async()=>{
-     if(xhr.status<200||xhr.status>=300){
-      let detail="Server conversion failed ("+xhr.status+").";
-      try{const payload=JSON.parse(await xhr.response.text());if(payload.detail)detail=payload.detail}catch(_){}
-      reject(new Error(detail));return;
-     }
-     resolve(xhr.response);
-    });
-    xhr.addEventListener("error",()=>reject(new Error("The conversion service could not be reached. Check that the backend is online, then try again.")));
-    xhr.addEventListener("timeout",()=>reject(new Error("The conversion request timed out. Try a smaller PDF or retry when the service is online.")));
-    xhr.addEventListener("abort",()=>reject(new Error("Upload was cancelled.")));
-    xhr.send(form);
-   });
-   if(!out.size)throw new Error("The server returned an empty Word document.");
-   const url=URL.createObjectURL(out),a=document.createElement("a");
-   a.href=url;a.download=(file.name.replace(/\\.pdf$/i,"").replace(/[\\\\/:*?"<>|]/g,"-").slice(0,100)||"converted-document")+".docx";
-   document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);
-   progress(100,"Conversion complete","Your Word document is downloaded.");
-   msg("Server conversion finished. Open the downloaded DOCX and check text, tables, logos and page layout. Some manual correction may be needed.","success");return;
+  if(!file||busy)return;
+  if(!window.ToolVaultPdfWordEngine){
+    msg("The local conversion engine did not load. Reload the page and try again.","error");
+    return;
   }
-  if(!window.pdfjsLib||!window.docx){throw new Error("Browser conversion libraries did not load. Check your internet connection and reload the page.")}
-  window.pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-  const pdf=await window.pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;
-  const sections=[];
-  if(mode==="visual"){
-   const first=await pdf.getPage(1);
-   const firstView=first.getViewport({scale:1});
-   const pageWidth=Math.round(firstView.width*20),pageHeight=Math.round(firstView.height*20);
-   first.cleanup();
-   const children=[];
-   for(let n=1;n<=pdf.numPages;n++){
-    msg("Preserving original appearance — rendering page "+n+" of "+pdf.numPages+"…","info");
-    const page=await pdf.getPage(n);
-    const view=page.getViewport({scale:2});
-    const canvas=document.createElement("canvas");
-    canvas.width=Math.ceil(view.width);canvas.height=Math.ceil(view.height);
-    const ctx=canvas.getContext("2d",{alpha:false});
-    await page.render({canvasContext:ctx,viewport:view,background:"#ffffff"}).promise;
-    const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error("Could not render page "+n)),"image/png"));
-    const bytes=new Uint8Array(await blob.arrayBuffer());
-    children.push(new window.docx.Paragraph({
-     children:[new window.docx.ImageRun({data:bytes,type:"png",transformation:{width:Math.round(view.width*0.66),height:Math.round(view.height*0.66)}})],
-     spacing:{before:0,after:0,line:1},
-     ...(n>1?{pageBreakBefore:true}:{})
-    }));
-    canvas.width=1;canvas.height=1;page.cleanup();
-   }
-   sections.push({properties:{page:{size:{width:pageWidth,height:pageHeight},margin:{top:0,right:0,bottom:0,left:0,header:0,footer:0}}},children});
-  }else{
-   const paragraphs=[];
-   for(let n=1;n<=pdf.numPages;n++){
-    msg("Extracting editable text from page "+n+" of "+pdf.numPages+"…","info");
-    const page=await pdf.getPage(n),content=await page.getTextContent();
-    const lines=[];let current="",lastY=null;
-    for(const item of content.items){
-     if(!item.str)continue;
-     const y=item.transform?item.transform[5]:null;
-     if(lastY!==null&&y!==null&&Math.abs(y-lastY)>3){if(current.trim())lines.push(current.trim());current="";}
-     if(current&&item.str&&!/\s$/.test(current)&&!/^\s/.test(item.str))current+=" ";
-     current+=item.str;if(y!==null)lastY=y;
+  const selected=file;
+  const mode=selectedMode();
+  const wantsOcr=Boolean(enableOcr.checked)&&mode!=="visual";
+  setBusy(true);
+  msg("Starting local conversion…","info");
+  progress(1,"Preparing PDF…","Your PDF stays in this browser; no conversion API is called.");
+  try{
+    const result=await window.ToolVaultPdfWordEngine.convert({
+      file:selected,
+      mode:mode,
+      useOcr:wantsOcr,
+      onProgress:update=>progress(update.percent,update.label,update.hint)
+    });
+    const safeBase=selected.name.replace(/\.pdf$/i,"").replace(/[\\/:*?"<>|]/g,"-").slice(0,100)||"converted-document";
+    const url=URL.createObjectURL(result.blob);
+    const a=document.createElement("a");
+    a.href=url;
+    a.download=safeBase+".docx";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),5000);
+
+    if(mode==="visual"){
+      msg("Word file downloaded. The original page appearance is preserved with images, so page text is not individually editable.","success");
+    }else if(wantsOcr&&result.pagesOcr){
+      msg("Word file downloaded. OCR was used on "+result.pagesOcr+" page(s). Please verify names, dates, numbers, currency amounts and layout.","success");
+    }else{
+      msg("Word file downloaded from the local engine. Please check columns, tables, images and spacing; automatic conversion cannot reproduce every PDF perfectly.","success");
     }
-    if(current.trim())lines.push(current.trim());
-    if(n>1)paragraphs.push(new window.docx.Paragraph({children:[new window.docx.TextRun({text:"",break:1})]}));
-    if(lines.length){for(const line of lines)paragraphs.push(new window.docx.Paragraph({children:[new window.docx.TextRun({text:line})],spacing:{after:100}}))}
-    else paragraphs.push(new window.docx.Paragraph({children:[new window.docx.TextRun({text:"[No selectable text found on this page. It may be a scanned page.]"})]}));
-    page.cleanup();
-   }
-   sections.push({properties:{},children:paragraphs});
+  }catch(error){
+    progressBox.className="progressbox show";
+    progressLabel.textContent="Conversion stopped";
+    progressPercent.textContent="—";
+    progressHint.textContent="No completed Word file was downloaded.";
+    msg("Could not convert this PDF. "+(error&&error.message?error.message:"Check the PDF and try again."),"error");
+  }finally{
+    setBusy(false);
+    refreshButton();
   }
-  await pdf.destroy();
-  if(!sections.length)throw new Error("No pages could be converted.");
-  msg("Building Word document…","info");
-  const doc=new window.docx.Document({sections});
-  const out=await window.docx.Packer.toBlob(doc);
-  const url=URL.createObjectURL(out),a=document.createElement("a");
-  a.href=url;a.download=(file.name.replace(/\.pdf$/i,"").replace(/[\\/:*?\"<>|]/g,"-").slice(0,100)||"converted-document")+".docx";
-  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
-  msg(mode==="visual"?"Done. Your layout-preserving Word file is downloading. Each page is an image to retain its original appearance; text is not directly editable.":"Done. Your editable-text Word file is downloading. Review the formatting because it may differ from the PDF.","success");
- }catch(e){progressBox.className="progressbox show";uploadProgress.value=0;progressPercent.textContent="—";progressLabel.textContent="Conversion stopped";progressHint.textContent="No completed Word file was received.";msg("Could not convert this PDF. "+(e&&e.message?e.message:"Check the file and try again."),"error")}
- finally{convert.disabled=!file;choose.disabled=false;clear.disabled=false;const selectedMode=document.querySelector('input[name="mode"]:checked')?.value||"visual";convert.textContent=selectedMode==="visual"?"Convert with original layout (.docx)":selectedMode==="server"?"Convert with server engine (.docx)":"Convert editable text (.docx)"}
 });
 })();
 </script>
