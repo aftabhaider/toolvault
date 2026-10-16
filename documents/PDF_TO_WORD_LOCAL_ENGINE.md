@@ -103,3 +103,35 @@ For PDFs with ruled tables, the engine now groups horizontal rules into table ba
 ## Runtime fix (2.5.2)
 
 Moved the PDF line's x-coordinate and font-size calculations before the loop that creates text runs. Tab-stop offsets therefore no longer access leftX before initialization. The offline cache and test port were refreshed for this retest.
+
+
+## Working checkpoint — 2026-10-16 (end of session)
+
+- **Working branch:** \`feature/local-pdf-to-word-engine\`
+- **Draft PR:** https://github.com/aftabhaider/toolvault/pull/9
+- **Latest local engine version:** \`2.5.2-local\`
+- **Service-worker cache:** \`toolvault-pdf-word-v17\`
+- **Local test launcher:** \`START-LOCAL-PDF-WORD-TEST.bat\`
+- **Current local test URL:** \`http://127.0.0.1:8011/documents/pdf-to-word.html\`
+- **Production:** changes are not merged; the live ToolVault site remains unchanged.
+
+### Work completed by this checkpoint
+
+- Keeps the local browser-based conversion flow and removes the old remote conversion API dependency from the page.
+- Maps PDF.js font metadata into Word text runs, with a font fallback.
+- Adds special emphasis for the bill title, installation heading, supply-order heading, and recipient heading.
+- Detects ruled table boundaries and derives row cell spans from the vertical borders crossing each row, including attempts to preserve merged totals.
+- Attempts to preserve separate embedded images, header/footer artwork, barcode, and the invoice vertical divider.
+- Fixes the previous \`returnFormTitle is not defined\` runtime error and the latest \`leftX before initialization\` runtime error.
+- JavaScript syntax checks passed for the engine, service worker, and page scripts. A mocked text-paragraph function test passed; a synthetic six-column/merged-total table test passed.
+
+### Not yet confirmed
+
+The latest version has **not** been validated end-to-end against \`BILL JHANG LOT-2.pdf\` in Microsoft Word after the most recent fixes. Font fidelity, real invoice metadata spacing, logos/barcode, and the complete table layout remain to be reviewed from the generated document.
+
+### Next session
+
+1. Download the latest branch ZIP and extract to a new folder.
+2. Run \`START-LOCAL-PDF-WORD-TEST.bat\`, keep the server window open, and open \`http://127.0.0.1:8011/documents/pdf-to-word.html\`.
+3. Convert \`BILL JHANG LOT-2.pdf\` in **Editable Word** mode.
+4. Compare the first and second pages against the original. Fix any remaining layout errors before merging PR #9 or changing production.
