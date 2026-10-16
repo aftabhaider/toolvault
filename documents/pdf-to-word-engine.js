@@ -199,6 +199,189 @@
     return cells;
   }
 
+  function verticalRuleCovers(grid, x, top, bottom, tolerance) {
+    const tol = tolerance === undefined ? 2.5 : tolerance;
+    return Boolean(grid && Array.isArray(grid.verticals) && grid.verticals.some(line =>
+      Math.abs(line.x - x) <= tol &&
+      (line.segments || []).some(segment =>
+        segment.top <= top + tol && segment.bottom >= bottom - tol
+      )
+    ));
+  }
+
+  function horizontalRulesShareSpan(a, b, pageWidth) {
+    const tolerance = Math.max(7, pageWidth * 0.012);
+    const overlap = Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0);
+    const smallest = Math.max(1, Math.min(a.x1 - a.x0, b.x1 - b.x0));
+    return Math.abs(a.x0 - b.x0) <= tolerance &&
+      Math.abs(a.x1 - b.x1) <= tolerance && overlap / smallest >= 0.86;
+  }
+
+  function getRuledTableCandidates(grid, pageWidth) {
+    if (!grid || !Array.isArray(grid.horizontals) || !Array.isArray(grid.verticals)) return [];
+    const rules = grid.horizontals.filter(rule => rule.x1 - rule.x0 >= pageWidth * 0.52)
+      .slice().sort((a, b) => a.y - b.y);
+    const candidates = [];
+    const seen = new Set();
+
+    for (let start = 0; start < rules.length; start++) {
+      const first = rules[start];
+      let last = start;
+      const connectedRules = [first];
+      for (let next = start + 1; next < rules.length; next++) {
+        const rule = rules[next];
+        if (!horizontalRulesShareSpan(first, rule, pageWidth)) break;
+        if (rule.y - rules[last].y < 5) continue;
+        const connectedOuterRules =
+          verticalRuleCovers(grid, first.x0, first.y, rule.y, 4) &&
+          verticalRuleCovers(grid, first.x1, first.y, rule.y, 4);
+        if (!connectedOuterRules) break;
+        connectedRules.push(rule);
+        last = next;
+      }
+      if (connectedRules.length < 3) continue;
+
+      const top = connectedRules[0].y;
+      const bottom = connectedRules[connectedRules.length - 1].y;
+      const key = [Math.round(first.x0), Math.round(first.x1), Math.round(top), Math.round(bottom)].join(":");
+      if (seen.has(key)) continue;
+      seen.add(key);
+
+      const allXs = [first.x0];
+      for (const vertical of grid.verticals) {
+        if (vertical.x <= first.x0 + 2.5 || vertical.x >= first.x1 - 2.5) continue;
+        if ((vertical.segments || []).some(segment => segment.top <= top + 3 && segment.bottom >= bottom - 3)) {
+          allXs.push(vertical.x);
+        }
+      }
+      allXs.push(first.x1);
+      allXs.sort((a, b) => a - b);
+      const boundaries = [];
+      for (const x of allXs) {
+        if (!boundaries.length || x - boundaries[boundaries.length - 1] > 2.5) boundaries.push(x);
+      }
+      if (boundaries.length < 3 || boundaries.length > 13) continue;
+      candidates.push({ top, bottom, x0: boundaries[0], x1: boundaries[boundaries.length - 1], rules: connectedRules, boundaries });
+    }
+    return candidates.sort((a, b) => a.top - b.top || (b.bottom - b.top) - (a.bottom - a.top));
+  }
+
+  function detectRuledTableAt(lines, startIndex, pageWidth, grid) {
+    const candidates = getRuledTableCandidates(grid, pageWidth);
+    if (!candidates.length) return null;
+    const currentLine = lines[startIndex];
+    if (!currentLine || !currentLine.items || !currentLine.items.length) return null;
+
+    const candidate = candidates.find(table =>
+      currentLine.top >= table.top - 1.5 &&
+      currentLine.top < table.bottom - 0.5 &&
+      currentLine.items.some(item => {
+        const center = item.x + item.width / 2;
+        return center >= table.x0 - 2 && center <= table.x1 + 2;
+      })
+    );
+    if (!candidate) return null;
+
+    const insideIndexes = [];
+    for (let index = 0; index < lines.length; index++) {
+      const line = lines[index];
+      if (!line.items || !line.items.length) continue;
+      if (line.top < candidate.top - 1 || line.top >= candidate.bottom - 0.5) continue;
+      if (line.items.some(item => {
+        const center = item.x + item.width / 2;
+        return center >= candidate.x0 - 2 && center <= candidate.x1 + 2;
+      })) insideIndexes.push(index);
+    }
+    if (!insideIndexes.length || startIndex !== insideIndexes[0]) return null;
+
+    const boundaries = candidate.boundaries;
+    const columnCount = boundaries.length - 1;
+    const rows = [];
+
+    for (let rowIndex = 0; rowIndex < candidate.rules.length - 1; rowIndex++) {
+      const rowTop = candidate.rules[rowIndex].y;
+      const rowBottom = candidate.rules[rowIndex + 1].y;
+      if (rowBottom - rowTop < 5) continue;
+
+      const hasDivider = [];
+      for (let boundaryIndex = 1; boundaryIndex < columnCount; boundaryIndex++) {
+        hasDivider[boundaryIndex] = verticalRuleCovers(grid, boundaries[boundaryIndex], rowTop, rowBottom, 3);
+      }
+
+      const spans = [];
+      let column = 0;
+      while (column < columnCount) {
+        let span = 1;
+        while (column + span < columnCount && !hasDivider[column + span]) span++;
+        spans.push({
+          startColumn: column,
+          colSpan: span,
+          left: boundaries[column],
+          right: boundaries[column + span]
+        });
+        column += span;
+      }
+
+      const cells = spans.map(span => ({ ...span, fragments: [], text: "", centered: false }));
+      for (const line of lines) {
+        if (!line.items || !line.items.length) continue;
+        if (line.top < rowTop - 1.5 || line.top >= rowBottom - 0.5) continue;
+
+        for (const cell of cells) {
+          const items = line.items.filter(item => {
+            const center = item.x + item.width / 2;
+            return center >= cell.left - 1.5 && center < cell.right + 1.5;
+          });
+          if (!items.length) continue;
+          const fragment = {
+            items,
+            text: items.map(item => item.str).join(" "),
+            x: Math.min(...items.map(item => item.x)),
+            end: Math.max(...items.map(item => item.x + item.width)),
+            center: (cell.left + cell.right) / 2,
+            fontSize: line.fontSize,
+            lineTop: line.top,
+            height: line.height
+          };
+          cell.fragments.push(fragment);
+          cell.text = [cell.text, fragment.text].filter(Boolean).join(" ").trim();
+        }
+      }
+
+      if (!cells.some(cell => cell.fragments.length)) continue;
+      const fullWidthMerge = cells.length === 1 && cells[0].colSpan === columnCount;
+      const rowText = cells.map(cell => cell.text).join(" ").toLowerCase();
+      const isSummary = /\b(total amount|totalamount|total amount in words|total amount of|grand total|net total)\b/i.test(rowText);
+      const isHeader = rowIndex === 0;
+      const fontSizes = cells.flatMap(cell => cell.fragments.map(fragment => fragment.fontSize)).filter(Number.isFinite);
+      rows.push({
+        cells,
+        merged: fullWidthMerge,
+        centered: fullWidthMerge && cells[0].fragments.some(fragment => Math.abs(fragment.center - pageWidth / 2) < pageWidth * 0.2),
+        isHeader,
+        isSummary,
+        ruled: true,
+        line: {
+          fontSize: fontSizes.length ? fontSizes.reduce((sum, size) => sum + size, 0) / fontSizes.length : 10,
+          top: rowTop,
+          height: rowBottom - rowTop
+        }
+      });
+    }
+
+    if (rows.length < 2) return null;
+    return {
+      rows,
+      endIndex: Math.max(...insideIndexes) + 1,
+      columnCount,
+      columnStarts: boundaries.slice(0, -1),
+      columnCenters: boundaries.slice(0, -1).map((x, index) => (x + boundaries[index + 1]) / 2),
+      boundaries,
+      leftPoints: candidate.x0,
+      lastLine: lines[Math.max(...insideIndexes)]
+    };
+  }
+
   function detectTableAt(lines, startIndex, pageWidth, grid) {
     const region = [];
     let previous = null;
@@ -392,7 +575,7 @@
       children.push(new docx.TextRun({
         text: part.str,
         size: Math.round(clampFontSize(part.fontSize || fallbackFontSize) * 2),
-        font: { name: part.wordFont || "Arial" },
+        font: part.wordFont || "Arial",
         bold: fontStyle.bold || Boolean(forceBold),
         italics: fontStyle.italics
       }));
@@ -409,7 +592,7 @@
     }
 
     return new docx.Paragraph({
-      children: children.length ? children : [new docx.TextRun({ text: cellText, font: { name: "Arial" }, bold: Boolean(forceBold) })],
+      children: children.length ? children : [new docx.TextRun({ text: cellText, font: "Arial", bold: Boolean(forceBold) })],
       alignment,
       spacing: { before: 0, after: 0 }
     });
@@ -462,27 +645,20 @@
     };
 
     const tableRows = rows.map(row => {
-      if (row.merged) {
-        const cell = row.cells[0];
-        return new docx.TableRow({
-          children: [new docx.TableCell({
-            columnSpan: columnCount,
-            children: makeCellParagraphs(cell, row.line.fontSize, row.isHeader || row.isSummary || row.merged, 0, row.isHeader),
-            width: { size: totalWidth, type: widthType },
-            shading: { fill: "EAF2F8" },
-            margins: { top: 25, bottom: 25, left: 45, right: 45 }
-          })]
-        });
-      }
-
-      return new docx.TableRow({
-        children: row.cells.map((cell, column) => new docx.TableCell({
-          children: makeCellParagraphs(cell, row.line.fontSize, row.isHeader || row.isSummary || row.merged, column, row.isHeader),
-          width: { size: widths[column], type: widthType },
-          shading: row.isHeader || row.isSummary ? { fill: "EAF2F8" } : undefined,
+      const cells = row.cells.map((cell, cellIndex) => {
+        const startColumn = Number.isFinite(cell.startColumn) ? cell.startColumn : cellIndex;
+        const span = Math.max(1, Math.min(columnCount - startColumn, Number(cell.colSpan) || 1));
+        const cellWidth = widths.slice(startColumn, startColumn + span).reduce((sum, width) => sum + width, 0);
+        const options = {
+          children: makeCellParagraphs(cell, row.line.fontSize, row.isHeader || row.isSummary || row.merged, startColumn, row.isHeader),
+          width: { size: cellWidth, type: widthType },
+          shading: row.isHeader || row.isSummary || row.merged ? { fill: "EAF2F8" } : undefined,
           margins: { top: 25, bottom: 25, left: 45, right: 45 }
-        }))
+        };
+        if (span > 1) options.columnSpan = span;
+        return new docx.TableCell(options);
       });
+      return new docx.TableRow({ children: cells });
     });
 
     return new docx.Table({
@@ -540,7 +716,10 @@
         index++;
         continue;
       }
-      const table = detectTableAt(lines, index, metrics.width, grid);
+      const ruledTable = detectRuledTableAt(lines, index, metrics.width, grid);
+      const hasStrongRuledGrid = Boolean(grid && grid.verticals && grid.verticals.length >= 3 &&
+        grid.horizontals && grid.horizontals.length >= 3);
+      const table = ruledTable || (!hasStrongRuledGrid ? detectTableAt(lines, index, metrics.width, grid) : null);
       if (table) {
         children.push(createTable(table.rows, metrics.width, docx, table));
         previousLine = table.lastLine;
@@ -582,7 +761,7 @@
             runs.push(new docx.TextRun({ text: "\t" }));
             tabStops.push({
               type: docx.TabStopType ? docx.TabStopType.LEFT : "left",
-              position: Math.max(20, Math.round(part.x * 20))
+              position: Math.max(20, Math.round((part.x - leftX) * 20))
             });
           } else if (gap > Math.max(1.2, line.fontSize * 0.18)) {
             runs.push(new docx.TextRun({ text: " " }));
@@ -1041,6 +1220,38 @@
     };
   }
 
+  async function createVerticalRuleImage(x, y, height, scale) {
+    const canvas = document.createElement("canvas");
+    const pixelWidth = Math.max(3, Math.round(scale));
+    const pixelHeight = Math.max(1, Math.ceil(height * scale));
+    canvas.width = pixelWidth;
+    canvas.height = pixelHeight;
+    const context = canvas.getContext("2d", { alpha: true });
+    if (!context) return null;
+    context.clearRect(0, 0, pixelWidth, pixelHeight);
+    context.fillStyle = "#000000";
+    context.fillRect(Math.floor(pixelWidth / 2), 0, Math.max(1, Math.ceil(scale * 0.45)), pixelHeight);
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+    if (!blob) return null;
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+    canvas.width = 1;
+    canvas.height = 1;
+    return {
+      bytes,
+      x,
+      y,
+      pageY: y,
+      width: 0.8 * (96 / 72),
+      height: height * (96 / 72),
+      widthPx: 0.8 * (96 / 72),
+      heightPx: height * (96 / 72),
+      widthPoints: 0.8,
+      heightPoints: height,
+      native: true,
+      decorLine: true
+    };
+  }
+
   async function detectBarcodeImage(canvas, metrics, scale, sourceLines) {
     const contact = (sourceLines || []).find(line => /contact\s*no/i.test(line.text || ""));
     if (!contact) return null;
@@ -1172,6 +1383,19 @@
         footer = renderedFooter;
       }
       const grid = detectRasterGrid(canvas, metrics, scale);
+      const tableTop = grid.horizontals.length
+        ? Math.min(...grid.horizontals.filter(rule => rule.x1 - rule.x0 >= metrics.width * 0.52).map(rule => rule.y))
+        : metrics.height;
+      const dividerImages = [];
+      for (const vertical of grid.verticals || []) {
+        if (vertical.x < metrics.width * 0.25 || vertical.x > metrics.width * 0.75) continue;
+        for (const segment of vertical.segments || []) {
+          const length = segment.bottom - segment.top;
+          if (length < 35 || segment.top < HEADER_BAND_POINTS + 8 || segment.bottom > tableTop - 8) continue;
+          const rule = await createVerticalRuleImage(vertical.x, segment.top, length, scale);
+          if (rule) dividerImages.push(rule);
+        }
+      }
       const barcode = await detectBarcodeImage(canvas, metrics, scale, sourceLines);
       const contactLine = (sourceLines || []).find(line => /contact\s*no/i.test(line.text || ""));
       const hasNativeBarcode = Boolean(contactLine && (nativeArtwork.images || []).some(image =>
@@ -1184,7 +1408,7 @@
         header,
         footer,
         footerText,
-        pageImages: nativeArtwork.images || [],
+        pageImages: [...(nativeArtwork.images || []), ...dividerImages],
         grid: shiftGridY(grid, header ? HEADER_BAND_POINTS : 0),
         barcode: hasNativeBarcode ? null : (barcode ? { ...barcode, pageY: barcode.y, y: barcode.y - (header ? HEADER_BAND_POINTS : 0) } : null)
       };
