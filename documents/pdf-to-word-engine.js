@@ -172,9 +172,7 @@
     return cells;
   }
 
-  function detectTableAt(lines, startIndex, pageWidth) {
-    // Treat nearby text lines as one layout region. This permits wrapped
-    // headers, wrapped descriptions and blank cells within tables.
+  function detectTableAt(lines, startIndex, pageWidth, grid) {
     const region = [];
     let previous = null;
     for (let index = startIndex; index < lines.length; index++) {
@@ -183,11 +181,8 @@
       region.push({ line, cells: splitLineIntoCells(line) });
       previous = line;
     }
-
     if (region.length < 2) return null;
 
-    // Build visual rows first. A table header is often spread across multiple
-    // baselines (for example, "Total" on one line and "Amount" below it).
     const rowGroups = [];
     for (const entry of region) {
       const current = rowGroups[rowGroups.length - 1];
@@ -201,44 +196,85 @@
     const multiCellLines = region.filter(entry => entry.cells.length >= 2).length;
     const maxLineColumns = Math.max(0, ...region.map(entry => entry.cells.length));
     if (multiCellLines < 2) return null;
-
-    // Short two-column forms are valid tables, but a longer text block whose
-    // inferred anchors drift across the page should remain ordinary paragraphs.
     if (maxLineColumns < 3 && region.length > 3) return null;
 
-    // Choose the visual row with the most text fragments as the column
-    // reference; merge fragments on the same horizontal column across wrapped
-    // header baselines to recover columns even when no one baseline has them all.
-    const anchorGroup = rowGroups.reduce((best, group) => {
-      const score = group.reduce((sum, entry) => sum + entry.cells.length, 0);
-      const bestScore = best.reduce((sum, entry) => sum + entry.cells.length, 0);
-      return score > bestScore ? group : best;
-    }, rowGroups[0]);
-    const anchorPool = anchorGroup.flatMap(entry => entry.cells)
-      .sort((a, b) => a.center - b.center);
-    const clusters = [];
-    for (const cell of anchorPool) {
-      let nearest = null;
-      let nearestDistance = Infinity;
-      for (const cluster of clusters) {
-        const distance = Math.abs(cluster.center - cell.center);
-        if (distance < nearestDistance) {
-          nearest = cluster;
-          nearestDistance = distance;
-        }
+    const regionTop = region[0].line.top - 7;
+    const regionBottom = region[region.length - 1].line.top +
+      (region[region.length - 1].line.height || region[region.length - 1].line.fontSize || 10) + 7;
+
+    // Prefer the real ruled geometry detected from page pixels. This is much
+    // more reliable than inferring columns from text start positions: right-
+    // aligned numbers and wrapped headings often begin away from their border.
+    let boundaries = [];
+    if (grid && Array.isArray(grid.verticals)) {
+      const active = grid.verticals
+        .filter(line => (line.segments || []).some(segment =>
+          segment.bottom >= regionTop && segment.top <= regionBottom &&
+          segment.bottom - segment.top >= 10
+        ))
+        .map(line => line.x)
+        .sort((a, b) => a - b);
+      for (const x of active) {
+        if (!boundaries.length || x - boundaries[boundaries.length - 1] > 2.5) boundaries.push(x);
       }
-      if (nearest && nearestDistance <= 24) {
-        nearest.count += 1;
-        nearest.center += (cell.center - nearest.center) / nearest.count;
-        nearest.start += (cell.x - nearest.start) / nearest.count;
-      } else {
-        clusters.push({ center: cell.center, start: cell.x, count: 1 });
+
+      const supportingRules = (grid.horizontals || []).filter(line =>
+        line.y >= regionTop - 5 &&
+        line.y <= regionBottom + 5 &&
+        line.x1 - line.x0 >= pageWidth * 0.4
+      );
+      if (boundaries.length < 3 || boundaries.length > 13 || supportingRules.length < 2) {
+        boundaries = [];
       }
     }
-    clusters.sort((a, b) => a.center - b.center);
-    const columnCenters = clusters.map(cluster => cluster.center);
-    const columnStarts = clusters.map(cluster => cluster.start);
-    const columnCount = columnCenters.length;
+
+    let columnCenters;
+    let columnStarts;
+    let columnCount;
+    let leftPoints;
+    let useGridBoundaries = boundaries.length >= 3;
+
+    if (useGridBoundaries) {
+      columnStarts = boundaries;
+      columnCount = boundaries.length - 1;
+      columnCenters = boundaries.slice(0, -1).map((x, i) => (x + boundaries[i + 1]) / 2);
+      leftPoints = boundaries[0];
+    } else {
+      const anchorGroup = rowGroups.reduce((best, group) => {
+        const score = group.reduce((sum, entry) => sum + entry.cells.length, 0);
+        const bestScore = best.reduce((sum, entry) => sum + entry.cells.length, 0);
+        return score > bestScore ? group : best;
+      }, rowGroups[0]);
+      const anchorPool = anchorGroup.flatMap(entry => entry.cells)
+        .sort((a, b) => a.center - b.center);
+      const clusters = [];
+      for (const cell of anchorPool) {
+        let nearest = null;
+        let nearestDistance = Infinity;
+        for (const cluster of clusters) {
+          const distance = Math.abs(cluster.center - cell.center);
+          if (distance < nearestDistance) {
+            nearest = cluster;
+            nearestDistance = distance;
+          }
+        }
+        if (nearest && nearestDistance <= 24) {
+          nearest.count += 1;
+          nearest.center += (cell.center - nearest.center) / nearest.count;
+          nearest.start += (cell.x - nearest.start) / nearest.count;
+        } else {
+          clusters.push({ center: cell.center, start: cell.x, count: 1 });
+        }
+      }
+      clusters.sort((a, b) => a.center - b.center);
+      columnCenters = clusters.map(cluster => cluster.center);
+      columnStarts = clusters.map(cluster => cluster.start);
+      columnCount = columnCenters.length;
+      const allXs = region.flatMap(entry => (entry.line.items || []).map(item => item.x)).filter(Number.isFinite);
+      if (!allXs.length) return null;
+      leftPoints = Math.max(0, Math.min(pageWidth - 30, Math.min(...allXs)));
+    }
+
     if (columnCount < 2 || columnCount > 12) return null;
 
     const rows = rowGroups.map(group => {
@@ -258,11 +294,18 @@
       } else {
         for (const entry of group) {
           for (const cell of entry.cells) {
-            const column = columnCenters.reduce((bestIndex, center, index) =>
-              Math.abs(cell.center - center) < Math.abs(cell.center - columnCenters[bestIndex])
-                ? index
-                : bestIndex
-            , 0);
+            const center = cell.center;
+            const column = useGridBoundaries
+              ? Math.max(0, Math.min(columnCount - 1,
+                  columnStarts.findIndex((x, index) => index < columnCount && center >= x && center < columnStarts[index + 1]) < 0
+                    ? (center < columnStarts[0] ? 0 : columnCount - 1)
+                    : columnStarts.findIndex((x, index) => index < columnCount && center >= x && center < columnStarts[index + 1])
+                ))
+              : columnCenters.reduce((bestIndex, centerX, index) =>
+                  Math.abs(center - centerX) < Math.abs(center - columnCenters[bestIndex])
+                    ? index
+                    : bestIndex
+                , 0);
             cells[column].fragments.push(cell);
             cells[column].text = [cells[column].text, cell.text].filter(Boolean).join(" ").trim();
           }
@@ -271,12 +314,14 @@
 
       const rowText = cells.map(cell => cell.text).join(" ").toLowerCase();
       const isHeader = /description/.test(rowText) && /code/.test(rowText);
+      const isSummary = /\b(accounting profit|total assets|total equity|total income|taxable income|total income|net assets current year|unreconciled amount|income\s*\/\s*\(loss\)\s*from business)\b/i.test(rowText);
       const firstFragment = fragments[0];
       return {
         cells,
         merged: isMerged,
         centered: Boolean(isMerged && firstFragment && firstFragment.x > pageWidth * 0.28),
         isHeader,
+        isSummary,
         line: {
           fontSize: group.reduce((sum, entry) => sum + entry.line.fontSize, 0) / group.length,
           top: group[0].line.top,
@@ -286,16 +331,13 @@
     }).filter(row => row.cells.some(cell => cell.fragments.length));
 
     if (rows.length < 2) return null;
-    const allXs = region.flatMap(entry => (entry.line.items || []).map(item => item.x)).filter(Number.isFinite);
-    if (!allXs.length) return null;
-    const leftPoints = Math.max(0, Math.min(pageWidth - 30, Math.min(...allXs)));
-
     return {
       rows,
       endIndex: startIndex + region.length,
       columnCount,
       columnStarts,
       columnCenters,
+      boundaries: useGridBoundaries ? boundaries : null,
       leftPoints,
       lastLine: region[region.length - 1].line
     };
@@ -334,7 +376,11 @@
     const starts = tableInfo.columnStarts;
     let widthsPoints = [];
 
-    if (columnCount === 2) {
+    if (tableInfo.boundaries && tableInfo.boundaries.length === columnCount + 1) {
+      widthsPoints = tableInfo.boundaries.slice(0, -1).map((left, index) =>
+        Math.max(18, tableInfo.boundaries[index + 1] - left)
+      );
+    } else if (columnCount === 2) {
       const firstWidth = Math.max(60, Math.min(availableWidth - 40, starts[1] - leftPoints - 5));
       widthsPoints = [firstWidth, availableWidth - firstWidth];
     } else if (columnCount >= 4) {
@@ -356,7 +402,7 @@
     const widths = widthsPoints.map(width => Math.max(360, Math.round(width * 20)));
     const totalWidth = widths.reduce((sum, width) => sum + width, 0);
     const widthType = docx.WidthType ? docx.WidthType.DXA : "dxa";
-    const edge = { style: docx.BorderStyle ? docx.BorderStyle.SINGLE : "single", size: 2, color: "D7E2DE", space: 0 };
+    const edge = { style: docx.BorderStyle ? docx.BorderStyle.SINGLE : "single", size: 2, color: "444444", space: 0 };
 
     const makeCellParagraphs = (cell, fallbackFontSize) => {
       const fragments = cell && cell.fragments ? cell.fragments : [];
@@ -406,12 +452,12 @@
     });
   }
 
-  function createEditableChildren(lines, metrics, docx) {
+  function createEditableChildren(lines, metrics, docx, grid) {
     const children = [];
     let previousLine = null;
     let index = 0;
     while (index < lines.length) {
-      const table = detectTableAt(lines, index, metrics.width);
+      const table = detectTableAt(lines, index, metrics.width, grid);
       if (table) {
         children.push(createTable(table.rows, metrics.width, docx, table));
         previousLine = table.lastLine;
@@ -982,9 +1028,10 @@
           report(onProgress, 5 + ((index - 1) / pdf.numPages) * 85, "Rebuilding editable content…", "Analyzing page " + index + " of " + pdf.numPages + ".");
           const page = await pdf.getPage(index);
           const metrics = pageMetrics(page);
-          const pageBands = await renderPageBands(page, metrics);
           const content = await page.getTextContent();
-          let lines = groupTextLines(content.items, metrics);
+          const sourceLines = groupTextLines(content.items, metrics);
+          const pageBands = await renderPageBands(page, metrics, sourceLines);
+          let lines = sourceLines;
           // Remove text already visible in header/footer artwork and preserve
           // the remaining layout relative to the body below the page header.
           if (pageBands.footer) {
