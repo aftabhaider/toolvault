@@ -164,10 +164,15 @@ function waitForController(timeoutMs){
 }
 async function registerLocalAssetCache(){
   if(!("serviceWorker" in navigator)) return false;
-  // If this page is already controlled by the offline worker, don't try to
-  // update/re-register it on every visit; this allows offline reopening.
-  if(navigator.serviceWorker.controller) return true;
   try{
+    // Register/check for updates even if an older offline worker already
+    // controls this page. Otherwise it can keep serving stale converter code.
+    const existing=await navigator.serviceWorker.getRegistration("/documents/");
+    if(existing&&navigator.onLine){
+      try{await existing.update();}catch(updateError){
+        console.warn("ToolVault offline cache update check failed.",updateError);
+      }
+    }
     await navigator.serviceWorker.register("/documents/pdf-to-word-sw.js",{scope:"/documents/"});
     await navigator.serviceWorker.ready;
     return await waitForController(10000);
