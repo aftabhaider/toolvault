@@ -4,7 +4,7 @@
  */
 "use strict";
 
-const CACHE_NAME = "toolvault-pdf-word-v4";
+const CACHE_NAME = "toolvault-pdf-word-v5";
 const PREFIX = "toolvault-pdf-word-";
 const SHELL = [
   "/documents/pdf-to-word",
@@ -68,8 +68,19 @@ async function fetchAndCacheRemote(path) {
       cache: "default"
     });
     if (!response || !response.ok) return false;
+    // Rebuild the cross-origin response as a normal Response. The app and
+    // Worker scripts request same-origin URLs; a basic same-origin response
+    // avoids opaque/CORS response-type mismatches for classic scripts/workers.
+    const contentType = response.headers.get("content-type") || "application/octet-stream";
+    const localResponse = new Response(await response.arrayBuffer(), {
+      status: 200,
+      headers: {
+        "Content-Type": contentType,
+        "Cache-Control": "public, max-age=31536000"
+      }
+    });
     const cache = await caches.open(CACHE_NAME);
-    await cache.put(localUrl, response.clone());
+    await cache.put(localUrl, localResponse.clone());
     return true;
   } catch (_) {
     return false;
