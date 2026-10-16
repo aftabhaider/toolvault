@@ -295,17 +295,19 @@
         for (const entry of group) {
           for (const cell of entry.cells) {
             const center = cell.center;
-            const column = useGridBoundaries
-              ? Math.max(0, Math.min(columnCount - 1,
-                  columnStarts.findIndex((x, index) => index < columnCount && center >= x && center < columnStarts[index + 1]) < 0
-                    ? (center < columnStarts[0] ? 0 : columnCount - 1)
-                    : columnStarts.findIndex((x, index) => index < columnCount && center >= x && center < columnStarts[index + 1])
-                ))
-              : columnCenters.reduce((bestIndex, centerX, index) =>
-                  Math.abs(center - centerX) < Math.abs(center - columnCenters[bestIndex])
-                    ? index
-                    : bestIndex
-                , 0);
+            let column = 0;
+            if (useGridBoundaries) {
+              column = columnStarts.findIndex((left, columnIndex) =>
+                columnIndex < columnCount && center >= left && center < columnStarts[columnIndex + 1]
+              );
+              if (column < 0) column = center < columnStarts[0] ? 0 : columnCount - 1;
+            } else {
+              column = columnCenters.reduce((bestIndex, centerX, columnIndex) =>
+                Math.abs(center - centerX) < Math.abs(center - columnCenters[bestIndex])
+                  ? columnIndex
+                  : bestIndex
+              , 0);
+            }
             cells[column].fragments.push(cell);
             cells[column].text = [cells[column].text, cell.text].filter(Boolean).join(" ").trim();
           }
@@ -1060,10 +1062,24 @@
     }
 
     try {
+      const nativeArtwork = await findNativePageArtwork(page, metrics, window.pdfjsLib);
+      for (const artwork of [nativeArtwork.header, nativeArtwork.footer]) {
+        if (!artwork) continue;
+        try {
+          const bitmap = await createImageBitmap(new Blob([artwork.bytes], { type: "image/png" }));
+          context.drawImage(
+            bitmap,
+            Math.round(artwork.x * scale),
+            Math.round(artwork.y * scale),
+            Math.round(artwork.widthPoints * scale),
+            Math.round(artwork.heightPoints * scale)
+          );
+          bitmap.close();
+        } catch (_) {}
+      }
       const renderedHeader = await cropBand(0, Math.min(HEADER_BAND_POINTS, metrics.height * 0.25));
       const footerHeight = Math.min(FOOTER_BAND_POINTS, metrics.height * 0.2);
       const renderedFooter = await cropBand(Math.max(0, metrics.height - footerHeight), footerHeight);
-      const nativeArtwork = await findNativePageArtwork(page, metrics, window.pdfjsLib);
       const header = nativeArtwork.header || renderedHeader;
       const footer = renderedFooter;
       const grid = detectRasterGrid(canvas, metrics, scale);
