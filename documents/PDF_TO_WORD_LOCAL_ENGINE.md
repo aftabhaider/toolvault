@@ -28,10 +28,10 @@ The cache fetches the pinned public library builds on first setup and serves the
 
 - Maximum input: 60 MB.
 - Maximum pages: 150.
-- Editable mode reconstructs text lines from PDF text items and estimates spacing and horizontal positions.
+- Editable mode reconstructs text lines from PDF text items, estimates spacing/horizontal positions, and conservatively detects repeated aligned rows that may be rebuilt as editable Word tables.
 - Visual mode embeds each rendered PDF page as an image in the DOCX. This preserves appearance more closely but the underlying page text is not individually editable.
 - OCR currently uses English and is optional. It can misread names, dates, decimal points, amounts, or technical terms.
-- The editable engine is heuristic, not a full fidelity PDF layout engine. Complex tables, multiple columns, rotated text, images, forms, headers/footers, unusual fonts, right-to-left scripts, and mixed page sizes can need correction.
+- The editable engine is heuristic, not a full fidelity PDF layout engine. Its initial table detector only handles clear repeated rows with aligned text positions; complex tables, multi-column article reading order, rotated text, images, forms, headers/footers, unusual fonts, right-to-left scripts, and mixed page sizes can need correction.
 - Large inputs and OCR can use substantial browser CPU and memory.
 
 ## Why the server sleeping issue is addressed
@@ -66,7 +66,7 @@ This is engineering documentation, not legal advice.
 ## Next engineering stages
 
 1. Test the first-install/offline loop in a real browser and resolve any service-worker/cache quirks.
-2. Test representative PDFs and improve text reading order, indentation, paragraph grouping, and table reconstruction.
+2. Test representative PDFs and improve text reading order, indentation, paragraph grouping, table detection, and image reconstruction.
 3. Add multilingual OCR only after testing language assets and reading direction.
 4. For strict offline or packaged distribution, vendor pinned dependencies on the same origin with license notices rather than fetching CDNs during installation.
 5. Only reintroduce a backend for document types that need better reconstruction than the browser engine can provide.
