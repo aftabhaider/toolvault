@@ -182,7 +182,7 @@
         script.crossOrigin = "anonymous";
         script.dataset.toolvaultTesseract = "true";
         script.onload = () => window.Tesseract ? resolve(window.Tesseract) : reject(new Error("The OCR library loaded, but its API was not available."));
-        script.onerror = () => reject(new Error("Could not load the browser OCR library. Check your connection and try again."));
+        script.onerror = () => { script.remove(); ocrScriptPromise = null; reject(new Error("Could not load the browser OCR library. Check your connection and try again.")); };
         document.head.appendChild(script);
       });
     }
@@ -369,8 +369,9 @@
       }
 
       if (!sections.length) throw new Error("No pages could be converted.");
-      if (mode !== "visual" && outputCharCount === 0 && !useOcr) {
-        throw new Error("This PDF appears to contain scanned images rather than selectable text. Enable the optional browser OCR checkbox and try again.");
+      if (mode !== "visual" && outputCharCount === 0) {
+        if (!useOcr) throw new Error("This PDF appears to contain scanned images rather than selectable text. Enable the optional browser OCR checkbox and try again.");
+        throw new Error("The OCR engine could not recognize usable text in this PDF. Try a clearer scan or a selectable-text PDF.");
       }
 
       report(onProgress, 94, "Building Word document…", "Packaging the converted pages into an editable DOCX.");
