@@ -566,7 +566,214 @@
   const HEADER_BAND_POINTS = 108;
   const FOOTER_BAND_POINTS = 73;
 
-  async function renderPageBands(page, metrics) {
+  function detectRasterGrid(canvas, metrics, scale) {
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx) return { verticals: [], horizontals: [] };
+    const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = image.data;
+    const width = canvas.width;
+    const height = canvas.height;
+    const yMin = Math.max(0, Math.round((HEADER_BAND_POINTS - 12) * scale));
+    const yMax = Math.min(height, Math.round((metrics.height - FOOTER_BAND_POINTS) * scale));
+    const xMin = Math.max(0, Math.round(8 * scale));
+    const xMax = Math.min(width, Math.round((metrics.width - 8) * scale));
+    const darkAt = (x, y) => {
+      const offset = (y * width + x) * 4;
+      return data[offset] < 135 && data[offset + 1] < 135 && data[offset + 2] < 135;
+    };
+
+    // Long horizontal strokes are table rules, while ordinary text contains
+    // shorter separated runs. Scan by row and keep only page-spanning rules.
+    const horizontalRows = [];
+    const minimumHorizontalRun = Math.round(width * 0.52);
+    for (let y = yMin; y < yMax; y++) {
+      let run = 0;
+      let best = 0;
+      let bestStart = 0;
+      for (let x = xMin; x < xMax; x++) {
+        if (darkAt(x, y)) {
+          if (run === 0) bestStart = x;
+          run++;
+          if (run > best) best = run;
+        } else {
+          run = 0;
+        }
+      }
+      if (best >= minimumHorizontalRun) {
+        horizontalRows.push({
+          y: y / scale,
+          x0: bestStart / scale,
+          x1: Math.min(xMax, bestStart + best) / scale
+        });
+      }
+    }
+
+    const horizontals = [];
+    for (const row of horizontalRows) {
+      const last = horizontals[horizontals.length - 1];
+      if (last && row.y - last._lastY <= 2 / scale) {
+        last.y = (last.y * last.count + row.y) / (last.count + 1);
+        last.x0 = Math.min(last.x0, row.x0);
+        last.x1 = Math.max(last.x1, row.x1);
+        last.count++;
+        last._lastY = row.y;
+      } else {
+        horizontals.push({ ...row, count: 1, _lastY: row.y });
+      }
+    }
+    for (const line of horizontals) {
+      delete line.count;
+      delete line._lastY;
+    }
+
+    // Table border rules are vertically continuous through multiple cells.
+    // Keep their actual spans so barcode bars or letter stems elsewhere on
+    // the page cannot be mistaken for column boundaries.
+    const verticalCandidates = [];
+    const minimumVerticalRun = Math.round(scale * 10.5);
+    for (let x = xMin; x < xMax; x++) {
+      const segments = [];
+      let start = -1;
+      for (let y = yMin; y <= yMax; y++) {
+        const dark = y < yMax && darkAt(x, y);
+        if (dark && start < 0) start = y;
+        if ((!dark || y === yMax) && start >= 0) {
+          const end = y - 1;
+          if (end - start + 1 >= minimumVerticalRun) {
+            segments.push({ top: start / scale, bottom: (end + 1) / scale });
+          }
+          start = -1;
+        }
+      }
+      if (segments.length) verticalCandidates.push({ x: x / scale, segments });
+    }
+
+    const verticals = [];
+    for (const candidate of verticalCandidates) {
+      const last = verticals[verticals.length - 1];
+      const overlapsSameRule = last && candidate.x - last._lastX <= 1.25 &&
+        candidate.segments.some(segment => last.segments.some(existing =>
+          Math.abs(existing.top - segment.top) <= 1.5 &&
+          Math.abs(existing.bottom - segment.bottom) <= 1.5
+        ));
+      if (overlapsSameRule) {
+        last.x = (last.x * last.count + candidate.x) / (last.count + 1);
+        last.count++;
+        last._lastX = candidate.x;
+        for (const segment of candidate.segments) {
+          const existing = last.segments.find(item =>
+            Math.abs(item.top - segment.top) <= 1.5 &&
+            Math.abs(item.bottom - segment.bottom) <= 1.5
+          );
+          if (existing) {
+            existing.top = (existing.top * existing.count + segment.top) / (existing.count + 1);
+            existing.bottom = (existing.bottom * existing.count + segment.bottom) / (existing.count + 1);
+            existing.count++;
+          } else {
+            last.segments.push({ ...segment, count: 1 });
+          }
+        }
+      } else {
+        verticals.push({
+          x: candidate.x,
+          segments: candidate.segments.map(segment => ({ ...segment, count: 1 })),
+          count: 1,
+          _lastX: candidate.x
+        });
+      }
+    }
+    for (const line of verticals) {
+      line.segments = line.segments.map(({ top, bottom }) => ({ top, bottom }));
+      delete line.count;
+      delete line._lastX;
+    }
+
+    return { verticals, horizontals };
+  }
+
+  function shiftGridY(grid, offset) {
+    if (!grid || !offset) return grid;
+    return {
+      verticals: (grid.verticals || []).map(line => ({
+        ...line,
+        segments: line.segments.map(segment => ({
+          top: segment.top - offset,
+          bottom: segment.bottom - offset
+        }))
+      })),
+      horizontals: (grid.horizontals || []).map(line => ({ ...line, y: line.y - offset }))
+    };
+  }
+
+  async function cropCanvasRegion(canvas, scale, x, y, width, height) {
+    const left = Math.max(0, Math.round(x * scale));
+    const top = Math.max(0, Math.round(y * scale));
+    const pixelWidth = Math.min(canvas.width - left, Math.max(1, Math.round(width * scale)));
+    const pixelHeight = Math.min(canvas.height - top, Math.max(1, Math.round(height * scale)));
+    if (pixelWidth < 1 || pixelHeight < 1) return null;
+    const crop = document.createElement("canvas");
+    crop.width = pixelWidth;
+    crop.height = pixelHeight;
+    const ctx = crop.getContext("2d", { alpha: false });
+    if (!ctx) return null;
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, pixelWidth, pixelHeight);
+    ctx.drawImage(canvas, left, top, pixelWidth, pixelHeight, 0, 0, pixelWidth, pixelHeight);
+    const blob = await new Promise((resolve, reject) => {
+      crop.toBlob(value => value ? resolve(value) : reject(new Error("Could not prepare a document image.")), "image/png");
+    });
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+    crop.width = 1;
+    crop.height = 1;
+    return {
+      bytes,
+      x,
+      y,
+      width,
+      height,
+      widthPx: width * (96 / 72),
+      heightPx: height * (96 / 72)
+    };
+  }
+
+  async function detectBarcodeImage(canvas, metrics, scale, sourceLines) {
+    const contact = (sourceLines || []).find(line => /contact\s*no/i.test(line.text || ""));
+    if (!contact) return null;
+
+    const x = Math.max(0, contact.left + 34);
+    const y = Math.max(0, contact.top + 14);
+    const width = Math.min(150, metrics.width * 0.45 - x);
+    const height = Math.min(38, metrics.height - FOOTER_BAND_POINTS - y);
+    if (width < 40 || height < 15) return null;
+
+    const imageData = canvas.getContext("2d", { willReadFrequently: true })
+      .getImageData(Math.round(x * scale), Math.round(y * scale), Math.round(width * scale), Math.round(height * scale));
+    const cw = Math.round(width * scale);
+    const ch = Math.round(height * scale);
+    let columnsWithTallDarkRun = 0;
+    for (let px = 0; px < cw; px++) {
+      let run = 0;
+      let longest = 0;
+      for (let py = 0; py < ch; py++) {
+        const offset = (py * cw + px) * 4;
+        const dark = imageData.data[offset] < 90 &&
+          imageData.data[offset + 1] < 90 &&
+          imageData.data[offset + 2] < 90;
+        if (dark) {
+          run++;
+          longest = Math.max(longest, run);
+        } else {
+          run = 0;
+        }
+      }
+      if (longest >= scale * 10) columnsWithTallDarkRun++;
+    }
+    if (columnsWithTallDarkRun < Math.max(12, cw * 0.04)) return null;
+    // Crop from just above the bars through the numeric caption beneath them.
+    return cropCanvasRegion(canvas, scale, x, y, width, height);
+  }
+
+  async function renderPageBands(page, metrics, sourceLines) {
     // Preserve form logos and footer artwork while reconstructing editable body text.
     const scale = 3;
     const viewport = page.getViewport({ scale });
@@ -620,7 +827,14 @@
       const header = await cropBand(0, Math.min(HEADER_BAND_POINTS, metrics.height * 0.25));
       const footerHeight = Math.min(FOOTER_BAND_POINTS, metrics.height * 0.2);
       const footer = await cropBand(Math.max(0, metrics.height - footerHeight), footerHeight);
-      return { header, footer };
+      const grid = detectRasterGrid(canvas, metrics, scale);
+      const barcode = await detectBarcodeImage(canvas, metrics, scale, sourceLines);
+      return {
+        header,
+        footer,
+        grid: shiftGridY(grid, header ? HEADER_BAND_POINTS : 0),
+        barcode: barcode ? { ...barcode, y: barcode.y - (header ? HEADER_BAND_POINTS : 0) } : null
+      };
     } finally {
       canvas.width = 1;
       canvas.height = 1;
