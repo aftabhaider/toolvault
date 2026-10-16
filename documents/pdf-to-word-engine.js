@@ -1424,6 +1424,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.2.0-local"
+    version: "2.3.0-local"
   };
 })();
