@@ -524,6 +524,100 @@
     return lines;
   }
 
+  const HEADER_BAND_POINTS = 108;
+  const FOOTER_BAND_POINTS = 73;
+
+  async function renderPageBands(page, metrics) {
+    // Preserve form logos and footer artwork while reconstructing editable body text.
+    const scale = 1.5;
+    const viewport = page.getViewport({ scale });
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.ceil(viewport.width));
+    canvas.height = Math.max(1, Math.ceil(viewport.height));
+    const context = canvas.getContext("2d", { alpha: false, willReadFrequently: true });
+    if (!context) return { header: null, footer: null };
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    await page.render({ canvasContext: context, viewport, background: "#ffffff" }).promise;
+
+    const scaleY = viewport.height / metrics.height;
+
+    async function cropBand(yPoints, heightPoints) {
+      const top = Math.max(0, Math.min(canvas.height - 1, Math.round(yPoints * scaleY)));
+      const height = Math.max(1, Math.min(canvas.height - top, Math.round(heightPoints * scaleY)));
+      const band = document.createElement("canvas");
+      band.width = canvas.width;
+      band.height = height;
+      const bandContext = band.getContext("2d", { alpha: false, willReadFrequently: true });
+      if (!bandContext) return null;
+      bandContext.fillStyle = "#ffffff";
+      bandContext.fillRect(0, 0, band.width, band.height);
+      bandContext.drawImage(canvas, 0, top, canvas.width, height, 0, 0, band.width, height);
+
+      const pixels = bandContext.getImageData(0, 0, band.width, band.height).data;
+      let inspected = 0;
+      let nonWhite = 0;
+      const stride = 4 * 12;
+      for (let i = 0; i < pixels.length; i += stride) {
+        inspected++;
+        if (pixels[i] < 242 || pixels[i + 1] < 242 || pixels[i + 2] < 242) nonWhite++;
+      }
+      if (!inspected || nonWhite / inspected < 0.003) {
+        band.width = 1;
+        band.height = 1;
+        return null;
+      }
+
+      const blob = await new Promise((resolve, reject) => {
+        band.toBlob(value => value ? resolve(value) : reject(new Error("Could not prepare a page header or footer image.")), "image/png");
+      });
+      const bytes = new Uint8Array(await blob.arrayBuffer());
+      band.width = 1;
+      band.height = 1;
+      return { bytes, width: metrics.width, height: height / scaleY };
+    }
+
+    try {
+      const header = await cropBand(0, Math.min(HEADER_BAND_POINTS, metrics.height * 0.25));
+      const footerHeight = Math.min(FOOTER_BAND_POINTS, metrics.height * 0.2);
+      const footer = await cropBand(Math.max(0, metrics.height - footerHeight), footerHeight);
+      return { header, footer };
+    } finally {
+      canvas.width = 1;
+      canvas.height = 1;
+    }
+  }
+
+  function makeBandHeader(band, docx) {
+    if (!band) return undefined;
+    return new docx.Header({
+      children: [new docx.Paragraph({
+        children: [new docx.ImageRun({
+          data: band.bytes,
+          type: "png",
+          transformation: { width: band.width, height: band.height }
+        })],
+        spacing: { before: 0, after: 0 },
+        indent: { left: 0 }
+      })]
+    });
+  }
+
+  function makeBandFooter(band, docx) {
+    if (!band) return undefined;
+    return new docx.Footer({
+      children: [new docx.Paragraph({
+        children: [new docx.ImageRun({
+          data: band.bytes,
+          type: "png",
+          transformation: { width: band.width, height: band.height }
+        })],
+        spacing: { before: 0, after: 0 },
+        indent: { left: 0 }
+      })]
+    });
+  }
+
   async function convert(options) {
     const file = options && options.file;
     const mode = options && options.mode || "editable";
@@ -635,8 +729,16 @@
           report(onProgress, 5 + ((index - 1) / pdf.numPages) * 85, "Rebuilding editable content…", "Analyzing page " + index + " of " + pdf.numPages + ".");
           const page = await pdf.getPage(index);
           const metrics = pageMetrics(page);
+          const pageBands = await renderPageBands(page, metrics);
           const content = await page.getTextContent();
           let lines = groupTextLines(content.items, metrics);
+          // Keep logo/header/footer artwork as images, while leaving body text editable.
+          if (pageBands.header) {
+            lines = lines.filter(line => line.top >= HEADER_BAND_POINTS - 1);
+          }
+          if (pageBands.footer) {
+            lines = lines.filter(line => line.top < metrics.height - FOOTER_BAND_POINTS);
+          }
           const pageChars = lines.reduce((sum, line) => sum + line.text.replace(/\s/g, "").length, 0);
           const needsOcr = lines.length === 0 || pageChars < 8;
 
@@ -664,6 +766,8 @@
             ? lines.map((line, lineIndex) => createLineParagraph(line, lineIndex ? lines[lineIndex - 1] : null, docx, metrics.height, !line.items || !line.items.length))
             : createEditableChildren(lines, metrics, docx);
 
+          const sectionHeaders = pageBands.header ? { default: makeBandHeader(pageBands.header, docx) } : undefined;
+          const sectionFooters = pageBands.footer ? { default: makeBandFooter(pageBands.footer, docx) } : undefined;
           sections.push({
             properties: {
               page: {
@@ -671,6 +775,8 @@
                 margin: { top: 0, right: 0, bottom: 0, left: 0, header: 0, footer: 0 }
               }
             },
+            headers: sectionHeaders,
+            footers: sectionFooters,
             children: children
           });
           page.cleanup();
