@@ -1247,8 +1247,21 @@
             lines = lines.filter(line => line.top < metrics.height - FOOTER_BAND_POINTS);
           }
           if (pageBands.header) {
+            const headerTextCutoff = pageBands.header.native
+              ? pageBands.header.y + pageBands.header.heightPoints
+              : HEADER_BAND_POINTS - 1;
             lines = lines
-              .filter(line => line.top >= HEADER_BAND_POINTS - 1)
+              .filter(line => {
+                const lineRight = Math.max(line.left || 0, ...(line.items || []).map(item => item.x + item.width));
+                const overlapsNativeHeader = pageBands.header.native &&
+                  line.top < headerTextCutoff &&
+                  line.top + (line.height || 0) > pageBands.header.y &&
+                  (line.left || 0) < pageBands.header.x + pageBands.header.widthPoints &&
+                  lineRight > pageBands.header.x;
+                return pageBands.header.native
+                  ? !overlapsNativeHeader
+                  : line.top >= headerTextCutoff;
+              })
               .map(line => ({ ...line, top: Math.max(0, line.top - HEADER_BAND_POINTS) }));
           }
           if (pageBands.barcode) {
