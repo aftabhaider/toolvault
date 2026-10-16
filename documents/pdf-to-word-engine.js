@@ -555,7 +555,7 @@
         const titleLine = /114\s*\(1\)|return of income filed voluntarily/i.test(line.text || "");
         const token = String(part.str || "").replace(/[.:]/g, "").trim().toLowerCase();
         const metadataLabel = line.top < 175 &&
-          /^(name|address|registration|no|tax|year|period|medium|contact|due|date|document)$/.test(token);
+          /^(name|address|registration(\s*no)?|no|tax(\s*year)?|year|period|medium|contact(\s*no)?|due(\s*date)?|date|document(\s*date)?)(\s*:)?$/.test(token);
         runs.push(new docx.TextRun({
           text: part.str,
           size: Math.round(clampFontSize(part.fontSize) * 2),
@@ -577,10 +577,11 @@
     // Infer alignment from the original text box instead of assuming every
     // PDF line is left-aligned. Centered titles and right-hand form fields are
     // common in official returns and other pre-printed forms.
-    const centered = items.length > 0 &&
+    const titleLine = /114\s*\(1\)|return of income filed voluntarily/i.test(line.text || "");
+    const centered = titleLine || (items.length > 0 &&
       leftX > pageWidth * 0.08 &&
       rightX < pageWidth * 0.92 &&
-      Math.abs(lineCenter - pageWidth / 2) <= Math.max(14, fontSize * 1.6);
+      Math.abs(lineCenter - pageWidth / 2) <= Math.max(14, fontSize * 1.6));
     const rightAligned = !centered &&
       leftX > pageWidth * 0.48 &&
       rightX > pageWidth * 0.78;
@@ -1067,7 +1068,16 @@
       const bytes = new Uint8Array(await blob.arrayBuffer());
       band.width = 1;
       band.height = 1;
-      return { bytes, width: metrics.width * (96 / 72), height: (height / scaleY) * (96 / 72), heightPoints: height / scaleY };
+      return {
+        bytes,
+        width: metrics.width * (96 / 72),
+        height: (height / scaleY) * (96 / 72),
+        heightPoints: height / scaleY,
+        widthPoints: metrics.width,
+        x: 0,
+        y: yPoints,
+        native: false
+      };
     }
 
     try {
@@ -1087,15 +1097,26 @@
         } catch (_) {}
       }
       const renderedHeader = await cropBand(0, Math.min(HEADER_BAND_POINTS, metrics.height * 0.25));
-      const footerHeight = Math.min(FOOTER_BAND_POINTS, metrics.height * 0.2);
-      const renderedFooter = await cropBand(Math.max(0, metrics.height - footerHeight), footerHeight);
+      const footerTop = Math.max(0, metrics.height - FOOTER_BAND_POINTS);
+      const renderedFooter = await cropBand(footerTop, Math.min(FOOTER_BAND_POINTS, metrics.height));
       const header = nativeArtwork.header || renderedHeader;
-      const footer = renderedFooter;
+      let footer = nativeArtwork.footer;
+      let footerText = null;
+      if (footer) {
+        // The print-date/page-number strip sits immediately above the native
+        // blue footer artwork. Keep it as a separate high-resolution strip so
+        // the original embedded footer image can retain its native pixels.
+        const textStripHeight = Math.max(0, footer.y - footerTop);
+        if (textStripHeight > 1) footerText = await cropBand(footerTop, textStripHeight);
+      } else {
+        footer = renderedFooter;
+      }
       const grid = detectRasterGrid(canvas, metrics, scale);
       const barcode = await detectBarcodeImage(canvas, metrics, scale, sourceLines);
       return {
         header,
         footer,
+        footerText,
         grid: shiftGridY(grid, header ? HEADER_BAND_POINTS : 0),
         barcode: barcode ? { ...barcode, pageY: barcode.y, y: barcode.y - (header ? HEADER_BAND_POINTS : 0) } : null
       };
@@ -1105,37 +1126,65 @@
     }
   }
 
-  function makeBandHeader(band, docx) {
-    if (!band) return undefined;
-    return new docx.Header({
-      children: [new docx.Paragraph({
-        children: [new docx.ImageRun({
-          data: band.bytes,
-          type: "png",
-          transformation: { width: band.width, height: band.height }
-        })],
-        spacing: { before: band.native ? Math.round(band.y * 20) : 0, after: 0 },
-        indent: { left: band.native ? Math.round(band.x * 20) : 0 }
-      })]
+  function makePagePositionedImage(band, docx, zIndex, behindDocument) {
+    if (!band) return null;
+    return new docx.ImageRun({
+      data: band.bytes,
+      type: "png",
+      transformation: { width: band.width, height: band.height },
+      floating: {
+        horizontalPosition: {
+          relative: docx.HorizontalPositionRelativeFrom
+            ? docx.HorizontalPositionRelativeFrom.PAGE
+            : "page",
+          offset: Math.round((band.x || 0) * 12700)
+        },
+        verticalPosition: {
+          relative: docx.VerticalPositionRelativeFrom
+            ? docx.VerticalPositionRelativeFrom.PAGE
+            : "page",
+          offset: Math.round((band.y || 0) * 12700)
+        },
+        wrap: { type: docx.TextWrappingType ? docx.TextWrappingType.NONE : "none" },
+        allowOverlap: true,
+        behindDocument: Boolean(behindDocument),
+        layoutInCell: false,
+        zIndex: zIndex || 1
+      }
     });
   }
 
-  function makeBandFooter(band, docx) {
+  function makeBandHeader(band, docx) {
     if (!band) return undefined;
-    return new docx.Footer({
+    const image = makePagePositionedImage(band, docx, 1, true);
+    return new docx.Header({
       children: [new docx.Paragraph({
-        children: [new docx.ImageRun({
-          data: band.bytes,
-          type: "png",
-          transformation: { width: band.width, height: band.height }
-        })],
+        children: image ? [image] : [new docx.TextRun({ text: "" })],
         spacing: { before: 0, after: 0 },
         indent: { left: 0 }
       })]
     });
   }
 
-  async function convert(options) {
+  function makeBandFooter(band, docx, footerText) {
+    if (!band && !footerText) return undefined;
+    const children = [];
+    const textStripImage = footerText ? makePagePositionedImage(footerText, docx, 2, true) : null;
+    const bannerImage = band ? makePagePositionedImage(band, docx, 3, true) : null;
+    if (textStripImage) children.push(new docx.Paragraph({
+      children: [textStripImage],
+      spacing: { before: 0, after: 0 },
+      indent: { left: 0 }
+    }));
+    if (bannerImage) children.push(new docx.Paragraph({
+      children: [bannerImage],
+      spacing: { before: 0, after: 0 },
+      indent: { left: 0 }
+    }));
+    return new docx.Footer({ children });
+  }
+
+    async function convert(options) {
     const file = options && options.file;
     const mode = options && options.mode || "editable";
     const useOcr = Boolean(options && options.useOcr);
@@ -1315,7 +1364,9 @@
             : createEditableChildren(lines, metrics, docx, pageBands.grid);
 
           const sectionHeaders = pageBands.header ? { default: makeBandHeader(pageBands.header, docx) } : undefined;
-          const sectionFooters = pageBands.footer ? { default: makeBandFooter(pageBands.footer, docx) } : undefined;
+          const sectionFooters = pageBands.footer || pageBands.footerText
+            ? { default: makeBandFooter(pageBands.footer, docx, pageBands.footerText) }
+            : undefined;
           sections.push({
             properties: {
               page: {
