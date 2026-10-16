@@ -448,7 +448,7 @@
             // position instead of relying on Word's default half-inch tabs.
             tabStops.push({
               type: docx.TabStopType ? docx.TabStopType.LEFT : "left",
-              position: Math.max(20, Math.round((part.x - (line.left || 0)) * 20))
+              position: Math.max(20, Math.round(part.x * 20))
             });
           } else if (gap > Math.max(1.2, line.fontSize * 0.18)) {
             runs.push(new docx.TextRun({ text: " " }));
