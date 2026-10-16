@@ -303,6 +303,12 @@
     }
 
     if (columnCount < 2 || columnCount > 12) return null;
+    // Inferred tables are deliberately conservative. When no visible grid is
+    // detected, don't reinterpret early-page invoice metadata as a table merely
+    // because recipient, date and company details share a few baselines.
+    if (!useGridBoundaries && (regionTop < 180 || maxLineColumns < 4 || rowGroups.length < 4)) {
+      return null;
+    }
 
     const rows = rowGroups.map(group => {
       const fragments = group.flatMap(entry => entry.cells.map(cell => ({
@@ -556,13 +562,15 @@
     const items = line.items && line.items.length ? line.items : [];
     if (isOcr || !items.length) {
       if (line.text) {
-        const titleLine = /114\s*\(1\)|return of income filed voluntarily/i.test(line.text || "");
+        const returnFormTitle = /114\s*\(1\)|return of income filed voluntarily/i.test(line.text || "");
+        const billTitle = /^bill$/i.test(String(line.text || "").trim()) && line.top < pageHeight * 0.4;
+        const titleLine = returnFormTitle || billTitle;
         runs.push(new docx.TextRun({
           text: line.text,
           size: Math.round(clampFontSize(line.fontSize) * 2),
           font: { name: "Arial" },
           bold: titleLine,
-          underline: titleLine
+          underline: returnFormTitle
         }));
       }
     } else {
@@ -581,7 +589,9 @@
           }
         }
         const fontStyle = styleFromFontName(part.fontName);
-        const titleLine = /114\s*\(1\)|return of income filed voluntarily/i.test(line.text || "");
+        const returnFormTitle = /114\s*\(1\)|return of income filed voluntarily/i.test(line.text || "");
+    const billTitle = /^bill$/i.test(String(line.text || "").trim()) && line.top < pageHeight * 0.4;
+    const titleLine = returnFormTitle || billTitle;
         const token = String(part.str || "").replace(/[.:]/g, "").trim().toLowerCase();
         const metadataLabel = line.top < 175 &&
           /^(name|address|registration(\s*no)?|no|tax(\s*year)?|year|period|medium|contact(\s*no)?|due(\s*date)?|date|document(\s*date)?)(\s*:)?$/.test(token);
@@ -591,7 +601,7 @@
           font: { name: part.wordFont || "Arial" },
           bold: fontStyle.bold || titleLine || metadataLabel,
           italics: fontStyle.italics,
-          underline: /114\s*\(1\)|return of income filed voluntarily/i.test(line.text || "")
+          underline: returnFormTitle
         }));
         previous = part;
       }
@@ -608,7 +618,7 @@
     // PDF line is left-aligned. Centered titles and right-hand form fields are
     // common in official returns and other pre-printed forms.
     const titleLine = /114\s*\(1\)|return of income filed voluntarily/i.test(line.text || "");
-    const centered = titleLine || (items.length > 0 &&
+    const centered = returnFormTitle || (items.length > 0 &&
       leftX > pageWidth * 0.08 &&
       rightX < pageWidth * 0.92 &&
       Math.abs(lineCenter - pageWidth / 2) <= Math.max(14, fontSize * 1.6));
@@ -775,12 +785,12 @@
 
   async function findNativePageArtwork(page, metrics, pdfjsLib) {
     const ops = pdfjsLib && pdfjsLib.OPS;
-    if (!ops || typeof page.getOperatorList !== "function") return { header: null, footer: null };
+    if (!ops || typeof page.getOperatorList !== "function") return { header: null, footer: null, images: [] };
     let list;
     try {
       list = await page.getOperatorList();
     } catch (_) {
-      return { header: null, footer: null };
+      return { header: null, footer: null, images: [] };
     }
 
     const imageOps = new Set([
@@ -792,6 +802,8 @@
     let transform = [1, 0, 0, 1, 0, 0];
     let header = null;
     let footer = null;
+    const images = [];
+    const seenImagePlacements = new Set();
 
     for (let i = 0; i < list.fnArray.length; i++) {
       const operation = list.fnArray[i];
@@ -806,6 +818,12 @@
       }
       if (operation === ops.transform && args.length >= 6) {
         transform = multiplyPdfMatrix(transform, args.slice(0, 6));
+        continue;
+      }
+      if (ops.paintFormXObjectBegin !== undefined &&
+          operation === ops.paintFormXObjectBegin &&
+          Array.isArray(args[0]) && args[0].length >= 6) {
+        transform = multiplyPdfMatrix(transform, args[0].slice(0, 6));
         continue;
       }
       if (!imageOps.has(operation) || typeof args[0] !== "string") continue;
@@ -823,7 +841,11 @@
       const isFooter = y > metrics.height - FOOTER_BAND_POINTS - 25 &&
         y < metrics.height - 5 && x < metrics.width * 0.15 &&
         width > metrics.width * 0.72 && height >= 8 && height <= 55;
-      if ((!isHeader || header) && (!isFooter || footer)) continue;
+
+      if ((isHeader && header) || (isFooter && footer)) continue;
+      const placementKey = [args[0], Math.round(x * 2), Math.round(y * 2), Math.round(width * 2), Math.round(height * 2)].join(":");
+      if (seenImagePlacements.has(placementKey)) continue;
+      seenImagePlacements.add(placementKey);
 
       const image = await getDisplayObject(page, args[0]);
       const png = await displayImageToPng(image);
@@ -832,19 +854,23 @@
         bytes: png.bytes,
         width: width * (96 / 72),
         height: height * (96 / 72),
+        widthPx: width * (96 / 72),
+        heightPx: height * (96 / 72),
         widthPoints: width,
         heightPoints: height,
         x,
         y,
+        pageY: y,
         native: true
       };
       if (isHeader && !header) header = artwork;
-      if (isFooter && !footer) footer = artwork;
+      else if (isFooter && !footer) footer = artwork;
+      else images.push(artwork);
     }
-    return { header, footer };
+    return { header, footer, images };
   }
 
-  function detectRasterGrid(canvas, metrics, scale) {
+    function detectRasterGrid(canvas, metrics, scale) {
     const ctx = canvas.getContext("2d", { willReadFrequently: true });
     if (!ctx) return { verticals: [], horizontals: [] };
     const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -1112,7 +1138,7 @@
 
     try {
       const nativeArtwork = await findNativePageArtwork(page, metrics, window.pdfjsLib);
-      for (const artwork of [nativeArtwork.header, nativeArtwork.footer]) {
+      for (const artwork of [nativeArtwork.header, nativeArtwork.footer, ...(nativeArtwork.images || [])]) {
         if (!artwork) continue;
         try {
           const bitmap = await createImageBitmap(new Blob([artwork.bytes], { type: "image/png" }));
@@ -1129,7 +1155,10 @@
       const renderedHeader = await cropBand(0, Math.min(HEADER_BAND_POINTS, metrics.height * 0.25));
       const footerTop = Math.max(0, metrics.height - FOOTER_BAND_POINTS);
       const renderedFooter = await cropBand(footerTop, Math.min(FOOTER_BAND_POINTS, metrics.height));
-      const header = nativeArtwork.header || renderedHeader;
+      const hasSeparateHeaderImages = (nativeArtwork.images || []).some(image =>
+        image.y < HEADER_BAND_POINTS + 115 && image.y + image.heightPoints > 0
+      );
+      const header = nativeArtwork.header || (hasSeparateHeaderImages ? null : renderedHeader);
       let footer = nativeArtwork.footer;
       let footerText = null;
       if (footer) {
@@ -1143,12 +1172,20 @@
       }
       const grid = detectRasterGrid(canvas, metrics, scale);
       const barcode = await detectBarcodeImage(canvas, metrics, scale, sourceLines);
+      const contactLine = (sourceLines || []).find(line => /contact\s*no/i.test(line.text || ""));
+      const hasNativeBarcode = Boolean(contactLine && (nativeArtwork.images || []).some(image =>
+        image.y >= contactLine.top &&
+        image.y <= contactLine.top + 70 &&
+        image.x >= contactLine.left + 15 &&
+        image.x < metrics.width * 0.6
+      ));
       return {
         header,
         footer,
         footerText,
+        pageImages: nativeArtwork.images || [],
         grid: shiftGridY(grid, header ? HEADER_BAND_POINTS : 0),
-        barcode: barcode ? { ...barcode, pageY: barcode.y, y: barcode.y - (header ? HEADER_BAND_POINTS : 0) } : null
+        barcode: hasNativeBarcode ? null : (barcode ? { ...barcode, pageY: barcode.y, y: barcode.y - (header ? HEADER_BAND_POINTS : 0) } : null)
       };
     } finally {
       canvas.width = 1;
@@ -1352,6 +1389,17 @@
               })
               .map(line => ({ ...line, top: Math.max(0, line.top - HEADER_BAND_POINTS) }));
           }
+          for (const image of pageBands.pageImages || []) {
+            lines.push({
+              text: "",
+              top: Math.max(0, image.y - (pageBands.header ? HEADER_BAND_POINTS : 0)),
+              height: 0,
+              fontSize: 6,
+              left: image.x,
+              items: [],
+              floatingImage: image
+            });
+          }
           if (pageBands.barcode) {
             lines.push({
               text: "",
@@ -1362,6 +1410,8 @@
               items: [],
               floatingImage: pageBands.barcode
             });
+          }
+          if ((pageBands.pageImages && pageBands.pageImages.length) || pageBands.barcode) {
             lines.sort((a, b) => a.top - b.top || (a.left || 0) - (b.left || 0));
           }
           const pageChars = lines.reduce((sum, line) => sum + (line.text || "").replace(/\s/g, "").length, 0);
