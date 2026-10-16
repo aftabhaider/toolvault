@@ -563,8 +563,8 @@
       }
 
       report(onProgress, 94, "Building Word document…", "Packaging the converted pages into an editable DOCX.");
-      const document = new docx.Document({ sections: sections });
-      const blob = await docx.Packer.toBlob(document);
+      const wordDocument = new docx.Document({ sections: sections });
+      const blob = await docx.Packer.toBlob(wordDocument);
       if (!blob || !blob.size) throw new Error("The local engine did not produce a valid Word file.");
 
       report(onProgress, 100, "Conversion complete", mode === "visual"
