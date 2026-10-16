@@ -500,7 +500,7 @@
             langPath: localAssetCacheActive()
               ? "/documents/vendor/lang"
               : TESSERACT_LANG_CDN,
-            workerBlobURL: false,
+            workerBlobURL: localAssetCacheActive() ? false : true,
             logger: (event) => {
               if (event && event.status === "recognizing text") {
                 report(onProgress, 10, "Starting browser OCR…", "Recognizing scanned English text. First-time OCR may download language data.");
