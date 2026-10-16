@@ -93,3 +93,8 @@ This iteration maps PDF.js text-style metadata into Word font families (Arial is
 ## Runtime fix (2.4.1)
 
 Moved return-form and bill-title flags to the paragraph-builder scope so both title styling and alignment can access them without a ReferenceError. Bumped the service-worker cache and the local-test port for regression testing. JavaScript syntax passes; the Word output still needs an end-to-end test.
+
+
+## Editable reconstruction improvements (2.5.1)
+
+For PDFs with ruled tables, the engine now groups horizontal rules into table bands, uses detected vertical rules as column boundaries, and derives row spans from which vertical borders actually cross each horizontal band. This preserves multi-line text inside its original physical cell and reconstructs merged total rows when inner borders stop. The engine computes table geometry once per page. It also infers centered text from actual item coordinates, applies a plain Word font-family string for compatibility, and explicitly styles common bill titles, installation headings, supply-order headings, and recipient labels. This has passed syntax checks and synthetic row/merged-cell tests; the user's real PDF still needs end-to-end testing in Word.
