@@ -250,9 +250,13 @@
       const allXs = [first.x0];
       for (const vertical of grid.verticals) {
         if (vertical.x <= first.x0 + 2.5 || vertical.x >= first.x1 - 2.5) continue;
-        if ((vertical.segments || []).some(segment => segment.top <= top + 3 && segment.bottom >= bottom - 3)) {
-          allXs.push(vertical.x);
-        }
+        // Internal borders may stop at merged total rows, so retain any
+        // genuine vertical segment that crosses a meaningful part of this
+        // table. Per-row merge spans are decided later using exact row bounds.
+        if ((vertical.segments || []).some(segment =>
+          segment.bottom >= top + 6 && segment.top <= bottom - 6 &&
+          Math.min(segment.bottom, bottom) - Math.max(segment.top, top) >= 10
+        )) allXs.push(vertical.x);
       }
       allXs.push(first.x1);
       allXs.sort((a, b) => a - b);
