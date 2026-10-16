@@ -560,11 +560,11 @@
     const runs = [];
     const tabStops = [];
     const items = line.items && line.items.length ? line.items : [];
+    const returnFormTitle = /114\s*\(1\)|return of income filed voluntarily/i.test(line.text || "");
+    const billTitle = /^bill$/i.test(String(line.text || "").trim()) && line.top < pageHeight * 0.4;
+    const titleLine = returnFormTitle || billTitle;
     if (isOcr || !items.length) {
       if (line.text) {
-        const returnFormTitle = /114\s*\(1\)|return of income filed voluntarily/i.test(line.text || "");
-        const billTitle = /^bill$/i.test(String(line.text || "").trim()) && line.top < pageHeight * 0.4;
-        const titleLine = returnFormTitle || billTitle;
         runs.push(new docx.TextRun({
           text: line.text,
           size: Math.round(clampFontSize(line.fontSize) * 2),
@@ -589,9 +589,6 @@
           }
         }
         const fontStyle = { bold: Boolean(part.bold) || styleFromFontName(part.pdfFontStyleName || part.fontFamily || part.fontName).bold, italics: Boolean(part.italics) || styleFromFontName(part.pdfFontStyleName || part.fontFamily || part.fontName).italics };
-        const returnFormTitle = /114\s*\(1\)|return of income filed voluntarily/i.test(line.text || "");
-    const billTitle = /^bill$/i.test(String(line.text || "").trim()) && line.top < pageHeight * 0.4;
-    const titleLine = returnFormTitle || billTitle;
         const token = String(part.str || "").replace(/[.:]/g, "").trim().toLowerCase();
         const metadataLabel =
           /^(name|address|registration(\s*no)?|no|tax(\s*year)?|year|period|medium|contact(\s*no)?|due(\s*date)?|date|document(\s*date)?|invoice(\s*(date|number|no))?|email)(\s*:)?$/.test(token);
@@ -617,7 +614,6 @@
     // Infer alignment from the original text box instead of assuming every
     // PDF line is left-aligned. Centered titles and right-hand form fields are
     // common in official returns and other pre-printed forms.
-    const titleLine = /114\s*\(1\)|return of income filed voluntarily/i.test(line.text || "");
     const centered = returnFormTitle || (items.length > 0 &&
       leftX > pageWidth * 0.08 &&
       rightX < pageWidth * 0.92 &&
@@ -1509,6 +1505,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.4.0-local"
+    version: "2.4.1-local"
   };
 })();
