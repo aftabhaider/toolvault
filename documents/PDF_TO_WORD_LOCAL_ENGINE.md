@@ -24,7 +24,10 @@ OCR assets are loaded only when a user enables OCR. To prepare OCR for offline u
 
 The cache fetches the pinned public library builds on first setup and serves them through same-origin paths. This reduces runtime reliance on third-party CDN availability after cache warm-up, but it is not equivalent to bundling all vendor bytes directly into the Git repository. For strict offline distribution or supply-chain independence, vendor the exact packages and their license notices into the repo instead.
 
-## Conversion modes and limits
+## Conversion modes
+
+Editable mode reconstructs nearby text lines into editable Word table cells where the column pattern is consistent. If a PDF includes a rendered header/footer band, that band is embedded as a page header/footer image so logos and branded artwork do not disappear. These image bands are not editable; body text and reconstructed table cells remain editable. Complex tables, multi-column forms, and unusual row merges still require manual review.
+ and limits
 
 - Maximum input: 60 MB.
 - Maximum pages: 150.
