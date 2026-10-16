@@ -753,6 +753,9 @@
     const items = line.items && line.items.length ? line.items : [];
     const returnFormTitle = /114\s*\(1\)|return of income filed voluntarily/i.test(line.text || "");
     const billTitle = /^bill$/i.test(String(line.text || "").trim()) && line.top < pageHeight * 0.4;
+    const invoiceHeading = /^installation of .*solar system/i.test(String(line.text || "").trim());
+    const supplyOrderHeading = /^supply order no\.?/i.test(String(line.text || "").trim());
+    const recipientHeading = /district\s*&\s*sessions judge/i.test(String(line.text || ""));
     const titleLine = returnFormTitle || billTitle;
     if (isOcr || !items.length) {
       if (line.text) {
@@ -787,7 +790,7 @@
           text: part.str,
           size: Math.round(clampFontSize(part.fontSize) * 2),
           font: { name: part.wordFont || "Arial" },
-          bold: fontStyle.bold || titleLine || metadataLabel,
+          bold: fontStyle.bold || titleLine || invoiceHeading || supplyOrderHeading || recipientHeading || metadataLabel,
           italics: fontStyle.italics,
           underline: returnFormTitle
         }));
@@ -1741,6 +1744,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.5.0-local"
+    version: "2.5.1-local"
   };
 })();
