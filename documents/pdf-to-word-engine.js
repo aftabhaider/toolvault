@@ -270,8 +270,8 @@
     return candidates.sort((a, b) => a.top - b.top || (b.bottom - b.top) - (a.bottom - a.top));
   }
 
-  function detectRuledTableAt(lines, startIndex, pageWidth, grid) {
-    const candidates = getRuledTableCandidates(grid, pageWidth);
+  function detectRuledTableAt(lines, startIndex, pageWidth, grid, precomputedCandidates) {
+    const candidates = precomputedCandidates || getRuledTableCandidates(grid, pageWidth);
     if (!candidates.length) return null;
     const currentLine = lines[startIndex];
     if (!currentLine || !currentLine.items || !currentLine.items.length) return null;
@@ -722,15 +722,15 @@
     const children = [];
     let previousLine = null;
     let index = 0;
+    const ruledTableCandidates = getRuledTableCandidates(grid, metrics.width);
     while (index < lines.length) {
       if (lines[index].floatingImage) {
         children.push(createFloatingImageParagraph(lines[index].floatingImage, docx));
         index++;
         continue;
       }
-      const ruledTable = detectRuledTableAt(lines, index, metrics.width, grid);
-      const hasStrongRuledGrid = Boolean(grid && grid.verticals && grid.verticals.length >= 3 &&
-        grid.horizontals && grid.horizontals.length >= 3);
+      const ruledTable = detectRuledTableAt(lines, index, metrics.width, grid, ruledTableCandidates);
+      const hasStrongRuledGrid = ruledTableCandidates.length > 0;
       const table = ruledTable || (!hasStrongRuledGrid ? detectTableAt(lines, index, metrics.width, grid) : null);
       if (table) {
         children.push(createTable(table.rows, metrics.width, docx, table));
