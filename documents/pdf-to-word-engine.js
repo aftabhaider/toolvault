@@ -345,7 +345,7 @@
     };
   }
 
-    function createCellParagraph(cell, docx, fallbackFontSize, forceBold) {
+    function createCellParagraph(cell, docx, fallbackFontSize, forceBold, columnIndex, headerRow) {
     const children = [];
     let previous = null;
     for (const part of cell.items || []) {
@@ -360,14 +360,23 @@
         text: part.str,
         size: Math.round(clampFontSize(part.fontSize || fallbackFontSize) * 2),
         bold: fontStyle.bold || Boolean(forceBold),
-        italics: fontStyle.italics,
-        underline: Boolean(part.underline)
+        italics: fontStyle.italics
       }));
       previous = part;
     }
+
+    const cellText = String(cell.text || (cell.items || []).map(item => item.str).join(" ")).trim();
+    const numericCell = /^[-(]?\d[\d,]*(?:\.\d+)?%?\)?$/.test(cellText.replace(/\s/g, ""));
+    let alignment;
+    if (cell.centered || (headerRow && columnIndex > 0) || (numericCell && columnIndex === 1)) {
+      alignment = docx.AlignmentType ? docx.AlignmentType.CENTER : "center";
+    } else if (numericCell && columnIndex >= 2) {
+      alignment = docx.AlignmentType ? docx.AlignmentType.RIGHT : "right";
+    }
+
     return new docx.Paragraph({
-      children: children.length ? children : [new docx.TextRun({ text: cell.text || "", bold: Boolean(forceBold) })],
-      alignment: cell.centered && docx.AlignmentType ? docx.AlignmentType.CENTER : undefined,
+      children: children.length ? children : [new docx.TextRun({ text: cellText, bold: Boolean(forceBold) })],
+      alignment,
       spacing: { before: 0, after: 0 }
     });
   }
@@ -407,7 +416,7 @@
     const widthType = docx.WidthType ? docx.WidthType.DXA : "dxa";
     const edge = { style: docx.BorderStyle ? docx.BorderStyle.SINGLE : "single", size: 4, color: "333333", space: 0 };
 
-    const makeCellParagraphs = (cell, fallbackFontSize, forceBold) => {
+    const makeCellParagraphs = (cell, fallbackFontSize, forceBold, columnIndex, headerRow) => {
       const fragments = cell && cell.fragments ? cell.fragments : [];
       if (!fragments.length) {
         return [new docx.Paragraph({
@@ -415,7 +424,7 @@
           spacing: { before: 0, after: 0 }
         })];
       }
-      return fragments.map(fragment => createCellParagraph(fragment, docx, fallbackFontSize, forceBold));
+      return fragments.map(fragment => createCellParagraph(fragment, docx, fallbackFontSize, forceBold, columnIndex, headerRow));
     };
 
     const tableRows = rows.map(row => {
@@ -424,7 +433,7 @@
         return new docx.TableRow({
           children: [new docx.TableCell({
             columnSpan: columnCount,
-            children: makeCellParagraphs(cell, row.line.fontSize, row.isHeader || row.isSummary || row.merged),
+            children: makeCellParagraphs(cell, row.line.fontSize, row.isHeader || row.isSummary || row.merged, 0, row.isHeader),
             width: { size: totalWidth, type: widthType },
             shading: { fill: "EAF2F8" },
             margins: { top: 25, bottom: 25, left: 45, right: 45 }
@@ -434,7 +443,7 @@
 
       return new docx.TableRow({
         children: row.cells.map((cell, column) => new docx.TableCell({
-          children: makeCellParagraphs(cell, row.line.fontSize, row.isHeader || row.isSummary || row.merged),
+          children: makeCellParagraphs(cell, row.line.fontSize, row.isHeader || row.isSummary || row.merged, column, row.isHeader),
           width: { size: widths[column], type: widthType },
           shading: row.isHeader || row.isSummary ? { fill: "EAF2F8" } : undefined,
           margins: { top: 25, bottom: 25, left: 45, right: 45 }
