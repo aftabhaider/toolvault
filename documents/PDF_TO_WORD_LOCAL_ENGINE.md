@@ -73,3 +73,8 @@ This is engineering documentation, not legal advice.
 3. Add multilingual OCR only after testing language assets and reading direction.
 4. For strict offline or packaged distribution, vendor pinned dependencies on the same origin with license notices rather than fetching CDNs during installation.
 5. Only reintroduce a backend for document types that need better reconstruction than the browser engine can provide.
+
+
+## Editable reconstruction improvements (2.2.0)
+
+The local engine now reads long horizontal and vertical rules from a page render and uses those boundary positions to recover table column counts and widths when a clear ruled grid is detected. Numeric table values are right-aligned, short numeric code cells are centered, table headings/summary rows receive stronger emphasis, and the common FBR return title and field labels are styled explicitly if the embedded PDF font names do not expose bold metadata. When PDF.js makes the original embedded header/footer image objects available, the header is reused at its source pixel resolution and the original footer banner is composited into the footer strip; otherwise the high-resolution rendered bands remain a fallback. A barcode-like graphic beneath a Contact No field can be recovered as a floating image so it does not alter text flow. These are heuristics and still need document-by-document validation, especially for borderless tables and unusually complex forms.
