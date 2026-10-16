@@ -41,11 +41,26 @@
     };
   }
 
+  function wordFontFromFamily(family, fontName) {
+    const value = (String(family || "") + " " + String(fontName || "")).toLowerCase();
+    if (/aptos/.test(value)) return "Aptos";
+    if (/calibri/.test(value)) return "Calibri";
+    if (/cambria/.test(value)) return "Cambria";
+    if (/georgia/.test(value)) return "Georgia";
+    if (/verdana/.test(value)) return "Verdana";
+    if (/tahoma/.test(value)) return "Tahoma";
+    if (/courier|consolas|monospace/.test(value)) return "Courier New";
+    if (/times new roman|times-roman|times roman|liberation serif|serif/.test(value)) return "Times New Roman";
+    if (/arial|helvetica|liberation sans|sans[- ]?serif|roboto|open sans|noto sans|lato/.test(value)) return "Arial";
+    // Use the common sans-serif font for PDFs that expose only internal font IDs.
+    return "Arial";
+  }
+
   function clampFontSize(size) {
     return Math.max(6, Math.min(72, Number.isFinite(size) ? size : 11));
   }
 
-  function normalizeItems(items, metrics) {
+  function normalizeItems(items, metrics, textStyles) {
     const normalized = [];
     for (const item of items || []) {
       if (!item || typeof item.str !== "string" || !item.str.trim()) continue;
@@ -54,6 +69,13 @@
       const x = (transform[4] || 0) - metrics.x0;
       const baseline = metrics.y1 - (transform[5] || 0);
       const width = Math.max(0, Number(item.width) || item.str.length * fontSize * 0.45);
+      const pdfStyle = textStyles && textStyles[item.fontName] ? textStyles[item.fontName] : {};
+      const fontFamily = String(pdfStyle.fontFamily || "");
+      const styleName = [item.fontName || "", fontFamily, pdfStyle.fontWeight || "", pdfStyle.fontStyle || ""].join(" ");
+      const namedStyle = styleFromFontName(styleName);
+      const explicitWeight = Number(pdfStyle.fontWeight || pdfStyle.weight || 0);
+      const bold = Boolean(pdfStyle.bold) || explicitWeight >= 600 || namedStyle.bold;
+      const italics = Boolean(pdfStyle.italic || pdfStyle.italics) || namedStyle.italics;
       normalized.push({
         str: item.str,
         x: Math.max(0, x),
@@ -63,14 +85,19 @@
         height: Math.max(fontSize, Number(item.height) || fontSize),
         fontSize: fontSize,
         fontName: item.fontName || "",
+        fontFamily: fontFamily,
+        wordFont: wordFontFromFamily(fontFamily, item.fontName),
+        pdfFontStyleName: styleName,
+        bold: bold,
+        italics: italics,
         hasEOL: Boolean(item.hasEOL)
       });
     }
     return normalized;
   }
 
-  function groupTextLines(items, metrics) {
-    const normalized = normalizeItems(items, metrics);
+    function groupTextLines(items, metrics, textStyles) {
+    const normalized = normalizeItems(items, metrics, textStyles);
     normalized.sort((a, b) => a.baseline - b.baseline || a.x - b.x);
     const lines = [];
 
@@ -355,10 +382,11 @@
           children.push(new docx.TextRun({ text: " " }));
         }
       }
-      const fontStyle = styleFromFontName(part.fontName);
+      const fontStyle = { bold: Boolean(part.bold) || styleFromFontName(part.pdfFontStyleName || part.fontFamily || part.fontName).bold, italics: Boolean(part.italics) || styleFromFontName(part.pdfFontStyleName || part.fontFamily || part.fontName).italics };
       children.push(new docx.TextRun({
         text: part.str,
         size: Math.round(clampFontSize(part.fontSize || fallbackFontSize) * 2),
+        font: { name: part.wordFont || "Arial" },
         bold: fontStyle.bold || Boolean(forceBold),
         italics: fontStyle.italics
       }));
@@ -375,7 +403,7 @@
     }
 
     return new docx.Paragraph({
-      children: children.length ? children : [new docx.TextRun({ text: cellText, bold: Boolean(forceBold) })],
+      children: children.length ? children : [new docx.TextRun({ text: cellText, font: { name: "Arial" }, bold: Boolean(forceBold) })],
       alignment,
       spacing: { before: 0, after: 0 }
     });
@@ -532,6 +560,7 @@
         runs.push(new docx.TextRun({
           text: line.text,
           size: Math.round(clampFontSize(line.fontSize) * 2),
+          font: { name: "Arial" },
           bold: titleLine,
           underline: titleLine
         }));
@@ -559,9 +588,10 @@
         runs.push(new docx.TextRun({
           text: part.str,
           size: Math.round(clampFontSize(part.fontSize) * 2),
+          font: { name: part.wordFont || "Arial" },
           bold: fontStyle.bold || titleLine || metadataLabel,
           italics: fontStyle.italics,
-          underline: titleLine
+          underline: /114\s*\(1\)|return of income filed voluntarily/i.test(line.text || "")
         }));
         previous = part;
       }
@@ -1296,7 +1326,7 @@
           const page = await pdf.getPage(index);
           const metrics = pageMetrics(page);
           const content = await page.getTextContent();
-          const sourceLines = groupTextLines(content.items, metrics);
+          const sourceLines = groupTextLines(content.items, metrics, content.styles);
           const pageBands = await renderPageBands(page, metrics, sourceLines);
           let lines = sourceLines;
           // Remove text already visible in header/footer artwork and preserve
