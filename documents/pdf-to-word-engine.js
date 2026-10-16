@@ -141,7 +141,7 @@
     let previous = null;
     // PDF table columns are often separated by less than 32pt. A smaller
     // threshold helps keep adjacent columns separate without splitting words.
-    const splitGap = Math.max(22, clampFontSize(line.fontSize) * 2.4);
+    const splitGap = Math.max(18, clampFontSize(line.fontSize) * 2.0);
 
     for (const item of items) {
       const gap = previous ? item.x - (previous.x + previous.width) : 0;
@@ -173,8 +173,8 @@
   }
 
   function detectTableAt(lines, startIndex, pageWidth) {
-    // Treat nearby text lines as one layout region. Unlike the old detector,
-    // this permits wrapped headers, wrapped descriptions and blank cells.
+    // Treat nearby text lines as one layout region. This permits wrapped
+    // headers, wrapped descriptions and blank cells within tables.
     const region = [];
     let previous = null;
     for (let index = startIndex; index < lines.length; index++) {
@@ -185,20 +185,9 @@
     }
 
     if (region.length < 2) return null;
-    const multiCellLines = region.filter(entry => entry.cells.length >= 2).length;
-    const columnCount = Math.max(0, ...region.map(entry => entry.cells.length));
-    if (columnCount < 2 || multiCellLines < 2 || columnCount > 12) return null;
 
-    const anchorEntry = region.reduce((best, entry) =>
-      entry.cells.length > best.cells.length ? entry : best
-    , region[0]);
-    const anchorCells = anchorEntry.cells;
-    const columnCenters = anchorCells.map(cell => cell.center);
-    const columnStarts = anchorCells.map(cell => cell.x);
-    if (columnCenters.length !== columnCount) return null;
-
-    // Combine physical text lines that occupy the same visual table row.
-    // This rejoins headers such as "Total" + "Amount" and wrapped descriptions.
+    // Build visual rows first. A table header is often spread across multiple
+    // baselines (for example, "Total" on one line and "Amount" below it).
     const rowGroups = [];
     for (const entry of region) {
       const current = rowGroups[rowGroups.length - 1];
@@ -208,6 +197,44 @@
         rowGroups.push([entry]);
       }
     }
+
+    const multiCellLines = region.filter(entry => entry.cells.length >= 2).length;
+    if (multiCellLines < 2) return null;
+
+    // Choose the visual row with the most text fragments as the column
+    // reference; merge fragments on the same horizontal column across wrapped
+    // header baselines to recover columns even when no one baseline has them all.
+    const anchorGroup = rowGroups.reduce((best, group) => {
+      const score = group.reduce((sum, entry) => sum + entry.cells.length, 0);
+      const bestScore = best.reduce((sum, entry) => sum + entry.cells.length, 0);
+      return score > bestScore ? group : best;
+    }, rowGroups[0]);
+    const anchorPool = anchorGroup.flatMap(entry => entry.cells)
+      .sort((a, b) => a.center - b.center);
+    const clusters = [];
+    for (const cell of anchorPool) {
+      let nearest = null;
+      let nearestDistance = Infinity;
+      for (const cluster of clusters) {
+        const distance = Math.abs(cluster.center - cell.center);
+        if (distance < nearestDistance) {
+          nearest = cluster;
+          nearestDistance = distance;
+        }
+      }
+      if (nearest && nearestDistance <= 24) {
+        nearest.count += 1;
+        nearest.center += (cell.center - nearest.center) / nearest.count;
+        nearest.start += (cell.x - nearest.start) / nearest.count;
+      } else {
+        clusters.push({ center: cell.center, start: cell.x, count: 1 });
+      }
+    }
+    clusters.sort((a, b) => a.center - b.center);
+    const columnCenters = clusters.map(cluster => cluster.center);
+    const columnStarts = clusters.map(cluster => cluster.start);
+    const columnCount = columnCenters.length;
+    if (columnCount < 2 || columnCount > 12) return null;
 
     const rows = rowGroups.map(group => {
       const fragments = group.flatMap(entry => entry.cells.map(cell => ({
@@ -219,7 +246,9 @@
       const cells = Array.from({ length: columnCount }, () => ({ fragments: [], text: "" }));
 
       if (isMerged) {
-        cells[0].fragments = fragments;
+        const firstFragment = fragments[0];
+        const centered = Boolean(firstFragment && firstFragment.x > pageWidth * 0.28);
+        cells[0].fragments = fragments.map(fragment => ({ ...fragment, centered }));
         cells[0].text = fragments.map(cell => cell.text).join(" ").trim();
       } else {
         for (const entry of group) {
@@ -251,13 +280,11 @@
       };
     }).filter(row => row.cells.some(cell => cell.fragments.length));
 
-    // Require that the region contains actual multi-column structure. This
-    // keeps ordinary single-column paragraphs in normal editable paragraphs.
     if (rows.length < 2) return null;
+    const allXs = region.flatMap(entry => (entry.line.items || []).map(item => item.x)).filter(Number.isFinite);
+    if (!allXs.length) return null;
+    const leftPoints = Math.max(0, Math.min(pageWidth - 30, Math.min(...allXs)));
 
-    const leftPoints = Math.max(0, Math.min(pageWidth - 30,
-      Math.min(...region.flatMap(entry => entry.line.items || []).map(item => item.x).filter(Number.isFinite))
-    ));
     return {
       rows,
       endIndex: startIndex + region.length,
@@ -269,7 +296,7 @@
     };
   }
 
-  function createCellParagraph(cell, docx, fallbackFontSize) {
+    function createCellParagraph(cell, docx, fallbackFontSize) {
     const children = [];
     let previous = null;
     for (const part of cell.items || []) {
