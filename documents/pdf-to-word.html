@@ -44,7 +44,7 @@
 </div><div class="toolbar"><button class="btn primary" id="convert" type="button" disabled>Convert locally to Word (.docx)</button><button class="btn secondary" id="clear" type="button">Clear file</button></div>
 <div id="status" class="status" role="status" aria-live="polite"></div>
 <div id="progressBox" class="progressbox" aria-live="polite"><div class="progresshead"><span id="progressLabel">Processing PDF…</span><span id="progressPercent">0%</span></div><progress id="uploadProgress" max="100" value="0">0%</progress><p id="progressHint" class="progresshint">Keep this page open while the conversion runs.</p></div>
-<div class="privacy"><h2>Privacy note</h2><p>The PDF file is processed in your browser and is not sent to a ToolVault conversion API. PDF.js and docx.js are loaded from third-party CDNs. If you enable OCR, Tesseract.js and its English language data are also loaded from a CDN; these are software assets, not your PDF. For confidential documents, use a trusted device and browser.</p></div>
+<div class="privacy"><h2>Privacy note</h2><p>Your PDF is processed in this browser and is not uploaded to a ToolVault conversion API. On the first online visit, the browser downloads and caches the open-source conversion libraries. Optional OCR downloads its engine and English language data the first time it is used. These are software assets; your PDF is not sent to those providers. After setup, the core converter can work offline in this browser.</p></div>
 </section>
 <section class="content">
 <h2>Convert PDF to Word online for free</h2>
@@ -52,10 +52,10 @@
 <h3>How to convert PDF to Word</h3>
 <ul><li>Select a PDF file from your device.</li><li>Choose a conversion mode. Optionally enable English OCR for scanned pages.</li><li>Convert in your browser and download the generated DOCX when it is ready.</li><li>Open the DOCX in Microsoft Word or a compatible editor and check layout and OCR text.</li></ul>
 <h3>Important conversion limits</h3>
-<p>The local engine supports PDFs up to 60 MB and 150 pages per conversion. Editable mode reconstructs selectable text and approximate positions; columns, complex tables, rotated text, forms, unusual fonts, images, headers and footers may not match the original. Visual mode embeds page images and is not individually editable. Optional English OCR may misread characters, names, dates, decimal points or amounts. Review important documents manually.</p>
+<p>After its first online setup, the local engine supports PDFs up to 60 MB and 150 pages per conversion. Editable mode reconstructs selectable text and approximate positions; columns, complex tables, rotated text, forms, unusual fonts, images, headers and footers may not match the original. Visual mode embeds page images and is not individually editable. Optional English OCR may misread characters, names, dates, decimal points or amounts. Review important documents manually.</p>
 <h3>Frequently asked questions</h3>
 <p><strong>Is the PDF to Word converter free?</strong><br>Yes. You can use it without creating an account.</p>
-<p><strong>Are my documents uploaded?</strong><br>Your PDF is processed in your browser and is not sent to a conversion API by this page. Required JavaScript libraries load from third-party CDNs. Optional OCR also downloads the English language data needed for recognition.</p>
+<p><strong>Are my documents uploaded?</strong><br>Your PDF is processed locally. Initial setup downloads the required open-source libraries and caches them under this site's origin. Optional OCR downloads its engine and English language model when first used. The PDF itself is not sent to a conversion API.</p>
 <p><strong>Can it convert scanned PDFs?</strong><br>Yes, with the optional English OCR setting. OCR runs in your browser and may take longer; accuracy varies, so review the converted text.</p>
 <p><strong>How do I keep the same layout, logo, header, footer and fonts?</strong><br>Select Preserve original page appearance. Each page is inserted as an image, so its appearance is retained; the page contents are not individually editable as Word text.</p>
 <p><strong>Can I preserve the layout and edit all text?</strong><br>Not reliably for every file. The local engine reconstructs text and approximate positions; visual mode preserves the page as an image. For exact documents, compare the output with the PDF and correct it in Word.</p>
@@ -64,9 +64,6 @@
 </section>
 </main>
 <footer><div class="wrap">© 2026 ToolVault · Free practical tools for the web.</div></footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js" defer></script>
-<script src="/documents/pdf-to-word-engine.js" defer></script>
 <script>
 (function(){
 "use strict";
@@ -85,6 +82,7 @@ const enableOcr=document.getElementById("enableOcr");
 const MAX_BYTES=60*1024*1024;
 let file=null;
 let busy=false;
+let engineReady=false;
 
 function size(n){return n<1048576?(n/1024).toFixed(1)+" KB":(n/1048576).toFixed(2)+" MB";}
 function msg(text,type){status.textContent=text;status.className="status show "+type;}
@@ -97,7 +95,7 @@ function progress(value,label,hint){
 }
 function setBusy(value){
   busy=value;
-  convert.disabled=value||!file;
+  convert.disabled=value||!file||!engineReady;
   choose.disabled=value;
   clear.disabled=value;
   document.querySelectorAll('input[name="mode"]').forEach(el=>el.disabled=value);
@@ -107,7 +105,7 @@ function selectedMode(){return document.querySelector('input[name="mode"]:checke
 function refreshButton(){
   const mode=selectedMode();
   convert.textContent=mode==="visual"?"Preserve layout in Word (.docx)":"Convert locally to Word (.docx)";
-  if(!busy)convert.disabled=!file;
+  if(!busy)convert.disabled=!file||!engineReady;
 }
 function setFile(f){
   file=null;
@@ -135,7 +133,84 @@ function setFile(f){
   file=f;
   info.textContent=f.name+" · "+size(f.size);
   info.className="fileinfo show";
-  msg("PDF selected. Ready for local conversion.","info");
+  msg(engineReady?"PDF selected. Ready for local conversion.":"PDF selected. Preparing local conversion engine…","info");
+  refreshButton();
+}
+function loadScript(src){
+  return new Promise((resolve,reject)=>{
+    const script=document.createElement("script");
+    script.src=src;
+    script.async=true;
+    script.onload=()=>resolve();
+    script.onerror=()=>reject(new Error("Could not load conversion component: "+src));
+    document.head.appendChild(script);
+  });
+}
+function waitForController(timeoutMs){
+  return new Promise(resolve=>{
+    if(navigator.serviceWorker.controller){resolve(true);return;}
+    let finished=false;
+    const finish=value=>{
+      if(finished)return;
+      finished=true;
+      clearTimeout(timer);
+      navigator.serviceWorker.removeEventListener("controllerchange",onChange);
+      resolve(value);
+    };
+    const onChange=()=>finish(Boolean(navigator.serviceWorker.controller));
+    const timer=setTimeout(()=>finish(Boolean(navigator.serviceWorker.controller)),timeoutMs);
+    navigator.serviceWorker.addEventListener("controllerchange",onChange);
+  });
+}
+async function registerLocalAssetCache(){
+  if(!("serviceWorker" in navigator)) return false;
+  try{
+    await navigator.serviceWorker.register("/documents/pdf-to-word-sw.js",{scope:"/documents/"});
+    await navigator.serviceWorker.ready;
+    return await waitForController(10000);
+  }catch(error){
+    console.warn("ToolVault offline cache could not be activated.",error);
+    return false;
+  }
+}
+async function initializeEngine(){
+  convert.disabled=true;
+  msg("Preparing the local PDF converter…","info");
+  progress(1,"Preparing local engine…","First setup needs internet to cache the conversion libraries. Once cached, the converter can work offline in this browser.");
+  let localAssets=false;
+  try{
+    localAssets=await registerLocalAssetCache();
+    window.ToolVaultLocalAssetsReady=localAssets;
+    if(localAssets){
+      progress(20,"Loading local conversion components…","Core libraries are being loaded from the same-origin offline cache.");
+      await loadScript("/documents/vendor/pdf.min.js");
+      await loadScript("/documents/vendor/docx.umd.js");
+      await loadScript("/documents/pdf-to-word-engine.js");
+    }else{
+      // Online-only compatibility fallback for browsers where service workers
+      // are unavailable/blocked. The PDF still stays in the browser.
+      if(!navigator.onLine) throw new Error("Offline cache is not available in this browser. Connect to the internet once and reopen this page.");
+      window.ToolVaultLocalAssetsReady=false;
+      await loadScript("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js");
+      await loadScript("https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js");
+      await loadScript("/documents/pdf-to-word-engine.js");
+    }
+    if(!window.pdfjsLib||!window.docx||!window.ToolVaultPdfWordEngine){
+      throw new Error("A conversion component loaded, but its API was unavailable.");
+    }
+    engineReady=true;
+    progress(100,localAssets?"Local converter ready":"Converter ready","Select a PDF to begin.");
+    msg(localAssets
+      ?"Local converter ready. Core conversion files are cached. To use OCR offline later, complete one OCR conversion while online first."
+      :"Converter ready online, but this browser could not activate offline caching. Conversion still runs locally, without a ToolVault conversion API.","success");
+  }catch(error){
+    engineReady=false;
+    progressBox.className="progressbox show";
+    progressLabel.textContent="Setup incomplete";
+    progressPercent.textContent="—";
+    progressHint.textContent="Connect to the internet and reload the page to download the required components.";
+    msg("The local converter could not be prepared. "+(error&&error.message?error.message:"Reload the page while online and try again."),"error");
+  }
   refreshButton();
 }
 choose.addEventListener("click",()=>input.click());
@@ -156,8 +231,8 @@ clear.addEventListener("click",()=>{
 });
 convert.addEventListener("click",async()=>{
   if(!file||busy)return;
-  if(!window.ToolVaultPdfWordEngine){
-    msg("The local conversion engine did not load. Reload the page and try again.","error");
+  if(!engineReady||!window.ToolVaultPdfWordEngine){
+    msg("The local conversion engine is not ready. Reload this page and try again.","error");
     return;
   }
   const selected=file;
@@ -201,6 +276,7 @@ convert.addEventListener("click",async()=>{
     refreshButton();
   }
 });
+initializeEngine();
 })();
 </script>
 </body>
