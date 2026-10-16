@@ -567,7 +567,7 @@
         inspected++;
         if (pixels[i] < 242 || pixels[i + 1] < 242 || pixels[i + 2] < 242) nonWhite++;
       }
-      if (!inspected || nonWhite / inspected < 0.003) {
+      if (!inspected || nonWhite / inspected < 0.008) {
         band.width = 1;
         band.height = 1;
         return null;
@@ -823,6 +823,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.0.0-local"
+    version: "2.1.0-local"
   };
 })();
