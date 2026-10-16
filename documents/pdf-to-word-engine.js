@@ -452,11 +452,48 @@
     });
   }
 
+  function createFloatingImageParagraph(image, docx) {
+    const floatingImage = new docx.ImageRun({
+      data: image.bytes,
+      type: "png",
+      transformation: { width: image.widthPx, height: image.heightPx },
+      floating: {
+        horizontalPosition: {
+          relative: docx.HorizontalPositionRelativeFrom
+            ? docx.HorizontalPositionRelativeFrom.PAGE
+            : "page",
+          offset: Math.round(image.x * 12700)
+        },
+        verticalPosition: {
+          relative: docx.VerticalPositionRelativeFrom
+            ? docx.VerticalPositionRelativeFrom.PAGE
+            : "page",
+          offset: Math.round(image.pageY * 12700)
+        },
+        wrap: { type: docx.TextWrappingType ? docx.TextWrappingType.NONE : "none" },
+        allowOverlap: true,
+        behindDocument: false,
+        layoutInCell: true,
+        zIndex: 10
+      }
+    });
+    return new docx.Paragraph({
+      children: [floatingImage],
+      spacing: { before: 0, after: 0 },
+      indent: { left: 0 }
+    });
+  }
+
   function createEditableChildren(lines, metrics, docx, grid) {
     const children = [];
     let previousLine = null;
     let index = 0;
     while (index < lines.length) {
+      if (lines[index].floatingImage) {
+        children.push(createFloatingImageParagraph(lines[index].floatingImage, docx));
+        index++;
+        continue;
+      }
       const table = detectTableAt(lines, index, metrics.width, grid);
       if (table) {
         children.push(createTable(table.rows, metrics.width, docx, table));
@@ -611,6 +648,150 @@
 
   const HEADER_BAND_POINTS = 108;
   const FOOTER_BAND_POINTS = 73;
+
+  function multiplyPdfMatrix(a, b) {
+    return [
+      a[0] * b[0] + a[2] * b[1],
+      a[1] * b[0] + a[3] * b[1],
+      a[0] * b[2] + a[2] * b[3],
+      a[1] * b[2] + a[3] * b[3],
+      a[0] * b[4] + a[2] * b[5] + a[4],
+      a[1] * b[4] + a[3] * b[5] + a[5]
+    ];
+  }
+
+  async function getDisplayObject(page, objectId) {
+    const store = typeof objectId === "string" && objectId.startsWith("g_")
+      ? page.commonObjs
+      : page.objs;
+    try {
+      const existing = store.get(objectId);
+      if (existing) return existing;
+    } catch (_) {}
+    return new Promise(resolve => {
+      try {
+        const result = store.get(objectId, value => resolve(value));
+        if (result) resolve(result);
+      } catch (_) {
+        resolve(null);
+      }
+    });
+  }
+
+  async function displayImageToPng(image) {
+    if (!image) return null;
+    const bitmap = image.bitmap || (typeof ImageBitmap !== "undefined" && image instanceof ImageBitmap ? image : null);
+    const width = Math.round(image.width || (bitmap && bitmap.width) || 0);
+    const height = Math.round(image.height || (bitmap && bitmap.height) || 0);
+    if (!width || !height || width * height > 30000000) return null;
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext("2d", { alpha: true });
+    if (!context) return null;
+
+    if (bitmap || (typeof HTMLImageElement !== "undefined" && image instanceof HTMLImageElement)) {
+      context.drawImage(bitmap || image, 0, 0, width, height);
+    } else if (image.data && image.data.length === width * height * 4) {
+      const pixels = new Uint8ClampedArray(image.data);
+      context.putImageData(new ImageData(pixels, width, height), 0, 0);
+    } else if (image.data && image.data.length === width * height * 3) {
+      const pixels = new Uint8ClampedArray(width * height * 4);
+      for (let src = 0, dst = 0; src < image.data.length; src += 3, dst += 4) {
+        pixels[dst] = image.data[src];
+        pixels[dst + 1] = image.data[src + 1];
+        pixels[dst + 2] = image.data[src + 2];
+        pixels[dst + 3] = 255;
+      }
+      context.putImageData(new ImageData(pixels, width, height), 0, 0);
+    } else {
+      canvas.width = 1;
+      canvas.height = 1;
+      return null;
+    }
+
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+    if (!blob) {
+      canvas.width = 1;
+      canvas.height = 1;
+      return null;
+    }
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+    canvas.width = 1;
+    canvas.height = 1;
+    return { bytes, width, height };
+  }
+
+  async function findNativePageArtwork(page, metrics, pdfjsLib) {
+    const ops = pdfjsLib && pdfjsLib.OPS;
+    if (!ops || typeof page.getOperatorList !== "function") return { header: null, footer: null };
+    let list;
+    try {
+      list = await page.getOperatorList();
+    } catch (_) {
+      return { header: null, footer: null };
+    }
+
+    const imageOps = new Set([
+      ops.paintImageXObject,
+      ops.paintJpegXObject,
+      ops.paintImageXObjectRepeat
+    ].filter(value => value !== undefined));
+    const stack = [];
+    let transform = [1, 0, 0, 1, 0, 0];
+    let header = null;
+    let footer = null;
+
+    for (let i = 0; i < list.fnArray.length; i++) {
+      const operation = list.fnArray[i];
+      const args = list.argsArray[i] || [];
+      if (operation === ops.save) {
+        stack.push(transform.slice());
+        continue;
+      }
+      if (operation === ops.restore) {
+        transform = stack.pop() || [1, 0, 0, 1, 0, 0];
+        continue;
+      }
+      if (operation === ops.transform && args.length >= 6) {
+        transform = multiplyPdfMatrix(transform, args.slice(0, 6));
+        continue;
+      }
+      if (!imageOps.has(operation) || typeof args[0] !== "string") continue;
+
+      const a = transform[0], b = transform[1], c = transform[2], d = transform[3];
+      if (Math.abs(b) > 0.5 || Math.abs(c) > 0.5 || Math.abs(a) < 1 || Math.abs(d) < 1) continue;
+      const x = Math.min(transform[4], transform[4] + a);
+      const width = Math.abs(a);
+      const height = Math.abs(d);
+      const y = metrics.height - Math.max(transform[5], transform[5] + d);
+
+      const isHeader = y >= -3 && y < HEADER_BAND_POINTS - 5 &&
+        x < metrics.width * 0.15 && width > metrics.width * 0.72 &&
+        height >= 25 && height <= HEADER_BAND_POINTS + 25;
+      const isFooter = y > metrics.height - FOOTER_BAND_POINTS - 25 &&
+        y < metrics.height - 5 && x < metrics.width * 0.15 &&
+        width > metrics.width * 0.72 && height >= 8 && height <= 55;
+      if ((!isHeader || header) && (!isFooter || footer)) continue;
+
+      const image = await getDisplayObject(page, args[0]);
+      const png = await displayImageToPng(image);
+      if (!png) continue;
+      const artwork = {
+        bytes: png.bytes,
+        width: width * (96 / 72),
+        height: height * (96 / 72),
+        widthPoints: width,
+        heightPoints: height,
+        x,
+        y,
+        native: true
+      };
+      if (isHeader && !header) header = artwork;
+      if (isFooter && !footer) footer = artwork;
+    }
+    return { header, footer };
+  }
 
   function detectRasterGrid(canvas, metrics, scale) {
     const ctx = canvas.getContext("2d", { willReadFrequently: true });
@@ -870,16 +1051,19 @@
     }
 
     try {
-      const header = await cropBand(0, Math.min(HEADER_BAND_POINTS, metrics.height * 0.25));
+      const renderedHeader = await cropBand(0, Math.min(HEADER_BAND_POINTS, metrics.height * 0.25));
       const footerHeight = Math.min(FOOTER_BAND_POINTS, metrics.height * 0.2);
-      const footer = await cropBand(Math.max(0, metrics.height - footerHeight), footerHeight);
+      const renderedFooter = await cropBand(Math.max(0, metrics.height - footerHeight), footerHeight);
+      const nativeArtwork = await findNativePageArtwork(page, metrics, window.pdfjsLib);
+      const header = nativeArtwork.header || renderedHeader;
+      const footer = renderedFooter;
       const grid = detectRasterGrid(canvas, metrics, scale);
       const barcode = await detectBarcodeImage(canvas, metrics, scale, sourceLines);
       return {
         header,
         footer,
         grid: shiftGridY(grid, header ? HEADER_BAND_POINTS : 0),
-        barcode: barcode ? { ...barcode, y: barcode.y - (header ? HEADER_BAND_POINTS : 0) } : null
+        barcode: barcode ? { ...barcode, pageY: barcode.y, y: barcode.y - (header ? HEADER_BAND_POINTS : 0) } : null
       };
     } finally {
       canvas.width = 1;
@@ -896,8 +1080,8 @@
           type: "png",
           transformation: { width: band.width, height: band.height }
         })],
-        spacing: { before: 0, after: 0 },
-        indent: { left: 0 }
+        spacing: { before: band.native ? Math.round(band.y * 20) : 0, after: 0 },
+        indent: { left: band.native ? Math.round(band.x * 20) : 0 }
       })]
     });
   }
@@ -1042,7 +1226,19 @@
               .filter(line => line.top >= HEADER_BAND_POINTS - 1)
               .map(line => ({ ...line, top: Math.max(0, line.top - HEADER_BAND_POINTS) }));
           }
-          const pageChars = lines.reduce((sum, line) => sum + line.text.replace(/\s/g, "").length, 0);
+          if (pageBands.barcode) {
+            lines.push({
+              text: "",
+              top: pageBands.barcode.y,
+              height: 0,
+              fontSize: 6,
+              left: pageBands.barcode.x,
+              items: [],
+              floatingImage: pageBands.barcode
+            });
+            lines.sort((a, b) => a.top - b.top || (a.left || 0) - (b.left || 0));
+          }
+          const pageChars = lines.reduce((sum, line) => sum + (line.text || "").replace(/\s/g, "").length, 0);
           const needsOcr = lines.length === 0 || pageChars < 8;
 
           if (needsOcr && useOcr) {
