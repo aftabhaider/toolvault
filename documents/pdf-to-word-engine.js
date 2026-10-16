@@ -1286,9 +1286,11 @@
             }];
           }
 
-          const children = useOcr && lines.some(line => !line.items || !line.items.length)
-            ? lines.map((line, lineIndex) => createLineParagraph(line, lineIndex ? lines[lineIndex - 1] : null, docx, metrics.width, metrics.height, !line.items || !line.items.length))
-            : createEditableChildren(lines, metrics, docx);
+          const children = useOcr && lines.some(line => !line.floatingImage && (!line.items || !line.items.length))
+            ? lines.map((line, lineIndex) => line.floatingImage
+              ? createFloatingImageParagraph(line.floatingImage, docx)
+              : createLineParagraph(line, lineIndex ? lines[lineIndex - 1] : null, docx, metrics.width, metrics.height, !line.items || !line.items.length))
+            : createEditableChildren(lines, metrics, docx, pageBands.grid);
 
           const sectionHeaders = pageBands.header ? { default: makeBandHeader(pageBands.header, docx) } : undefined;
           const sectionFooters = pageBands.footer ? { default: makeBandFooter(pageBands.footer, docx) } : undefined;
