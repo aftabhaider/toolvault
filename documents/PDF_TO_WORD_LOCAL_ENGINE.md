@@ -98,3 +98,8 @@ Moved return-form and bill-title flags to the paragraph-builder scope so both ti
 ## Editable reconstruction improvements (2.5.1)
 
 For PDFs with ruled tables, the engine now groups horizontal rules into table bands, uses detected vertical rules as column boundaries, and derives row spans from which vertical borders actually cross each horizontal band. This preserves multi-line text inside its original physical cell and reconstructs merged total rows when inner borders stop. The engine computes table geometry once per page. It also infers centered text from actual item coordinates, applies a plain Word font-family string for compatibility, and explicitly styles common bill titles, installation headings, supply-order headings, and recipient labels. This has passed syntax checks and synthetic row/merged-cell tests; the user's real PDF still needs end-to-end testing in Word.
+
+
+## Runtime fix (2.5.2)
+
+Moved the PDF line's x-coordinate and font-size calculations before the loop that creates text runs. Tab-stop offsets therefore no longer access leftX before initialization. The offline cache and test port were refreshed for this retest.
