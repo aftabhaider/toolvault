@@ -429,6 +429,7 @@
 
     function createLineParagraph(line, previousLine, docx, pageHeight, isOcr) {
     const runs = [];
+    const tabStops = [];
     if (isOcr || !line.items || !line.items.length) {
       if (line.text) {
         runs.push(new docx.TextRun({
@@ -443,6 +444,12 @@
           const gap = part.x - (previous.x + previous.width);
           if (gap > Math.max(9, line.fontSize * 1.7)) {
             runs.push(new docx.TextRun({ text: "\t" }));
+            // Anchor tab-separated fields to the PDF's original horizontal
+            // position instead of relying on Word's default half-inch tabs.
+            tabStops.push({
+              type: docx.TabStopType ? docx.TabStopType.LEFT : "left",
+              position: Math.max(20, Math.round((part.x - (line.left || 0)) * 20))
+            });
           } else if (gap > Math.max(1.2, line.fontSize * 0.18)) {
             runs.push(new docx.TextRun({ text: " " }));
           }
@@ -467,11 +474,12 @@
     return new docx.Paragraph({
       children: runs.length ? runs : [new docx.TextRun({ text: "" })],
       indent: { left: leftIndent },
+      tabStops: tabStops.length ? tabStops : undefined,
       spacing: { before: before, after: 0 }
     });
   }
 
-  async function loadTesseract() {
+    async function loadTesseract() {
     if (window.Tesseract) return window.Tesseract;
     if (!ocrScriptPromise) {
       ocrScriptPromise = new Promise((resolve, reject) => {
@@ -579,7 +587,7 @@
       const bytes = new Uint8Array(await blob.arrayBuffer());
       band.width = 1;
       band.height = 1;
-      return { bytes, width: metrics.width, height: height / scaleY };
+      return { bytes, width: metrics.width * (96 / 72), height: (height / scaleY) * (96 / 72), heightPoints: height / scaleY };
     }
 
     try {
@@ -737,12 +745,15 @@
           const pageBands = await renderPageBands(page, metrics);
           const content = await page.getTextContent();
           let lines = groupTextLines(content.items, metrics);
-          // Keep logo/header/footer artwork as images, while leaving body text editable.
-          if (pageBands.header) {
-            lines = lines.filter(line => line.top >= HEADER_BAND_POINTS - 1);
-          }
+          // Remove text already visible in header/footer artwork and preserve
+          // the remaining layout relative to the body below the page header.
           if (pageBands.footer) {
             lines = lines.filter(line => line.top < metrics.height - FOOTER_BAND_POINTS);
+          }
+          if (pageBands.header) {
+            lines = lines
+              .filter(line => line.top >= HEADER_BAND_POINTS - 1)
+              .map(line => ({ ...line, top: Math.max(0, line.top - HEADER_BAND_POINTS) }));
           }
           const pageChars = lines.reduce((sum, line) => sum + line.text.replace(/\s/g, "").length, 0);
           const needsOcr = lines.length === 0 || pageChars < 8;
