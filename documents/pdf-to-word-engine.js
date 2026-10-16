@@ -130,6 +130,177 @@
     };
   }
 
+  function splitLineIntoCells(line) {
+    const items = line && Array.isArray(line.items) ? line.items.slice().sort((a, b) => a.x - b.x) : [];
+    if (items.length < 2) return null;
+
+    const cells = [];
+    let current = [];
+    let previous = null;
+    const splitGap = Math.max(32, clampFontSize(line.fontSize) * 3.1);
+
+    for (const item of items) {
+      const gap = previous ? item.x - (previous.x + previous.width) : 0;
+      if (previous && gap > splitGap && current.length) {
+        cells.push({ items: current });
+        current = [];
+      }
+      current.push(item);
+      previous = item;
+    }
+    if (current.length) cells.push({ items: current });
+    if (cells.length < 2) return null;
+
+    for (const cell of cells) {
+      cell.x = cell.items[0].x;
+      cell.text = "";
+      let last = null;
+      for (const part of cell.items) {
+        if (last) {
+          const gap = part.x - (last.x + last.width);
+          if (gap > Math.max(1.2, clampFontSize(line.fontSize) * 0.18)) cell.text += " ";
+        }
+        cell.text += part.str;
+        last = part;
+      }
+    }
+    return cells;
+  }
+
+  function detectTableAt(lines, startIndex, pageWidth) {
+    const firstLine = lines[startIndex];
+    const firstCells = splitLineIntoCells(firstLine);
+    if (!firstCells || firstCells.length < 2) return null;
+
+    const columnCount = firstCells.length;
+    const rows = [{ line: firstLine, cells: firstCells }];
+    const starts = firstCells.map(cell => cell.x);
+    const alignmentTolerance = Math.max(12, pageWidth * 0.025);
+    let previous = firstLine;
+
+    for (let index = startIndex + 1; index < lines.length; index++) {
+      const line = lines[index];
+      const rowGap = line.top - (previous.top + previous.height);
+      if (rowGap > Math.max(42, clampFontSize(previous.fontSize) * 4.2)) break;
+
+      const cells = splitLineIntoCells(line);
+      if (!cells || cells.length !== columnCount) break;
+      let aligned = true;
+      for (let column = 0; column < columnCount; column++) {
+        if (Math.abs(cells[column].x - starts[column]) > alignmentTolerance) {
+          aligned = false;
+          break;
+        }
+      }
+      if (!aligned) break;
+
+      rows.push({ line, cells });
+      previous = line;
+    }
+
+    // Only treat a clear multi-row pattern as a table. This reduces accidental
+    // conversion of isolated large gaps into table cells.
+    if (rows.length < 3) return null;
+
+    // Two long text blocks aligned side by side are more likely to be a
+    // multi-column article than a data table. Keep them as text paragraphs.
+    if (columnCount === 2) {
+      const everyCellLooksLikeLongBodyText = rows.every(row =>
+        row.cells.every(cell => cell.text.replace(/\s/g, "").length >= 28)
+      );
+      if (everyCellLooksLikeLongBodyText) return null;
+    }
+
+    return { rows, endIndex: startIndex + rows.length };
+  }
+
+  function createCellParagraph(cell, docx, fallbackFontSize) {
+    const children = [];
+    let previous = null;
+    for (const part of cell.items) {
+      if (previous) {
+        const gap = part.x - (previous.x + previous.width);
+        if (gap > Math.max(1.2, clampFontSize(fallbackFontSize) * 0.18)) {
+          children.push(new docx.TextRun({ text: " " }));
+        }
+      }
+      const fontStyle = styleFromFontName(part.fontName);
+      children.push(new docx.TextRun({
+        text: part.str,
+        size: Math.round(clampFontSize(part.fontSize || fallbackFontSize) * 2),
+        bold: fontStyle.bold,
+        italics: fontStyle.italics
+      }));
+      previous = part;
+    }
+    return new docx.Paragraph({
+      children: children.length ? children : [new docx.TextRun({ text: cell.text || "" })],
+      spacing: { before: 0, after: 0 }
+    });
+  }
+
+  function createTable(rows, pageWidth, docx) {
+    const columnCount = rows[0].cells.length;
+    const columnStarts = [];
+    for (let column = 0; column < columnCount; column++) {
+      columnStarts.push(rows.reduce((sum, row) => sum + row.cells[column].x, 0) / rows.length);
+    }
+
+    const leftPoints = Math.max(0, Math.min(pageWidth - 30, columnStarts[0]));
+    const widthsPoints = [];
+    for (let column = 0; column < columnCount - 1; column++) {
+      widthsPoints.push(Math.max(18, columnStarts[column + 1] - columnStarts[column]));
+    }
+    widthsPoints.push(Math.max(18, pageWidth - columnStarts[columnCount - 1]));
+
+    // Keep the grid and preferred table width internally consistent.
+    const widths = widthsPoints.map(width => Math.max(360, Math.round(width * 20)));
+    const totalWidth = widths.reduce((sum, width) => sum + width, 0);
+    const widthType = docx.WidthType ? docx.WidthType.DXA : "dxa";
+    const edge = { style: docx.BorderStyle ? docx.BorderStyle.SINGLE : "single", size: 2, color: "D7E2DE", space: 0 };
+
+    const tableRows = rows.map(row => new docx.TableRow({
+      children: row.cells.map((cell, column) => new docx.TableCell({
+        children: [createCellParagraph(cell, docx, row.line.fontSize)],
+        width: { size: widths[column], type: widthType },
+        margins: { top: 25, bottom: 25, left: 45, right: 45 }
+      }))
+    }));
+
+    return new docx.Table({
+      rows: tableRows,
+      width: { size: totalWidth, type: widthType },
+      columnWidths: widths,
+      indent: { size: Math.round(leftPoints * 20), type: widthType },
+      layout: docx.TableLayoutType ? docx.TableLayoutType.FIXED : undefined,
+      borders: {
+        top: edge, bottom: edge, left: edge, right: edge,
+        insideHorizontal: edge, insideVertical: edge
+      }
+    });
+  }
+
+  function createEditableChildren(lines, metrics, docx) {
+    const children = [];
+    let previousLine = null;
+    let index = 0;
+    while (index < lines.length) {
+      const table = detectTableAt(lines, index, metrics.width);
+      if (table) {
+        children.push(createTable(table.rows, metrics.width, docx));
+        previousLine = table.rows[table.rows.length - 1].line;
+        index = table.endIndex;
+        continue;
+      }
+
+      const line = lines[index];
+      children.push(createLineParagraph(line, previousLine, docx, metrics.height, false));
+      previousLine = line;
+      index++;
+    }
+    return children;
+  }
+
   function createLineParagraph(line, previousLine, docx, pageHeight, isOcr) {
     const runs = [];
     if (isOcr || !line.items || !line.items.length) {
@@ -368,12 +539,9 @@
             }];
           }
 
-          const children = [];
-          let previous = null;
-          for (const line of lines) {
-            children.push(createLineParagraph(line, previous, docx, metrics.height, !line.items || !line.items.length));
-            previous = line;
-          }
+          const children = useOcr && lines.some(line => !line.items || !line.items.length)
+            ? lines.map((line, lineIndex) => createLineParagraph(line, lineIndex ? lines[lineIndex - 1] : null, docx, metrics.height, !line.items || !line.items.length))
+            : createEditableChildren(lines, metrics, docx);
 
           sections.push({
             properties: {
