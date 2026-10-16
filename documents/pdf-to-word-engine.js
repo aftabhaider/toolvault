@@ -8,8 +8,16 @@
 
   const MAX_FILE_BYTES = 60 * 1024 * 1024;
   const MAX_PAGES = 150;
-  const OCR_SCRIPT = "/documents/vendor/tesseract.min.js";
+  const OCR_SCRIPT_LOCAL = "/documents/vendor/tesseract.min.js";
+  const OCR_SCRIPT_CDN = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
+  const TESSERACT_WORKER_CDN = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js";
+  const TESSERACT_CORE_CDN = "https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1";
+  const TESSERACT_LANG_CDN = "https://tessdata.projectnaptha.com/4.0.0/";
   let ocrScriptPromise = null;
+
+  function localAssetCacheActive() {
+    return Boolean(window.ToolVaultLocalAssetsReady);
+  }
 
   function report(onProgress, percent, label, hint) {
     if (typeof onProgress === "function") {
@@ -177,7 +185,7 @@
           return;
         }
         const script = document.createElement("script");
-        script.src = OCR_SCRIPT;
+        script.src = localAssetCacheActive() ? OCR_SCRIPT_LOCAL : OCR_SCRIPT_CDN;
         script.async = true;
         script.crossOrigin = "anonymous";
         script.dataset.toolvaultTesseract = "true";
@@ -240,7 +248,9 @@
     }
 
     report(onProgress, 2, "Opening PDF…", "The file stays in your browser; it is not uploaded to a conversion server.");
-    pdfjsLib.GlobalWorkerOptions.workerSrc = "/documents/vendor/pdf.worker.min.js";
+    pdfjsLib.GlobalWorkerOptions.workerSrc = localAssetCacheActive()
+      ? "/documents/vendor/pdf.worker.min.js"
+      : "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
     let pdf;
     try {
@@ -310,9 +320,15 @@
         if (useOcr) {
           const Tesseract = await loadTesseract();
           ocrWorker = await Tesseract.createWorker("eng", 1, {
-            workerPath: "/documents/vendor/tesseract.worker.min.js",
-            corePath: "/documents/vendor/tesseract-core",
-            langPath: "/documents/vendor/lang/",
+            workerPath: localAssetCacheActive()
+              ? "/documents/vendor/tesseract.worker.min.js"
+              : TESSERACT_WORKER_CDN,
+            corePath: localAssetCacheActive()
+              ? "/documents/vendor/tesseract-core"
+              : TESSERACT_CORE_CDN,
+            langPath: localAssetCacheActive()
+              ? "/documents/vendor/lang/"
+              : TESSERACT_LANG_CDN,
             workerBlobURL: false,
             logger: (event) => {
               if (event && event.status === "recognizing text") {
