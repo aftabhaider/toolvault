@@ -1539,7 +1539,14 @@
           const page = await pdf.getPage(index);
           const metrics = pageMetrics(page);
           const baseViewport = page.getViewport({ scale: 1 });
-          const renderViewport = page.getViewport({ scale: 2 });
+          // Render complete pages at high resolution in exact-appearance mode.
+          // Cap raster memory at about 12 megapixels per page.
+          const maximumRenderPixels = 12000000;
+          const renderScale = Math.max(1, Math.min(
+            4,
+            Math.sqrt(maximumRenderPixels / Math.max(1, baseViewport.width * baseViewport.height))
+          ));
+          const renderViewport = page.getViewport({ scale: renderScale });
           const canvas = document.createElement("canvas");
           canvas.width = Math.ceil(renderViewport.width);
           canvas.height = Math.ceil(renderViewport.height);
@@ -1553,7 +1560,7 @@
           sections.push({
             properties: {
               page: {
-                size: { width: Math.round(metrics.width * 20), height: Math.round(metrics.height * 20) },
+                size: { width: Math.round(baseViewport.width * 20), height: Math.round(baseViewport.height * 20) },
                 margin: { top: 0, right: 0, bottom: 0, left: 0, header: 0, footer: 0 }
               }
             },
@@ -1563,9 +1570,15 @@
                   new docx.ImageRun({
                     data: bytes,
                     type: "png",
-                    transformation: { width: baseViewport.width, height: baseViewport.height }
+                    // docx.js image dimensions use CSS pixels at 96 DPI.
+                    // Convert PDF page points to pixels so the image fills the page.
+                    transformation: {
+                      width: baseViewport.width * (96 / 72),
+                      height: baseViewport.height * (96 / 72)
+                    }
                   })
                 ],
+                indent: { left: 0, right: 0, firstLine: 0 },
                 spacing: { before: 0, after: 0 }
               })
             ]
@@ -1743,6 +1756,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.5.2-local"
+    version: "2.6.0-local"
   };
 })();
