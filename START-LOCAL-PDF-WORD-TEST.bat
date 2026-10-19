@@ -27,15 +27,15 @@ pause
 exit /b 1
 
 :use_py
-echo Starting server at http://127.0.0.1:8011
-start "" "http://127.0.0.1:8011/documents/pdf-to-word.html"
-py -m http.server 8011
+echo Starting server at http://127.0.0.1:8012
+start "" "http://127.0.0.1:8012/documents/pdf-to-word.html"
+py -m http.server 8012
 goto finished
 
 :use_python
-echo Starting server at http://127.0.0.1:8011
-start "" "http://127.0.0.1:8011/documents/pdf-to-word.html"
-python -m http.server 8011
+echo Starting server at http://127.0.0.1:8012
+start "" "http://127.0.0.1:8012/documents/pdf-to-word.html"
+python -m http.server 8012
 goto finished
 
 :finished
