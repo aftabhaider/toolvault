@@ -33,13 +33,13 @@
 <header><div class="wrap nav"><a class="logo" href="/">Tool<span>Vault</span></a><a href="/documents/">← All PDF Tools</a></div></header>
 <main class="wrap">
 <div class="crumb"><a href="/">ToolVault</a> / <a href="/documents/">PDF & Documents</a> / PDF to Word</div>
-<section class="hero"><span class="eyebrow">Free · Browser-based</span><h1>PDF to Word Converter</h1><p>Convert PDF to Word with a server-independent browser engine. Preserve the original page appearance or reconstruct editable text and layout locally. Optional English OCR can help with scanned pages.</p></section>
+<section class="hero"><span class="eyebrow">Free · Browser-based</span><h1>PDF to Word Converter</h1><p>Convert PDF to Word in your browser. Choose exact page appearance to keep the PDF's visible layout, colors, logos and tables; choose editable text when you need to modify the content, with possible layout differences.</p></section>
 <section class="panel">
-<div class="drop" id="drop"><strong>Choose a PDF to convert</strong><p>Select a PDF to process on this device. Text-based PDFs can be reconstructed into editable Word content. For scanned pages, enable optional English OCR and review the results carefully.</p><input id="fileInput" type="file" accept="application/pdf,.pdf" hidden><button class="btn secondary" id="choose" type="button">Choose PDF file</button></div>
+<div class="drop" id="drop"><strong>Choose a PDF to convert</strong><p>Select a PDF to process on this device. Exact appearance preserves each page visually; Editable Word reconstructs the text and may change the layout.</p><input id="fileInput" type="file" accept="application/pdf,.pdf" hidden><button class="btn secondary" id="choose" type="button">Choose PDF file</button></div>
 <div class="fileinfo" id="fileInfo" aria-live="polite"></div>
 <div class="fileinfo show" style="margin-top:14px"><strong>Conversion mode</strong>
-<label style="display:flex;gap:9px;align-items:flex-start;margin-top:9px;cursor:pointer"><input type="radio" name="mode" value="editable" checked style="margin-top:4px"><span><strong>Editable Word (local engine — recommended)</strong><br><span style="color:var(--muted)">Reconstructs selectable text and tables directly in your browser. Detected header/footer artwork is retained as an image; the reconstructed body text and table cells remain editable. Complex forms may still need correction.</span></span></label>
-<label style="display:flex;gap:9px;align-items:flex-start;margin-top:12px;cursor:pointer"><input type="radio" name="mode" value="visual" style="margin-top:4px"><span><strong>Preserve original page appearance</strong><br><span style="color:var(--muted)">Keeps each PDF page visually faithful by placing it as a high-resolution image inside Word. Page text is not individually editable.</span></span></label>
+<label style="display:flex;gap:9px;align-items:flex-start;margin-top:9px;cursor:pointer"><input type="radio" name="mode" value="visual" checked style="margin-top:4px"><span><strong>Exact PDF appearance in Word — recommended for identical layout</strong><br><span style="color:var(--muted)">Places each complete PDF page into Word as a high-resolution image fitted to the original page size. Preserves visible fonts, colors, logos, margins, tables, alignment, headers and footers. Page text is not individually editable.</span></span></label>
+<label style="display:flex;gap:9px;align-items:flex-start;margin-top:12px;cursor:pointer"><input type="radio" name="mode" value="editable" style="margin-top:4px"><span><strong>Editable Word (layout may change)</strong><br><span style="color:var(--muted)">Reconstructs selectable text and tables in your browser. Use this when you need editable text and accept that the page layout, fonts, colors, images and table borders may not match the PDF exactly.</span></span></label>
 <label style="display:flex;gap:9px;align-items:flex-start;margin-top:12px;cursor:pointer"><input type="checkbox" id="enableOcr" style="margin-top:4px"><span><strong>Run English OCR on scanned pages (optional)</strong><br><span style="color:var(--muted)">Uses a browser-based OCR engine for pages with little or no selectable text. The first run may download language data and can be slow. Check all names, dates, figures and amounts.</span></span></label>
 </div><div class="toolbar"><button class="btn primary" id="convert" type="button" disabled>Convert locally to Word (.docx)</button><button class="btn secondary" id="clear" type="button">Clear file</button></div>
 <div id="status" class="status" role="status" aria-live="polite"></div>
@@ -48,16 +48,16 @@
 </section>
 <section class="content">
 <h2>Convert PDF to Word online for free</h2>
-<p>Choose Editable Word to reconstruct selectable text and approximate page positioning into editable Word paragraphs. Choose Preserve original page appearance when the visual appearance matters most; this mode places a high-resolution image of each page into Word, so the page text is not individually editable. Optional English OCR can recognize text from scanned pages directly in your browser.</p>
+<p>Choose Exact PDF appearance when you need a Word file that looks like the source PDF; each page is rendered as a high-resolution image fitted to the original page size. Choose Editable Word only when you need to edit the text; reconstructed layout, font matching, tables and colors may differ. Optional English OCR can recognize text from scanned pages directly in your browser.</p>
 <h3>How to convert PDF to Word</h3>
 <ul><li>Select a PDF file from your device.</li><li>Choose a conversion mode. Optionally enable English OCR for scanned pages.</li><li>Convert in your browser and download the generated DOCX when it is ready.</li><li>Open the DOCX in Microsoft Word or a compatible editor and check layout and OCR text.</li></ul>
 <h3>Important conversion limits</h3>
-<p>After its first online setup, the local engine supports PDFs up to 60 MB and 150 pages per conversion. Editable mode reconstructs selectable text and approximate positions; columns, complex tables, rotated text, forms, unusual fonts, images, headers and footers may not match the original. Visual mode embeds page images and is not individually editable. Optional English OCR may misread characters, names, dates, decimal points or amounts. Review important documents manually.</p>
+<p>After its first online setup, the local engine supports PDFs up to 60 MB and 150 pages per conversion. Editable mode reconstructs selectable text and approximate positions; columns, complex tables, rotated text, forms, unusual fonts, images, headers and footers may not match the original. Exact appearance mode embeds high-resolution full-page images and is not individually editable. Optional English OCR may misread characters, names, dates, decimal points or amounts. Review important documents manually.</p>
 <h3>Frequently asked questions</h3>
 <p><strong>Is the PDF to Word converter free?</strong><br>Yes. You can use it without creating an account.</p>
 <p><strong>Are my documents uploaded?</strong><br>Your PDF is processed locally. Initial setup downloads the required open-source libraries and caches them under this site's origin. Optional OCR downloads its engine and English language model when first used. The PDF itself is not sent to a conversion API.</p>
 <p><strong>Can it convert scanned PDFs?</strong><br>Yes, with the optional English OCR setting. OCR runs in your browser and may take longer; accuracy varies, so review the converted text.</p>
-<p><strong>How do I keep the same layout, logo, header, footer and fonts?</strong><br>Select Preserve original page appearance. Each page is inserted as an image, so its appearance is retained; the page contents are not individually editable as Word text.</p>
+<p><strong>How do I keep the same layout, logo, header, footer and fonts?</strong><br>Select Exact PDF appearance in Word. Each full page is inserted as a high-resolution image sized to the original page. Text isn't individually editable; for editable text, choose Editable Word and expect layout differences.</p>
 <p><strong>Can I preserve the layout and edit all text?</strong><br>Not reliably for every file. The local engine reconstructs text and approximate positions; visual mode preserves the page as an image. For exact documents, compare the output with the PDF and correct it in Word.</p>
 <p><strong>Why is the output empty?</strong><br>The PDF may be scanned or contain no usable text layer. Enable the optional English OCR setting and retry. OCR can misread content, so check the output.</p>
 <h3>Explore more PDF tools</h3><div class="related"><a href="/documents/merge-pdf">Merge PDF files</a><a href="/documents/">All PDF tools</a><a href="/">ToolVault homepage</a></div>
@@ -101,10 +101,10 @@ function setBusy(value){
   document.querySelectorAll('input[name="mode"]').forEach(el=>el.disabled=value);
   enableOcr.disabled=value;
 }
-function selectedMode(){return document.querySelector('input[name="mode"]:checked')?.value||"editable";}
+function selectedMode(){return document.querySelector('input[name="mode"]:checked')?.value||"visual";}
 function refreshButton(){
   const mode=selectedMode();
-  convert.textContent=mode==="visual"?"Preserve layout in Word (.docx)":"Convert locally to Word (.docx)";
+  convert.textContent=mode==="visual"?"Preserve exact PDF appearance (.docx)":"Convert to editable Word (.docx)";
   if(!busy)convert.disabled=!file||!engineReady;
 }
 function setFile(f){
@@ -267,7 +267,7 @@ convert.addEventListener("click",async()=>{
     setTimeout(()=>URL.revokeObjectURL(url),5000);
 
     if(mode==="visual"){
-      msg("Word file downloaded. The original page appearance is preserved with images, so page text is not individually editable.","success");
+      msg("Word file downloaded using high-resolution full-page images sized to the original pages. The visible layout is preserved; page text is not individually editable.","success");
     }else if(wantsOcr&&result.pagesOcr){
       msg("Word file downloaded. OCR was used on "+result.pagesOcr+" page(s). Please verify names, dates, numbers, currency amounts and layout.","success");
     }else{
