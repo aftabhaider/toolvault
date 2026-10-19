@@ -796,6 +796,7 @@
           text: part.str,
           size: Math.round(clampFontSize(part.fontSize) * 2),
           font: { name: part.wordFont || "Arial" },
+          color: part.wordColor || undefined,
           bold: fontStyle.bold || titleLine || invoiceHeading || supplyOrderHeading || recipientHeading || metadataLabel,
           italics: fontStyle.italics,
           underline: returnFormTitle
