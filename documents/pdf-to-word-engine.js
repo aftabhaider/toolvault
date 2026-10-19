@@ -747,7 +747,7 @@
     return children;
   }
 
-    function createLineParagraph(line, previousLine, docx, pageWidth, pageHeight, isOcr) {
+    function createLineParagraph(line, previousLine, docx, pageWidth, pageHeight, isOcr, backgroundImage) {
     const runs = [];
     const tabStops = [];
     const items = line.items && line.items.length ? line.items : [];
@@ -826,7 +826,10 @@
       : 0;
 
     return new docx.Paragraph({
-      children: runs.length ? runs : [new docx.TextRun({ text: "" })],
+      children: [
+        ...(backgroundImage ? [createHybridBackgroundRun(backgroundImage, docx)] : []),
+        ...(runs.length ? runs : [new docx.TextRun({ text: "" })])
+      ],
       alignment: centered && docx.AlignmentType
         ? docx.AlignmentType.CENTER
         : rightAligned && docx.AlignmentType
@@ -886,6 +889,7 @@
         return {
           text: String(line.text).trim(),
           left: Math.max(0, box.x0 * scaleX),
+          width: Math.max(0, (box.x1 - box.x0) * scaleX),
           top: Math.max(0, box.y0 * scaleY),
           height: Math.max(fontSize, (box.y1 - box.y0) * scaleY),
           fontSize: fontSize,
@@ -1490,7 +1494,201 @@
     return new docx.Footer({ children });
   }
 
-    async function convert(options) {
+    function medianColor(samples) {
+    if (!samples.length) return [255, 255, 255];
+    const channel = index => {
+      const values = samples.map(sample => sample[index]).sort((a, b) => a - b);
+      return values[Math.floor(values.length / 2)];
+    };
+    return [channel(0), channel(1), channel(2)];
+  }
+
+  function sampleCanvasColor(imageData, rect) {
+    const { data, width, height } = imageData;
+    const samples = [];
+    const pushPixel = (x, y) => {
+      if (x < 0 || x >= width || y < 0 || y >= height) return;
+      const offset = (Math.floor(y) * width + Math.floor(x)) * 4;
+      samples.push([data[offset], data[offset + 1], data[offset + 2]]);
+    };
+    const x0 = Math.max(0, Math.floor(rect.x));
+    const x1 = Math.min(width - 1, Math.ceil(rect.x + rect.width));
+    const y0 = Math.max(0, Math.floor(rect.y));
+    const y1 = Math.min(height - 1, Math.ceil(rect.y + rect.height));
+    const stride = Math.max(1, Math.floor(Math.min(rect.width, rect.height) / 24));
+    for (let x = x0; x <= x1; x += stride) {
+      pushPixel(x, y0);
+      pushPixel(x, y1);
+    }
+    for (let y = y0; y <= y1; y += stride) {
+      pushPixel(x0, y);
+      pushPixel(x1, y);
+    }
+    return medianColor(samples);
+  }
+
+  function estimateForegroundColor(imageData, rect, background) {
+    const { data, width, height } = imageData;
+    const x0 = Math.max(0, Math.floor(rect.x + rect.width * 0.08));
+    const x1 = Math.min(width - 1, Math.ceil(rect.x + rect.width * 0.92));
+    const y0 = Math.max(0, Math.floor(rect.y + rect.height * 0.12));
+    const y1 = Math.min(height - 1, Math.ceil(rect.y + rect.height * 0.88));
+    const samples = [];
+    const stepX = Math.max(1, Math.floor((x1 - x0 + 1) / 80));
+    const stepY = Math.max(1, Math.floor((y1 - y0 + 1) / 24));
+    for (let y = y0; y <= y1; y += stepY) {
+      for (let x = x0; x <= x1; x += stepX) {
+        const offset = (y * width + x) * 4;
+        const pixel = [data[offset], data[offset + 1], data[offset + 2]];
+        const distance = Math.sqrt(
+          (pixel[0] - background[0]) ** 2 +
+          (pixel[1] - background[1]) ** 2 +
+          (pixel[2] - background[2]) ** 2
+        );
+        if (distance > 45) samples.push(pixel);
+      }
+    }
+    if (!samples.length) return "000000";
+    const rgb = medianColor(samples);
+    return rgb.map(value => Math.max(0, Math.min(255, value)).toString(16).padStart(2, "0")).join("").toUpperCase();
+  }
+
+  function maskHybridText(canvas, metrics, lines, scaleX, scaleY) {
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+    if (!context) return;
+    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+    const masks = [];
+    for (const line of lines || []) {
+      const items = line.items && line.items.length ? line.items : [];
+      if (items.length) {
+        for (const item of items) {
+          if (!item.str || !String(item.str).trim()) continue;
+          const fontSize = clampFontSize(item.fontSize || line.fontSize);
+          const rect = {
+            x: (item.x - 0.7) * scaleX,
+            y: (item.top - 0.8) * scaleY,
+            width: Math.max(1, (item.width + 1.4) * scaleX),
+            height: Math.max(fontSize + 1.5, (item.height || fontSize) + 1.6) * scaleY
+          };
+          const bgRect = {
+            x: Math.max(0, rect.x - 2 * scaleX),
+            y: Math.max(0, rect.y - 1.7 * scaleY),
+            width: Math.min(canvas.width, rect.width + 4 * scaleX),
+            height: Math.min(canvas.height, rect.height + 3.4 * scaleY)
+          };
+          const background = sampleCanvasColor(imageData, bgRect);
+          item.wordColor = estimateForegroundColor(imageData, rect, background);
+          masks.push({ rect, color: background });
+        }
+      } else if (line.width && Number.isFinite(line.left) && Number.isFinite(line.top)) {
+        const rect = {
+          x: (line.left - 0.6) * scaleX,
+          y: (line.top - 0.6) * scaleY,
+          width: Math.max(1, (line.width + 1.2) * scaleX),
+          height: Math.max(1, (line.height + 1.2) * scaleY)
+        };
+        const bgRect = {
+          x: Math.max(0, rect.x - 2 * scaleX),
+          y: Math.max(0, rect.y - 1.5 * scaleY),
+          width: Math.min(canvas.width, rect.width + 4 * scaleX),
+          height: Math.min(canvas.height, rect.height + 3 * scaleY)
+        };
+        masks.push({ rect, color: sampleCanvasColor(imageData, bgRect) });
+      }
+    }
+
+    context.save();
+    context.imageSmoothingEnabled = false;
+    for (const mask of masks) {
+      context.fillStyle = "rgb(" + mask.color[0] + ", " + mask.color[1] + ", " + mask.color[2] + ")";
+      context.fillRect(mask.rect.x, mask.rect.y, mask.rect.width, mask.rect.height);
+    }
+    context.restore();
+  }
+
+  async function renderHybridBackground(page, metrics, lines) {
+    const baseViewport = page.getViewport({ scale: 1 });
+    const maximumRenderPixels = 12000000;
+    const renderScale = Math.max(1, Math.min(
+      4,
+      Math.sqrt(maximumRenderPixels / Math.max(1, baseViewport.width * baseViewport.height))
+    ));
+    const viewport = page.getViewport({ scale: renderScale });
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.ceil(viewport.width));
+    canvas.height = Math.max(1, Math.ceil(viewport.height));
+    const context = canvas.getContext("2d", { alpha: false, willReadFrequently: true });
+    if (!context) throw new Error("This browser could not render a page for hybrid editable output.");
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    await page.render({ canvasContext: context, viewport, background: "#ffffff" }).promise;
+    maskHybridText(canvas, metrics, lines, viewport.width / metrics.width, viewport.height / metrics.height);
+    const blob = await new Promise((resolve, reject) =>
+      canvas.toBlob(value => value ? resolve(value) : reject(new Error("Could not prepare the editable page background.")), "image/png")
+    );
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+    canvas.width = 1;
+    canvas.height = 1;
+    return {
+      bytes,
+      widthPx: baseViewport.width * (96 / 72),
+      heightPx: baseViewport.height * (96 / 72),
+      x: 0,
+      y: 0,
+      pageY: 0,
+      widthPoints: metrics.width,
+      heightPoints: metrics.height,
+      native: false,
+      pageBackground: true
+    };
+  }
+
+  function createHybridBackgroundRun(background, docx) {
+    return new docx.ImageRun({
+      data: background.bytes,
+      type: "png",
+      transformation: { width: background.widthPx, height: background.heightPx },
+      floating: {
+        horizontalPosition: {
+          relative: docx.HorizontalPositionRelativeFrom
+            ? docx.HorizontalPositionRelativeFrom.PAGE
+            : "page",
+          offset: 0
+        },
+        verticalPosition: {
+          relative: docx.VerticalPositionRelativeFrom
+            ? docx.VerticalPositionRelativeFrom.PAGE
+            : "page",
+          offset: 0
+        },
+        wrap: { type: docx.TextWrappingType ? docx.TextWrappingType.NONE : "none" },
+        allowOverlap: true,
+        behindDocument: true,
+        layoutInCell: false,
+        zIndex: 0
+      }
+    });
+  }
+
+  function createHybridPageChildren(lines, metrics, docx, background) {
+    const contentLines = (lines || []).slice().sort((a, b) => a.top - b.top || (a.left || 0) - (b.left || 0));
+    if (!contentLines.length) {
+      contentLines.push({ text: "", left: 0, top: 0, height: 1, fontSize: 6, items: [] });
+    }
+    return contentLines.map((line, index) =>
+      createLineParagraph(
+        line,
+        index ? contentLines[index - 1] : null,
+        docx,
+        metrics.width,
+        metrics.height,
+        !line.items || !line.items.length,
+        index === 0 ? background : null
+      )
+    );
+  }
+
+  async function convert(options) {
     const file = options && options.file;
     const mode = options && options.mode || "editable";
     const useOcr = Boolean(options && options.useOcr);
@@ -1533,7 +1731,59 @@
     let outputCharCount = 0;
 
     try {
-      if (mode === "visual") {
+      if (mode === "hybrid") {
+        if (useOcr) {
+          const Tesseract = await loadTesseract();
+          ocrWorker = await Tesseract.createWorker("eng", 1, {
+            workerPath: localAssetCacheActive()
+              ? "/documents/vendor/tesseract.worker.min.js"
+              : TESSERACT_WORKER_CDN,
+            corePath: localAssetCacheActive()
+              ? "/documents/vendor/tesseract-core"
+              : TESSERACT_CORE_CDN,
+            langPath: localAssetCacheActive()
+              ? "/documents/vendor/lang"
+              : TESSERACT_LANG_CDN,
+            workerBlobURL: localAssetCacheActive() ? false : true,
+            logger: event => {
+              if (event && event.status === "recognizing text") {
+                report(onProgress, 12, "Running browser OCR…", "Recognizing text for the editable text layer.");
+              }
+            }
+          });
+          await ocrWorker.setParameters({ preserve_interword_spaces: "1" });
+        }
+
+        for (let index = 1; index <= pdf.numPages; index++) {
+          report(onProgress, (index - 1) / pdf.numPages * 88 + 5, "Preserving page design and adding editable text…", "Processing page " + index + " of " + pdf.numPages + ".");
+          const page = await pdf.getPage(index);
+          const metrics = pageMetrics(page);
+          const content = await page.getTextContent();
+          let lines = groupTextLines(content.items, metrics, content.styles);
+          const pageChars = lines.reduce((sum, line) => sum + (line.text || "").replace(/\s/g, "").length, 0);
+          if ((!lines.length || pageChars < 8) && useOcr) {
+            lines = await runOcr(page, metrics, ocrWorker, onProgress, index, pdf.numPages);
+            if (lines.length) pagesOcr += 1;
+          }
+
+          const background = await renderHybridBackground(page, metrics, lines);
+          if (lines.length) {
+            pagesWithText += 1;
+            outputCharCount += lines.reduce((sum, line) => sum + String(line.text || "").length, 0);
+          }
+          const children = createHybridPageChildren(lines, metrics, docx, background);
+          sections.push({
+            properties: {
+              page: {
+                size: { width: Math.round(metrics.width * 20), height: Math.round(metrics.height * 20) },
+                margin: { top: 0, right: 0, bottom: 0, left: 0, header: 0, footer: 0 }
+              }
+            },
+            children
+          });
+          page.cleanup();
+        }
+      } else if (mode === "visual") {
         for (let index = 1; index <= pdf.numPages; index++) {
           report(onProgress, (index - 1) / pdf.numPages * 90 + 5, "Preserving original page layout…", "Rendering page " + index + " of " + pdf.numPages + ".");
           const page = await pdf.getPage(index);
@@ -1756,6 +2006,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.6.0-local"
+    version: "2.7.0-local"
   };
 })();
