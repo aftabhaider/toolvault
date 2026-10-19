@@ -152,3 +152,31 @@ Validation completed: JavaScript syntax checks for the engine and HTML page pass
 ## Hybrid mode refinement (2.7.2-local)
 
 When OCR is used to replace a very sparse selectable-text layer, the background masker now masks both the original selectable fragments and OCR-recognized line boxes. This prevents the original PDF text from remaining visibly underneath the reconstructed OCR text. The engine version, service-worker cache, and local-test port were refreshed after this change.
+
+
+## Resume checkpoint — 2026-10-19
+
+- **Branch:** \`feature/local-pdf-to-word-engine\`
+- **Draft PR:** https://github.com/aftabhaider/toolvault/pull/9
+- **Engine:** \`2.7.2-local\`
+- **Service-worker cache:** \`toolvault-pdf-word-v20\`
+- **Current local test URL:** \`http://127.0.0.1:8014/documents/pdf-to-word.html\`
+- **Default mode:** \`hybrid\` — “Keep original layout + editable text”
+- **Exact visual mode:** remains available as \`visual\`
+- **Reflowed/native editable mode:** remains available as \`editable\`
+- **Production:** no changes merged to \`main\`; the live website is unchanged.
+
+### Hybrid mode design
+
+For each page, render a high-resolution background, mask selectable text regions using sampled local background colors, estimate the original text foreground color, and draw corresponding editable Word text over the page at extracted coordinates. OCR may supply editable overlays for scanned pages when enabled. The background retains lines, fills, logos and table borders. Those artwork objects are not native Word table cells; changing overlay text can disturb alignment. This is intended as the best practical compromise between fidelity and editable text, not a guarantee of pixel-identical or fully native Word reconstruction.
+
+### Checks completed
+
+- Engine, service-worker, and inline page-script JavaScript syntax checks pass.
+- Synthetic text-mask check showed a test glyph region being removed and restored to its background color.
+- Synthetic Word paragraph check showed the background image anchored behind overlay text, source text-color property carried through, and separate same-baseline fields not incorrectly centered as one block.
+- Service-worker version and local launcher port refreshed after the latest code edits.
+
+### Next action
+
+Download the current branch ZIP, extract it to a new folder, run \`START-LOCAL-PDF-WORD-TEST.bat\` with its console left open, and open \`http://127.0.0.1:8014/documents/pdf-to-word.html\`. Convert \`BILL JHANG LOT-2.pdf\) in hybrid mode and inspect the first two pages in Microsoft Word. No end-to-end test with the actual bill has been completed yet. If text overlays, image anchors or paragraph flow do not render properly in Word, fix that before merging PR #9 or changing production.
