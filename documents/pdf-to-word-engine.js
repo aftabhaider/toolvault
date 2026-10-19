@@ -808,17 +808,26 @@
     // Infer alignment from the original text box instead of assuming every
     // PDF line is left-aligned. Centered titles and right-hand form fields are
     // common in official returns and other pre-printed forms.
-    const centered = returnFormTitle || (items.length > 0 &&
+    let hasSeparatedFields = false;
+    for (let fieldIndex = 1; fieldIndex < items.length; fieldIndex++) {
+      const gap = items[fieldIndex].x - (items[fieldIndex - 1].x + items[fieldIndex - 1].width);
+      if (gap > Math.max(9, fontSize * 1.7)) {
+        hasSeparatedFields = true;
+        break;
+      }
+    }
+    const centered = returnFormTitle || (!hasSeparatedFields && items.length > 0 &&
       leftX > pageWidth * 0.08 &&
       rightX < pageWidth * 0.92 &&
       Math.abs(lineCenter - pageWidth / 2) <= Math.max(14, fontSize * 1.6));
-    const rightAligned = !centered &&
+    const rightAligned = !centered && !hasSeparatedFields &&
       leftX > pageWidth * 0.48 &&
       rightX > pageWidth * 0.78;
 
     const priorBottom = previousLine ? previousLine.top + previousLine.height : 0;
     const rawGap = previousLine ? line.top - priorBottom : line.top;
-    const before = Math.round(Math.max(0, Math.min(pageHeight * 0.4, rawGap)) * 20);
+    const maxParagraphBefore = backgroundImage ? pageHeight * 1.5 : pageHeight * 0.4;
+    const before = Math.round(Math.max(0, Math.min(maxParagraphBefore, rawGap)) * 20);
     const leftIndent = centered || rightAligned
       ? 0
       : Math.round(Math.max(0, Math.min(pageWidth * 0.95, leftX)) * 20);
@@ -1973,7 +1982,7 @@
       }
 
       if (!sections.length) throw new Error("No pages could be converted.");
-      if (mode !== "visual" && outputCharCount === 0) {
+      if (mode === "editable" && outputCharCount === 0) {
         if (!useOcr) throw new Error("This PDF appears to contain scanned images rather than selectable text. Enable the optional browser OCR checkbox and try again.");
         throw new Error("The OCR engine could not recognize usable text in this PDF. Try a clearer scan or a selectable-text PDF.");
       }
@@ -2007,6 +2016,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.7.0-local"
+    version: "2.7.1-local"
   };
 })();
