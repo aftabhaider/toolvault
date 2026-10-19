@@ -1769,14 +1769,22 @@
           const page = await pdf.getPage(index);
           const metrics = pageMetrics(page);
           const content = await page.getTextContent();
-          let lines = groupTextLines(content.items, metrics, content.styles);
-          const pageChars = lines.reduce((sum, line) => sum + (line.text || "").replace(/\s/g, "").length, 0);
-          if ((!lines.length || pageChars < 8) && useOcr) {
-            lines = await runOcr(page, metrics, ocrWorker, onProgress, index, pdf.numPages);
-            if (lines.length) pagesOcr += 1;
+          const sourceLines = groupTextLines(content.items, metrics, content.styles);
+          let lines = sourceLines;
+          let maskLines = sourceLines;
+          const pageChars = sourceLines.reduce((sum, line) => sum + (line.text || "").replace(/\s/g, "").length, 0);
+          if ((!sourceLines.length || pageChars < 8) && useOcr) {
+            const ocrLines = await runOcr(page, metrics, ocrWorker, onProgress, index, pdf.numPages);
+            if (ocrLines.length) {
+              lines = ocrLines;
+              // Mask native selectable text as well as OCR-recognized text to
+              // avoid leaving duplicate glyphs behind the editable OCR overlay.
+              maskLines = sourceLines.concat(ocrLines);
+              pagesOcr += 1;
+            }
           }
 
-          const background = await renderHybridBackground(page, metrics, lines);
+          const background = await renderHybridBackground(page, metrics, maskLines);
           if (lines.length) {
             pagesWithText += 1;
             outputCharCount += lines.reduce((sum, line) => sum + String(line.text || "").length, 0);
