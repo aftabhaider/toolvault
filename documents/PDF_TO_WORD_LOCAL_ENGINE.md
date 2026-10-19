@@ -135,3 +135,8 @@ The latest version has **not** been validated end-to-end against \`BILL JHANG LO
 2. Run \`START-LOCAL-PDF-WORD-TEST.bat\`, keep the server window open, and open \`http://127.0.0.1:8011/documents/pdf-to-word.html\`.
 3. Convert \`BILL JHANG LOT-2.pdf\` in **Editable Word** mode.
 4. Compare the first and second pages against the original. Fix any remaining layout errors before merging PR #9 or changing production.
+
+
+## Exact appearance mode (2.6.0-local)
+
+Exact appearance is the default mode when matching the source PDF's visible design is the priority. It renders each complete PDF page as one PNG and inserts that image at the original page dimensions into a zero-margin Word page. Raster resolution is adaptively capped at 4x scale (about 12 megapixels per page) to preserve small text, table rules, brand colors, logos, and page headers/footers while limiting browser memory usage. This mode preserves appearance rather than editable text; users should choose Editable Word only when they need to edit reconstructed content and can accept layout differences. Pixel-level differences may still arise from browser PDF rendering and Microsoft Word's image/page display, so real-output verification remains required.
