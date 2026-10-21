@@ -1567,6 +1567,9 @@
     const context = canvas.getContext("2d", { willReadFrequently: true });
     if (!context) return;
     const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+    const gridScale = (scaleX + scaleY) / 2;
+    // Detect border geometry before masking glyphs so rule segments remain detectable.
+    const grid = detectRasterGrid(canvas, metrics, gridScale);
     const masks = [];
     for (const line of lines || []) {
       const items = line.items && line.items.length ? line.items : [];
@@ -1621,8 +1624,6 @@
     const target = context.getImageData(0, 0, canvas.width, canvas.height);
     const targetData = target.data;
     const sourceData = imageData.data;
-    const gridScale = (scaleX + scaleY) / 2;
-    const grid = detectRasterGrid(canvas, metrics, gridScale);
     const restorePixel = (x, y) => {
       if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) return;
       const offset = (y * canvas.width + x) * 4;
