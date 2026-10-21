@@ -4,7 +4,7 @@
  */
 "use strict";
 
-const CACHE_NAME = "toolvault-pdf-word-v21";
+const CACHE_NAME = "toolvault-pdf-word-v22";
 const PREFIX = "toolvault-pdf-word-";
 const SHELL = [
   "/documents/pdf-to-word",
