@@ -189,3 +189,8 @@ The default \`hybrid\` mode renders each page as a high-resolution background, m
 The hybrid compromise preserves page artwork, logo placement, page colors and table geometry better than reflowed reconstruction while making detected text selectable/editable. It is not a native Word reconstruction: table borders, fills and logos are part of the page background, text family/metrics may differ, and edit operations can cause overlap. Exact-appearance mode is still available for documents where editability is not needed; reflowed mode is available for users prioritizing native Word tables/paragraphs.
 
 The latest change was syntax-checked. A full real-PDF conversion and Microsoft Word visual review are still required before production use.
+
+
+## Hybrid editable mode update (2.7.4-local)
+
+The recommended mode is now the hybrid workflow: render the original PDF page as a high-resolution background, mask text glyph boxes using locally sampled background colors, and overlay editable text runs at measured PDF coordinates. Table fill colors, borders, logos and decorative rules remain in the image layer, while the text overlay is editable. Editable text paragraphs now use exact line-box height based on the measured PDF line height rather than Word's default line spacing, reducing cumulative vertical drift. This is a best-effort workflow; text may still need manual correction because source fonts and Word's text metrics can differ, and background masks may leave minor artifacts.
