@@ -1614,6 +1614,46 @@
       context.fillRect(mask.rect.x, mask.rect.y, mask.rect.width, mask.rect.height);
     }
     context.restore();
+
+    // Text masks can cross thin table rules. Restore the original dark border
+    // pixels after masking glyphs so the line work remains intact behind the
+    // editable text overlay.
+    const target = context.getImageData(0, 0, canvas.width, canvas.height);
+    const targetData = target.data;
+    const sourceData = imageData.data;
+    const gridScale = (scaleX + scaleY) / 2;
+    const grid = detectRasterGrid(canvas, metrics, gridScale);
+    const restorePixel = (x, y) => {
+      if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) return;
+      const offset = (y * canvas.width + x) * 4;
+      const r = sourceData[offset], g = sourceData[offset + 1], b = sourceData[offset + 2];
+      if (r < 155 && g < 155 && b < 155) {
+        targetData[offset] = r;
+        targetData[offset + 1] = g;
+        targetData[offset + 2] = b;
+        targetData[offset + 3] = sourceData[offset + 3];
+      }
+    };
+
+    for (const rule of grid.horizontals || []) {
+      const y = Math.round(rule.y * scaleY);
+      const x0 = Math.max(0, Math.floor(rule.x0 * scaleX));
+      const x1 = Math.min(canvas.width - 1, Math.ceil(rule.x1 * scaleX));
+      for (let dy = -1; dy <= 1; dy++) {
+        for (let x = x0; x <= x1; x++) restorePixel(x, y + dy);
+      }
+    }
+    for (const rule of grid.verticals || []) {
+      const x = Math.round(rule.x * scaleX);
+      for (const segment of rule.segments || []) {
+        const y0 = Math.max(0, Math.floor(segment.top * scaleY));
+        const y1 = Math.min(canvas.height - 1, Math.ceil(segment.bottom * scaleY));
+        for (let dx = -1; dx <= 1; dx++) {
+          for (let y = y0; y <= y1; y++) restorePixel(x + dx, y);
+        }
+      }
+    }
+    context.putImageData(target, 0, 0);
   }
 
   async function renderHybridBackground(page, metrics, lines) {
@@ -1990,7 +2030,7 @@
       }
 
       if (!sections.length) throw new Error("No pages could be converted.");
-      if (mode === "editable" && outputCharCount === 0) {
+      if ((mode === "editable" || mode === "hybrid") && outputCharCount === 0) {
         if (!useOcr) throw new Error("This PDF appears to contain scanned images rather than selectable text. Enable the optional browser OCR checkbox and try again.");
         throw new Error("The OCR engine could not recognize usable text in this PDF. Try a clearer scan or a selectable-text PDF.");
       }
@@ -2024,6 +2064,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.7.2-local"
+    version: "2.7.3-local"
   };
 })();
