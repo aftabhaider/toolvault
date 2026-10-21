@@ -847,7 +847,12 @@
           : undefined,
       indent: { left: leftIndent, right: rightIndent },
       tabStops: tabStops.length ? tabStops : undefined,
-      spacing: { before: before, after: 0 }
+      spacing: {
+        before: before,
+        after: 0,
+        line: Math.max(1, Math.round(Math.max(fontSize, line.height || fontSize) * 20)),
+        lineRule: docx.LineRuleType ? docx.LineRuleType.EXACT : "exact"
+      }
     });
   }
 
@@ -2065,6 +2070,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.7.3-local"
+    version: "2.7.4-local"
   };
 })();
