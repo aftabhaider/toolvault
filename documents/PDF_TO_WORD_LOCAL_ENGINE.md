@@ -180,3 +180,12 @@ For each page, render a high-resolution background, mask selectable text regions
 ### Next action
 
 Download the current branch ZIP, extract it to a new folder, run \`START-LOCAL-PDF-WORD-TEST.bat\` with its console left open, and open \`http://127.0.0.1:8014/documents/pdf-to-word.html\`. Convert \`BILL JHANG LOT-2.pdf\) in hybrid mode and inspect the first two pages in Microsoft Word. No end-to-end test with the actual bill has been completed yet. If text overlays, image anchors or paragraph flow do not render properly in Word, fix that before merging PR #9 or changing production.
+
+
+## Hybrid editable mode (2.7.3-local)
+
+The default \`hybrid\` mode renders each page as a high-resolution background, masks detected selectable text glyphs using a sampled local background color, and places text runs back over the masked areas as editable Word text. It samples foreground text colors from the page raster and restores detected dark horizontal/vertical border pixels after masking, helping preserve table rules and dividers. Existing embedded graphics remain in the background. Optional English OCR supplies editable text on pages without a usable text layer when OCR is enabled.
+
+The hybrid compromise preserves page artwork, logo placement, page colors and table geometry better than reflowed reconstruction while making detected text selectable/editable. It is not a native Word reconstruction: table borders, fills and logos are part of the page background, text family/metrics may differ, and edit operations can cause overlap. Exact-appearance mode is still available for documents where editability is not needed; reflowed mode is available for users prioritizing native Word tables/paragraphs.
+
+The latest change was syntax-checked. A full real-PDF conversion and Microsoft Word visual review are still required before production use.
