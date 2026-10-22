@@ -782,7 +782,7 @@
             runs.push(new docx.TextRun({ text: "\t" }));
             tabStops.push({
               type: docx.TabStopType ? docx.TabStopType.LEFT : "left",
-              position: Math.max(20, Math.round(part.x * 20))
+              position: Math.max(20, Math.round((part.x - leftX) * 20))
             });
           } else if (gap > Math.max(1.2, line.fontSize * 0.18)) {
             runs.push(new docx.TextRun({ text: " " }));
@@ -2053,7 +2053,9 @@
 
       report(onProgress, 100, "Conversion complete", mode === "visual"
         ? "The Word file keeps the page appearance using images; the page text is not individually editable."
-        : "The Word file was generated in your browser. Review spacing, tables, columns, and scanned text before relying on the result.");
+        : mode === "hybrid"
+          ? "The Word file contains original page artwork with editable text overlays. Check text positions and backgrounds before relying on it."
+          : "The Word file was generated in your browser. Review spacing, tables, columns, and scanned text before relying on the result.");
 
       return {
         blob: blob,
@@ -2075,6 +2077,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.7.6-local"
+    version: "2.7.7-local"
   };
 })();
