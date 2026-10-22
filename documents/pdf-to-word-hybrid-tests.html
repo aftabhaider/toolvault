@@ -30,6 +30,8 @@ assert("A border pixel is restored only when source pixel is dark",()=>{const da
 assert("Hybrid point boxes map correctly to canvas pixels",()=>{const r=window.__hybridTestApi.mapRect({x:10,y:20,width:30,height:8},3,4,200,200,0,0);eq(r.x,30);eq(r.y,80);eq(r.width,90);eq(r.height,32);}),
 assert("Hybrid mask merges touching glyphs without swallowing separated columns",()=>{const a=window.__hybridTestApi.merge([{rect:{x:2,y:4,width:10,height:8},color:[250,250,250]},{rect:{x:12,y:4,width:8,height:8},color:[250,250,250]},{rect:{x:40,y:4,width:8,height:8},color:[250,250,250]}]);eq(a.length,2);eq(a[0].right,20);}),
 assert("OCR line mask uses OCR box and is clamped",()=>{const r=window.__hybridTestApi.mapRect({x:-3,y:7,width:12,height:11},2,2,20,30,.45,.35);eq(r.x,0);eq(r.y,13);eq(r.width,19);eq(r.height,24);})
+
+assert("Actual engine background sampler ignores near-black glyph edges on a tinted cell",()=>{const c=document.createElement("canvas");c.width=30;c.height=20;const x=c.getContext("2d");x.fillStyle="#d9edf7";x.fillRect(0,0,30,20);x.fillStyle="#111111";x.fillRect(12,7,3,6);const im=x.getImageData(0,0,30,20);const b=window.__hybridTestApi.sampleBackground(im,{x:8,y:5,width:10,height:10});eq(b[0],217);eq(b[1],237);eq(b[2],247);}),
 ];const fails=tests.filter(t=>!t.pass);summary.textContent=tests.length+" checks · "+(tests.length-fails.length)+" passed · "+fails.length+" failed";summary.className=fails.length?"fail":"pass";output.textContent=tests.map(t=>(t.pass?"PASS ":"FAIL ")+t.name+(t.error?" — "+t.error:"")).join("\n");}
 document.getElementById("run").addEventListener("click",run);
 })();
