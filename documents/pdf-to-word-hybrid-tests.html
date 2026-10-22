@@ -26,6 +26,10 @@ assert("Transparent/scanned OCR box uses the same page-local point coordinate sy
 assert("OCR PDF-point mapping uses exact render viewport X and Y",()=>{const viewportW=887.4,viewportH=1148.4,metricW=612,metricH=792,b={x0:14.5,y0:29,x1:72.5,y1:43.5};near(b.x0*(metricW/viewportW),10,0.001);near(b.y0*(metricH/viewportH),20,0.001);near((b.y1-b.y0)*(metricH/viewportH),10,0.001);}),
 assert("Masks are narrow enough to avoid large text-fragment patches",()=>{const fontSize=10,width=55,padX=Math.min(1.15,Math.max(.35,fontSize*.045));near(width+padX*2,57.3,.001);}),
 assert("A border pixel is restored only when source pixel is dark",()=>{const dark=[35,35,35],fill=[222,231,240];const keep=dark.every(v=>v<175)?dark:fill;eq(keep[0],35);const notKeep=fill.every(v=>v<175)?fill:fill;eq(notKeep[0],222);})
+
+assert("Hybrid point boxes map correctly to canvas pixels",()=>{const r=window.__hybridTestApi.mapRect({x:10,y:20,width:30,height:8},3,4,200,200,0,0);eq(r.x,30);eq(r.y,80);eq(r.width,90);eq(r.height,32);}),
+assert("Hybrid mask merges touching glyphs without swallowing separated columns",()=>{const a=window.__hybridTestApi.merge([{rect:{x:2,y:4,width:10,height:8},color:[250,250,250]},{rect:{x:12,y:4,width:8,height:8},color:[250,250,250]},{rect:{x:40,y:4,width:8,height:8},color:[250,250,250]}]);eq(a.length,2);eq(a[0].right,20);}),
+assert("OCR line mask uses OCR box and is clamped",()=>{const r=window.__hybridTestApi.mapRect({x:-3,y:7,width:12,height:11},2,2,20,30,.45,.35);eq(r.x,0);eq(r.y,13);eq(r.width,19);eq(r.height,24);})
 ];const fails=tests.filter(t=>!t.pass);summary.textContent=tests.length+" checks · "+(tests.length-fails.length)+" passed · "+fails.length+" failed";summary.className=fails.length?"fail":"pass";output.textContent=tests.map(t=>(t.pass?"PASS ":"FAIL ")+t.name+(t.error?" — "+t.error:"")).join("\n");}
 document.getElementById("run").addEventListener("click",run);
 })();
