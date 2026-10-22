@@ -194,3 +194,10 @@ The latest change was syntax-checked. A full real-PDF conversion and Microsoft W
 ## Hybrid editable mode update (2.7.4-local)
 
 The recommended mode is now the hybrid workflow: render the original PDF page as a high-resolution background, mask text glyph boxes using locally sampled background colors, and overlay editable text runs at measured PDF coordinates. Table fill colors, borders, logos and decorative rules remain in the image layer, while the text overlay is editable. Editable text paragraphs now use exact line-box height based on the measured PDF line height rather than Word's default line spacing, reducing cumulative vertical drift. This is a best-effort workflow; text may still need manual correction because source fonts and Word's text metrics can differ, and background masks may leave minor artifacts.
+
+
+## Hybrid alignment refinement (2.7.5-local)
+
+- Tab stops in hybrid editable text use original page X positions (absolute positions relative to the paragraph/page text area), reducing horizontal shift for separated fields on the same baseline.
+- Glyph-removal masks include a slightly larger margin to cover PDF.js width/antialiasing discrepancies. The hybrid renderer restores detected dark horizontal and vertical rules after masking, so ruled table borders should remain intact.
+- JavaScript syntax validation passes. This was not end-to-end tested against the real invoice in Microsoft Word; the next required check is a new hybrid conversion of the same PDF, focused on table headings, numbers and wrapped specification lines.
