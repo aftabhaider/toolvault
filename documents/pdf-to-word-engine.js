@@ -757,17 +757,19 @@
       ? Math.max(...items.map(item => item.x + item.width))
       : leftX + String(line.text || "").length * fontSize * 0.45;
     const lineCenter = (leftX + rightX) / 2;
+    const hybridLayout = Boolean(backgroundImage);
     const returnFormTitle = /114\s*\(1\)|return of income filed voluntarily/i.test(line.text || "");
     const billTitle = /^bill$/i.test(String(line.text || "").trim()) && line.top < pageHeight * 0.4;
     const invoiceHeading = /^installation of .*solar system/i.test(String(line.text || "").trim());
     const supplyOrderHeading = /^supply order no\.?/i.test(String(line.text || "").trim());
     const recipientHeading = /district\s*&\s*sessions judge/i.test(String(line.text || ""));
     const titleLine = returnFormTitle || billTitle;
+
     if (isOcr || !items.length) {
       if (line.text) {
         runs.push(new docx.TextRun({
           text: line.text,
-          size: Math.round(clampFontSize(line.fontSize) * 2),
+          size: Math.round(fontSize * 2),
           font: { name: "Arial" },
           bold: titleLine,
           underline: returnFormTitle
@@ -788,10 +790,12 @@
             runs.push(new docx.TextRun({ text: " " }));
           }
         }
-        const fontStyle = { bold: Boolean(part.bold) || styleFromFontName(part.pdfFontStyleName || part.fontFamily || part.fontName).bold, italics: Boolean(part.italics) || styleFromFontName(part.pdfFontStyleName || part.fontFamily || part.fontName).italics };
+        const fontStyle = {
+          bold: Boolean(part.bold) || styleFromFontName(part.pdfFontStyleName || part.fontFamily || part.fontName).bold,
+          italics: Boolean(part.italics) || styleFromFontName(part.pdfFontStyleName || part.fontFamily || part.fontName).italics
+        };
         const token = String(part.str || "").replace(/[.:]/g, "").trim().toLowerCase();
-        const metadataLabel =
-          /^(name|address|registration(\s*no)?|no|tax(\s*year)?|year|period|medium|contact(\s*no)?|due(\s*date)?|date|document(\s*date)?|invoice(\s*(date|number|no))?|email)(\s*:)?$/.test(token);
+        const metadataLabel = /^(name|address|registration(\s*no)?|no|tax(\s*year)?|year|period|medium|contact(\s*no)?|due(\s*date)?|date|document(\s*date)?|invoice(\s*(date|number|no))?|email)(\s*:)?$/.test(token);
         runs.push(new docx.TextRun({
           text: part.str,
           size: Math.round(clampFontSize(part.fontSize) * 2),
@@ -805,50 +809,39 @@
       }
     }
 
-    // Infer alignment from the original text box instead of assuming every
-    // PDF line is left-aligned. Centered titles and right-hand form fields are
-    // common in official returns and other pre-printed forms.
     let hasSeparatedFields = false;
     for (let fieldIndex = 1; fieldIndex < items.length; fieldIndex++) {
       const gap = items[fieldIndex].x - (items[fieldIndex - 1].x + items[fieldIndex - 1].width);
-      if (gap > Math.max(9, fontSize * 1.7)) {
-        hasSeparatedFields = true;
-        break;
-      }
+      if (gap > Math.max(9, fontSize * 1.7)) { hasSeparatedFields = true; break; }
     }
-    const centered = returnFormTitle || (!hasSeparatedFields && items.length > 0 &&
-      leftX > pageWidth * 0.08 &&
-      rightX < pageWidth * 0.92 &&
-      Math.abs(lineCenter - pageWidth / 2) <= Math.max(14, fontSize * 1.6));
-    const rightAligned = !centered && !hasSeparatedFields &&
-      leftX > pageWidth * 0.48 &&
-      rightX > pageWidth * 0.78;
+    const centered = !hybridLayout && (returnFormTitle || (!hasSeparatedFields && items.length > 0 &&
+      leftX > pageWidth * 0.08 && rightX < pageWidth * 0.92 &&
+      Math.abs(lineCenter - pageWidth / 2) <= Math.max(14, fontSize * 1.6)));
+    const rightAligned = !hybridLayout && !centered && !hasSeparatedFields &&
+      leftX > pageWidth * 0.48 && rightX > pageWidth * 0.78;
 
+    // Hybrid mode uses one full-page background. Keep overlay paragraphs at the
+    // page's X origin and use page-local positions in their paragraph spacing;
+    // applying the inferred left indent a second time causes double shifting.
     const priorBottom = previousLine ? previousLine.top + previousLine.height : 0;
     const rawGap = previousLine ? line.top - priorBottom : line.top;
     const maxParagraphBefore = backgroundImage ? pageHeight * 1.5 : pageHeight * 0.4;
     const before = Math.round(Math.max(0, Math.min(maxParagraphBefore, rawGap)) * 20);
-    const leftIndent = centered || rightAligned
-      ? 0
-      : Math.round(Math.max(0, Math.min(pageWidth * 0.95, leftX)) * 20);
-    const rightIndent = rightAligned
-      ? Math.round(Math.max(0, Math.min(pageWidth * 0.5, pageWidth - rightX)) * 20)
-      : 0;
-
+    const leftIndent = hybridLayout ? 0 : (centered || rightAligned ? 0 :
+      Math.round(Math.max(0, Math.min(pageWidth * 0.95, leftX)) * 20));
+    const rightIndent = hybridLayout ? 0 : (rightAligned ?
+      Math.round(Math.max(0, Math.min(pageWidth * 0.5, pageWidth - rightX)) * 20) : 0);
     return new docx.Paragraph({
       children: [
         ...(backgroundImage ? [createHybridBackgroundRun(backgroundImage, docx)] : []),
         ...(runs.length ? runs : [new docx.TextRun({ text: "" })])
       ],
-      alignment: centered && docx.AlignmentType
-        ? docx.AlignmentType.CENTER
-        : rightAligned && docx.AlignmentType
-          ? docx.AlignmentType.RIGHT
-          : undefined,
-      indent: { left: leftIndent, right: rightIndent },
+      alignment: centered && docx.AlignmentType ? docx.AlignmentType.CENTER :
+        rightAligned && docx.AlignmentType ? docx.AlignmentType.RIGHT : undefined,
+      indent: { left: leftIndent, right: rightIndent, firstLine: 0 },
       tabStops: tabStops.length ? tabStops : undefined,
       spacing: {
-        before: before,
+        before,
         after: 0,
         line: Math.max(1, Math.round(Math.max(fontSize, line.height || fontSize) * 20)),
         lineRule: docx.LineRuleType ? docx.LineRuleType.EXACT : "exact"
@@ -856,7 +849,7 @@
     });
   }
 
-    async function loadTesseract() {
+    async ) {
     if (window.Tesseract) return window.Tesseract;
     if (!ocrScriptPromise) {
       ocrScriptPromise = new Promise((resolve, reject) => {
@@ -2081,6 +2074,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.8.2-local"
+    version: "2.8.3-local"
   };
 })();
