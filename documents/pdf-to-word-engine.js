@@ -2142,10 +2142,16 @@
     }
   }
 
+  // Expose narrowly-scoped pure geometry helpers for the local regression page.
+  window.__hybridTestApi = {
+    mapRect: hybridMapRect,
+    merge: hybridMergeIntersectingMasks
+  };
+
   window.ToolVaultPdfWordEngine = {
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.8.4-local"
+    version: "2.8.5-local"
   };
 })();
