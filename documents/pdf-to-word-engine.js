@@ -782,7 +782,7 @@
             runs.push(new docx.TextRun({ text: "\t" }));
             tabStops.push({
               type: docx.TabStopType ? docx.TabStopType.LEFT : "left",
-              position: Math.max(20, Math.round((part.x - leftX) * 20))
+              position: Math.max(20, Math.round(part.x * 20))
             });
           } else if (gap > Math.max(1.2, line.fontSize * 0.18)) {
             runs.push(new docx.TextRun({ text: " " }));
@@ -1582,17 +1582,22 @@
         for (const item of items) {
           if (!item.str || !String(item.str).trim()) continue;
           const fontSize = clampFontSize(item.fontSize || line.fontSize);
+          // PDF.js text advance widths can be slightly narrower than painted
+          // glyphs. Leave a larger mask around each item to remove the source
+          // glyphs and their antialiasing before editable text is placed above.
+          const maskPadX = 1.8;
+          const maskPadY = 1.7;
           const rect = {
-            x: (item.x - 0.7) * scaleX,
-            y: (item.top - 0.8) * scaleY,
-            width: Math.max(1, (item.width + 1.4) * scaleX),
-            height: Math.max(fontSize + 1.5, (item.height || fontSize) + 1.6) * scaleY
+            x: Math.max(0, (item.x - maskPadX) * scaleX),
+            y: Math.max(0, (item.top - maskPadY) * scaleY),
+            width: Math.max(1, (item.width + maskPadX * 2) * scaleX),
+            height: Math.max(fontSize + 3.2, (item.height || fontSize) + maskPadY * 2.2) * scaleY
           };
           const bgRect = {
-            x: Math.max(0, rect.x - 2 * scaleX),
-            y: Math.max(0, rect.y - 1.7 * scaleY),
-            width: Math.min(canvas.width, rect.width + 4 * scaleX),
-            height: Math.min(canvas.height, rect.height + 3.4 * scaleY)
+            x: Math.max(0, rect.x - 2.5 * scaleX),
+            y: Math.max(0, rect.y - 2.2 * scaleY),
+            width: Math.min(canvas.width - Math.max(0, rect.x - 2.5 * scaleX), rect.width + 5 * scaleX),
+            height: Math.min(canvas.height - Math.max(0, rect.y - 2.2 * scaleY), rect.height + 4.4 * scaleY)
           };
           const background = sampleCanvasColor(imageData, bgRect);
           item.wordColor = estimateForegroundColor(imageData, rect, background);
@@ -1600,16 +1605,16 @@
         }
       } else if (line.width && Number.isFinite(line.left) && Number.isFinite(line.top)) {
         const rect = {
-          x: (line.left - 0.6) * scaleX,
-          y: (line.top - 0.6) * scaleY,
-          width: Math.max(1, (line.width + 1.2) * scaleX),
-          height: Math.max(1, (line.height + 1.2) * scaleY)
+          x: Math.max(0, (line.left - 1.4) * scaleX),
+          y: Math.max(0, (line.top - 1.3) * scaleY),
+          width: Math.max(1, (line.width + 2.8) * scaleX),
+          height: Math.max(1, (line.height + 2.6) * scaleY)
         };
         const bgRect = {
-          x: Math.max(0, rect.x - 2 * scaleX),
-          y: Math.max(0, rect.y - 1.5 * scaleY),
-          width: Math.min(canvas.width, rect.width + 4 * scaleX),
-          height: Math.min(canvas.height, rect.height + 3 * scaleY)
+          x: Math.max(0, rect.x - 2.5 * scaleX),
+          y: Math.max(0, rect.y - 2.2 * scaleY),
+          width: Math.min(canvas.width - Math.max(0, rect.x - 2.5 * scaleX), rect.width + 5 * scaleX),
+          height: Math.min(canvas.height - Math.max(0, rect.y - 2.2 * scaleY), rect.height + 4.4 * scaleY)
         };
         masks.push({ rect, color: sampleCanvasColor(imageData, bgRect) });
       }
@@ -2070,6 +2075,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.7.4-local"
+    version: "2.7.5-local"
   };
 })();
