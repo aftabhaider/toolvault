@@ -880,6 +880,9 @@
   }
 
   async function runOcr(page, metrics, worker, onProgress, pageNumber, totalPages) {
+    // OCR.js line boxes are in the rendered canvas pixel space. Convert both X
+    // and Y with the exact render viewport so they share PDF-point page-local
+    // coordinates with selectable PDF.js text.
     const viewport = page.getViewport({ scale: 1.45 });
     const canvas = document.createElement("canvas");
     canvas.width = Math.max(1, Math.ceil(viewport.width));
@@ -888,30 +891,42 @@
     if (!ctx) throw new Error("This browser could not create a canvas for OCR.");
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    await page.render({ canvasContext: ctx, viewport: viewport, background: "#ffffff" }).promise;
+    await page.render({ canvasContext: ctx, viewport, background: "#ffffff" }).promise;
     report(onProgress, 15 + ((pageNumber - 1) / totalPages) * 70, "Recognizing scanned text…", "Reading page " + pageNumber + " of " + totalPages + " in your browser.");
-    const result = await worker.recognize(canvas);
-    canvas.width = 1;
-    canvas.height = 1;
+    let result;
+    try {
+      result = await worker.recognize(canvas);
+    } finally {
+      canvas.width = 1;
+      canvas.height = 1;
+    }
 
     const scaleX = metrics.width / viewport.width;
     const scaleY = metrics.height / viewport.height;
     const lines = (result && result.data && result.data.lines ? result.data.lines : [])
-      .filter((line) => line && String(line.text || "").trim())
-      .map((line) => {
-        const box = line.bbox || { x0: 0, y0: 0, y1: 14 };
-        const fontSize = clampFontSize(((box.y1 - box.y0) * scaleY) * 0.86);
+      .filter(line => line && String(line.text || "").trim())
+      .map(line => {
+        const box = line.bbox || { x0:0, y0:0, x1:0, y1:14 };
+        const left = Math.max(0, box.x0 * scaleX);
+        const top = Math.max(0, box.y0 * scaleY);
+        const width = Math.max(0, (box.x1 - box.x0) * scaleX);
+        const height = Math.max(1, (box.y1 - box.y0) * scaleY);
+        const fontSize = clampFontSize(height * 0.86);
         return {
           text: String(line.text).trim(),
-          left: Math.max(0, box.x0 * scaleX),
-          width: Math.max(0, (box.x1 - box.x0) * scaleX),
-          top: Math.max(0, box.y0 * scaleY),
-          height: Math.max(fontSize, (box.y1 - box.y0) * scaleY),
-          fontSize: fontSize,
-          items: []
+          left,
+          width,
+          top,
+          height,
+          fontSize,
+          items: [],
+          // OCR lines have no individual PDF.js glyph runs. Keep line boxes
+          // explicit for masking and overlay placement; don't infer text-run
+          // widths as if they came from a selectable text layer.
+          ocrBox: { x:left, y:top, width, height }
         };
       })
-      .sort((a, b) => a.top - b.top || a.left - b.left);
+      .sort((a,b) => a.top-b.top || a.left-b.left);
     return lines;
   }
 
@@ -2066,6 +2081,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.8.1-local"
+    version: "2.8.2-local"
   };
 })();
