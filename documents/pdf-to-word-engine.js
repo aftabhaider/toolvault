@@ -2149,6 +2149,10 @@
   }
 
   // Expose narrowly-scoped pure geometry helpers for the local regression page.
+  function hybridSampleBackground(imageData, rect) {
+    return sampleCanvasColor(imageData, rect);
+  }
+
   window.__hybridTestApi = {
     mapRect: hybridMapRect,
     merge: hybridMergeIntersectingMasks
