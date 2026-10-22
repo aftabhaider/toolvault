@@ -849,8 +849,30 @@
     });
   }
 
-    async ) {
+  async function loadTesseract() {
     if (window.Tesseract) return window.Tesseract;
+    if (!ocrScriptPromise) {
+      ocrScriptPromise = new Promise((resolve, reject) => {
+        const existing = document.querySelector('script[data-toolvault-tesseract="true"]');
+        if (existing) {
+          existing.addEventListener("load", () => resolve(window.Tesseract), { once: true });
+          existing.addEventListener("error", () => reject(new Error("Could not load the browser OCR library.")), { once: true });
+          return;
+        }
+        const script = document.createElement("script");
+        script.src = localAssetCacheActive() ? OCR_SCRIPT_LOCAL : OCR_SCRIPT_CDN;
+        script.async = true;
+        script.crossOrigin = "anonymous";
+        script.dataset.toolvaultTesseract = "true";
+        script.onload = () => window.Tesseract ? resolve(window.Tesseract) : reject(new Error("The OCR library loaded, but its API was not available."));
+        script.onerror = () => { script.remove(); ocrScriptPromise = null; reject(new Error("Could not load the browser OCR library. Check your connection and try again.")); };
+        document.head.appendChild(script);
+      });
+    }
+    return ocrScriptPromise;
+  }
+
+  async function runOcr(
     if (!ocrScriptPromise) {
       ocrScriptPromise = new Promise((resolve, reject) => {
         const existing = document.querySelector('script[data-toolvault-tesseract="true"]');
