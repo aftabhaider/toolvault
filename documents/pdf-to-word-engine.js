@@ -1598,10 +1598,55 @@
     return rgb.map(value => Math.max(0, Math.min(255, value)).toString(16).padStart(2, "0")).join("").toUpperCase();
   }
 
+  function hybridMapRect(rect, scaleX, scaleY, width, height, padXPoints, padYPoints) {
+    const px = Number.isFinite(padXPoints) ? padXPoints : 0;
+    const py = Number.isFinite(padYPoints) ? padYPoints : 0;
+    const x0 = Math.max(0, Math.floor((rect.x - px) * scaleX));
+    const y0 = Math.max(0, Math.floor((rect.y - py) * scaleY));
+    const x1 = Math.min(width, Math.ceil((rect.x + rect.width + px) * scaleX));
+    const y1 = Math.min(height, Math.ceil((rect.y + rect.height + py) * scaleY));
+    if (x1 <= x0 || y1 <= y0) return null;
+    return { x: x0, y: y0, width: x1 - x0, height: y1 - y0 };
+  }
+
+  function hybridMergeIntersectingMasks(masks) {
+    const pending = (masks || []).map(mask => ({
+      x: mask.rect.x, y: mask.rect.y,
+      right: mask.rect.x + mask.rect.width,
+      bottom: mask.rect.y + mask.rect.height,
+      colors: [mask.color]
+    }));
+    const groups = [];
+    while (pending.length) {
+      let group = pending.shift();
+      let changed = true;
+      while (changed) {
+        changed = false;
+        for (let i = pending.length - 1; i >= 0; i--) {
+          const other = pending[i];
+          const intersects = group.x <= other.right && group.right >= other.x &&
+            group.y <= other.bottom && group.bottom >= other.y;
+          if (!intersects) continue;
+          group = {
+            x: Math.min(group.x, other.x),
+            y: Math.min(group.y, other.y),
+            right: Math.max(group.right, other.right),
+            bottom: Math.max(group.bottom, other.bottom),
+            colors: group.colors.concat(other.colors)
+          };
+          pending.splice(i, 1);
+          changed = true;
+        }
+      }
+      groups.push(group);
+    }
+    return groups;
+  }
+
   function maskHybridText(canvas, metrics, lines, scaleX, scaleY) {
     const context = canvas.getContext("2d", { willReadFrequently: true });
     if (!context) return;
-    const source = context.getImageData(0, 0, canvas.width, canvas.height);
+    const original = context.getImageData(0, 0, canvas.width, canvas.height);
     const grid = detectRasterGrid(canvas, metrics, (scaleX + scaleY) / 2);
     const masks = [];
 
@@ -1610,80 +1655,85 @@
       for (const item of items) {
         if (!item || !String(item.str || "").trim()) continue;
         const fontSize = clampFontSize(item.fontSize || line.fontSize);
-        const padX = Math.min(1.15, Math.max(0.35, fontSize * 0.045));
-        const padY = Math.min(0.9, Math.max(0.25, fontSize * 0.035));
-        const x0 = Math.max(0, Math.floor((item.x - padX) * scaleX));
-        const y0 = Math.max(0, Math.floor((item.top - padY) * scaleY));
-        const x1 = Math.min(canvas.width, Math.ceil((item.x + item.width + padX) * scaleX));
-        const y1 = Math.min(canvas.height, Math.ceil((item.top + Math.max(item.height || 0, fontSize) + padY) * scaleY));
-        if (x1 <= x0 || y1 <= y0) continue;
-        const rect = { x:x0, y:y0, width:x1-x0, height:y1-y0 };
-        const extraX = Math.max(2, Math.round(1.5 * scaleX));
-        const extraY = Math.max(2, Math.round(1.5 * scaleY));
-        const sx0 = Math.max(0, x0-extraX), sy0 = Math.max(0,y0-extraY);
-        const sample = sampleCanvasColor(source, {
-          x:sx0, y:sy0,
-          width:Math.max(1,Math.min(canvas.width-sx0,rect.width+extraX*2)),
-          height:Math.max(1,Math.min(canvas.height-sy0,rect.height+extraY*2))
-        });
-        item.wordColor = estimateForegroundColor(source, rect, sample);
-        masks.push({ rect, color:sample });
+        // Tight padding is deliberate: broad rectangles paint over cell fills,
+        // short dividers and nearby values. Original text is removed only close
+        // to its source geometry; residual antialiasing is preferable to damage.
+        const padX = Math.min(1.0, Math.max(0.3, fontSize * 0.04));
+        const padY = Math.min(0.8, Math.max(0.2, fontSize * 0.03));
+        const rect = hybridMapRect({
+          x: Number(item.x) || 0,
+          y: Number(item.top) || 0,
+          width: Math.max(0.5, Number(item.width) || String(item.str).length * fontSize * 0.45),
+          height: Math.max(fontSize, Number(item.height) || fontSize)
+        }, scaleX, scaleY, canvas.width, canvas.height, padX, padY);
+        if (!rect) continue;
+        const padXpx = Math.max(2, Math.round(1.5 * scaleX));
+        const padYpx = Math.max(2, Math.round(1.4 * scaleY));
+        const sx = Math.max(0, rect.x - padXpx);
+        const sy = Math.max(0, rect.y - padYpx);
+        const sampleRect = {
+          x: sx, y: sy,
+          width: Math.max(1, Math.min(canvas.width - sx, rect.width + padXpx * 2)),
+          height: Math.max(1, Math.min(canvas.height - sy, rect.height + padYpx * 2))
+        };
+        const background = sampleCanvasColor(original, sampleRect);
+        item.wordColor = estimateForegroundColor(original, rect, background);
+        masks.push({ rect, color: background });
       }
-    }
 
-    // Merge true intersections only; preserve the boundary between adjacent
-    // cells and same-line fields so one mask cannot wipe out neighboring labels.
-    const groups = [];
-    for (const mask of masks) {
-      let g = {x:mask.rect.x,y:mask.rect.y,right:mask.rect.x+mask.rect.width,
-        bottom:mask.rect.y+mask.rect.height,colors:[mask.color]};
-      let joined = true;
-      while(joined) {
-        joined=false;
-        for(let i=groups.length-1;i>=0;i--) {
-          const p=groups[i];
-          if(g.x<=p.right && g.right>=p.x && g.y<=p.bottom && g.bottom>=p.y) {
-            g={x:Math.min(g.x,p.x),y:Math.min(g.y,p.y),right:Math.max(g.right,p.right),
-              bottom:Math.max(g.bottom,p.bottom),colors:g.colors.concat(p.colors)};
-            groups.splice(i,1);
-            joined=true;
-          }
+      // OCR results do not have per-glyph PDF.js items. Use their measured line
+      // boxes in the same page-point coordinate system for scanned-page masking.
+      if ((!line.items || !line.items.length) && line.ocrBox && line.text) {
+        const rect = hybridMapRect(line.ocrBox, scaleX, scaleY, canvas.width, canvas.height, 0.45, 0.35);
+        if (rect) {
+          const sx = Math.max(0, rect.x - 3), sy = Math.max(0, rect.y - 3);
+          const sampleRect = {
+            x: sx, y: sy,
+            width: Math.max(1, Math.min(canvas.width - sx, rect.width + 6)),
+            height: Math.max(1, Math.min(canvas.height - sy, rect.height + 6))
+          };
+          masks.push({ rect, color: sampleCanvasColor(original, sampleRect) });
         }
       }
-      groups.push(g);
     }
 
+    // Merge genuine intersections only. Adjacent fragments from separate invoice
+    // columns are not joined merely because they share the same baseline.
+    const groups = hybridMergeIntersectingMasks(masks);
     context.save();
     context.imageSmoothingEnabled = false;
-    for (const g of groups) {
-      const color = medianColor(g.colors);
-      context.fillStyle = "rgb("+color[0]+", "+color[1]+", "+color[2]+")";
-      context.fillRect(g.x,g.y,g.right-g.x,g.bottom-g.y);
+    for (const group of groups) {
+      const color = medianColor(group.colors);
+      context.fillStyle = "rgb(" + color[0] + ", " + color[1] + ", " + color[2] + ")";
+      context.fillRect(group.x, group.y, group.right - group.x, group.bottom - group.y);
     }
     context.restore();
 
-    // Restore detected table rules/dividers from the untouched source raster.
-    const target=context.getImageData(0,0,canvas.width,canvas.height);
-    const out=target.data, src=source.data;
-    const restore=(x,y)=>{
-      if(x<0||x>=canvas.width||y<0||y>=canvas.height)return;
-      const i=(y*canvas.width+x)*4;
-      if(src[i]<175&&src[i+1]<175&&src[i+2]<175){
-        out[i]=src[i];out[i+1]=src[i+1];out[i+2]=src[i+2];out[i+3]=src[i+3];
+    // Restore detected dark long rules from the untouched raster after masking.
+    const restored = context.getImageData(0, 0, canvas.width, canvas.height);
+    const out = restored.data, src = original.data;
+    const restore = (x, y) => {
+      if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) return;
+      const p = (y * canvas.width + x) * 4;
+      if (src[p] < 175 && src[p + 1] < 175 && src[p + 2] < 175) {
+        out[p] = src[p]; out[p + 1] = src[p + 1]; out[p + 2] = src[p + 2]; out[p + 3] = src[p + 3];
       }
     };
-    for(const rule of grid.horizontals||[]){
-      const y=Math.round(rule.y*scaleY),x0=Math.max(0,Math.floor(rule.x0*scaleX)),x1=Math.min(canvas.width-1,Math.ceil(rule.x1*scaleX));
-      for(let dy=-1;dy<=1;dy++)for(let x=x0;x<=x1;x++)restore(x,y+dy);
+    for (const rule of grid.horizontals || []) {
+      const y = Math.round(rule.y * scaleY);
+      const x0 = Math.max(0, Math.floor(rule.x0 * scaleX));
+      const x1 = Math.min(canvas.width - 1, Math.ceil(rule.x1 * scaleX));
+      for (let dy = -1; dy <= 1; dy++) for (let x = x0; x <= x1; x++) restore(x, y + dy);
     }
-    for(const rule of grid.verticals||[]){
-      const x=Math.round(rule.x*scaleX);
-      for(const seg of rule.segments||[]){
-        const y0=Math.max(0,Math.floor(seg.top*scaleY)),y1=Math.min(canvas.height-1,Math.ceil(seg.bottom*scaleY));
-        for(let dx=-1;dx<=1;dx++)for(let y=y0;y<=y1;y++)restore(x+dx,y);
+    for (const rule of grid.verticals || []) {
+      const x = Math.round(rule.x * scaleX);
+      for (const segment of rule.segments || []) {
+        const y0 = Math.max(0, Math.floor(segment.top * scaleY));
+        const y1 = Math.min(canvas.height - 1, Math.ceil(segment.bottom * scaleY));
+        for (let dx = -1; dx <= 1; dx++) for (let y = y0; y <= y1; y++) restore(x + dx, y);
       }
     }
-    context.putImageData(target,0,0);
+    context.putImageData(restored, 0, 0);
   }
 
   async function renderHybridBackground(page, metrics, lines) {
@@ -2096,6 +2146,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.8.3-local"
+    version: "2.8.4-local"
   };
 })();
