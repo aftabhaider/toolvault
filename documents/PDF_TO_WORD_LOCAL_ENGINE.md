@@ -267,3 +267,12 @@ Download a fresh ZIP, extract to a new folder, run the launcher with its console
 - The screenshot indicates text overlay misalignment and duplicate/poorly masked glyphs. The main causes to inspect are per-fragment flat-color rectangle masking, DOCX paragraph-based page positioning, and OCR boxes needing consistent page coordinate mapping.
 - New synthetic test page: `documents/pdf-to-word-hybrid-tests.html`. It checks coordinate scaling, mask box clamping/merging, color sampling, rule restoration, multiple page sizes, and OCR box coordinate conversion. These tests cannot certify output appearance in Word.
 - Actual invoice/FBR PDF conversion and Microsoft Word visual comparison are still mandatory. Do not merge or deploy until reviewed.
+
+
+## Hybrid mask/OCR refinement — 2.8.2-local (2026-10-22)
+
+- Replaced the broad 2.4-point-per-edge text masks with tighter font-size-relative margins, reducing the chance of painting over cell backgrounds and adjacent fields.
+- Mask rectangles that genuinely intersect are combined; separated columns are kept separate. Local raster samples are used for each mask and detected dark table rules are restored from the untouched page image after masking.
+- OCR processing now releases its temporary canvas in a `finally` block and stores OCR boxes in page-local point coordinates derived from the actual PDF.js render viewport.
+- Added `documents/pdf-to-word-hybrid-tests.html` with synthetic tests for coordinates, mask clamp/union, colored backgrounds, rule restoration, multiple page sizes, and OCR scaling.
+- Engine syntax, synthetic tests, and real output still need checks in a browser/Microsoft Word. This update is not certified for production and does not replace comparison against the Jhang bill and FBR return PDFs.
