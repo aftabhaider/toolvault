@@ -276,3 +276,11 @@ Download a fresh ZIP, extract to a new folder, run the launcher with its console
 - OCR processing now releases its temporary canvas in a `finally` block and stores OCR boxes in page-local point coordinates derived from the actual PDF.js render viewport.
 - Added `documents/pdf-to-word-hybrid-tests.html` with synthetic tests for coordinates, mask clamp/union, colored backgrounds, rule restoration, multiple page sizes, and OCR scaling.
 - Engine syntax, synthetic tests, and real output still need checks in a browser/Microsoft Word. This update is not certified for production and does not replace comparison against the Jhang bill and FBR return PDFs.
+
+
+## Hybrid mask regression checkpoint — 2.8.5-local (2026-10-22)
+
+- The masking pass now uses bounded font-relative text boxes, merges intersecting masks only, and handles OCR line boxes in hybrid mode. It restores detected dark table rules from the pre-mask raster.
+- The helper geometry functions are exposed only for the local synthetic test page at `documents/pdf-to-word-hybrid-tests.html`; they are not a remote API and do not receive the selected PDF.
+- The overlay paragraph builder avoids applying inferred native Word left/right indents to the hybrid page overlay; the background is anchored at page origin. Real Word output still needs visual review.
+- Engine: `2.8.5-local`; service worker cache: `toolvault-pdf-word-v28`; launcher URL remains `http://127.0.0.1:8019/documents/pdf-to-word.html`.
