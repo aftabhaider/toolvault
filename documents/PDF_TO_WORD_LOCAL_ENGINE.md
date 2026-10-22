@@ -206,3 +206,31 @@ The recommended mode is now the hybrid workflow: render the original PDF page as
 ## Hybrid overlay refinement (2.7.6-local)
 
 The overlay now uses absolute PDF X coordinates for Word tab stops in lines containing multiple horizontal fields. Text-clearing rectangles were expanded to cover more of the PDF.js glyph bounds and antialiasing; detected dark table rules are restored after masking. This should reduce residual double-printing and horizontal shifts but requires validation against real PDFs. Engine, service-worker and page syntax checks are required before use; no production changes have been made.
+
+
+## Resume checkpoint — 2026-10-22 (hybrid overlap refinement)
+
+- **Branch:** \`feature/local-pdf-to-word-engine\`
+- **Draft PR:** https://github.com/aftabhaider/toolvault/pull/9
+- **Current engine:** \`2.7.6-local\`
+- **Service-worker cache:** \`toolvault-pdf-word-v24\`
+- **Current launcher:** \`START-LOCAL-PDF-WORD-TEST.bat\`
+- **Local URL:** \`http://127.0.0.1:8018/documents/pdf-to-word.html\`
+- **Default conversion mode:** \`hybrid\` — original high-resolution page artwork with selectable/editable text overlays.
+- **Production status:** no changes merged to \`main\`; live ToolVault is unchanged.
+
+### What changed since the 2.7.4 output
+
+The hybrid editable mode now uses absolute original PDF X positions for Word tab stops on lines containing separate fields. The text-removal mask margin has been expanded to reduce residual duplicate glyphs, and the detected dark table rules are restored after masking. Service-worker cache/launcher were advanced so testing can load this exact version.
+
+### Checks in the latest revision
+
+- Engine JavaScript syntax: PASS.
+- Service-worker JavaScript syntax: PASS.
+- Inline page JavaScript syntax: PASS.
+- Synthetic Word-paragraph smoke test: PASS; confirmed a tab stop is emitted at the absolute PDF X coordinate and the background image is attached behind editable text.
+- Old remote conversion API remains unused by the page.
+
+### Still needed
+
+The screenshot-driven improvements have **not** yet been verified with a new full conversion of the user's RO plant invoice or bill in Microsoft Word. Current approach is a visual/editability compromise: artwork and borders are part of a page background, while text overlays are editable. Mask residuals, text-font width differences, and line alignment may still need tuning. Next test should use a fresh ZIP extracted into a new folder, run the launcher with the console left open, open the local URL above, convert the same PDF in default hybrid mode, and compare the text overlays and table headings. Do not merge to production until an actual Word output review is satisfactory.
