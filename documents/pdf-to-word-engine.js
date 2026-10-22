@@ -1560,16 +1560,22 @@
     const x1 = Math.min(width - 1, Math.ceil(rect.x + rect.width));
     const y0 = Math.max(0, Math.floor(rect.y));
     const y1 = Math.min(height - 1, Math.ceil(rect.y + rect.height));
-    const stride = Math.max(1, Math.floor(Math.min(rect.width, rect.height) / 24));
-    for (let x = x0; x <= x1; x += stride) {
-      pushPixel(x, y0);
-      pushPixel(x, y1);
+    // Use the outermost perimeter rather than the interior edge: interior
+    // sampling frequently captures antialiased glyph pixels or a table rule.
+    const strideX = Math.max(1, Math.floor(Math.max(1, x1 - x0) / 32));
+    const strideY = Math.max(1, Math.floor(Math.max(1, y1 - y0) / 12));
+    for (let x = x0; x <= x1; x += strideX) {
+      pushPixel(x, y0); pushPixel(x, y1);
     }
-    for (let y = y0; y <= y1; y += stride) {
-      pushPixel(x0, y);
-      pushPixel(x1, y);
+    for (let y = y0; y <= y1; y += strideY) {
+      pushPixel(x0, y); pushPixel(x1, y);
     }
-    return medianColor(samples);
+    if (!samples.length) return [255, 255, 255];
+    // Avoid using near-black pixels as a mask fill when at least a few lighter
+    // colors exist. If the perimeter is genuinely dark, fall back to median.
+    const safe = samples.filter(pixel => Math.min(pixel[0], pixel[1], pixel[2]) > 85 ||
+      Math.max(...pixel) - Math.min(...pixel) > 35);
+    return medianColor(safe.length >= Math.min(4, samples.length) ? safe : samples);
   }
 
   function estimateForegroundColor(imageData, rect, background) {
@@ -2152,6 +2158,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.8.5-local"
+    version: "2.8.6-local"
   };
 })();
