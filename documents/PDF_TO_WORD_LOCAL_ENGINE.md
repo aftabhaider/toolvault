@@ -257,3 +257,13 @@ The paragraph tab stop is now relative to the paragraph's text start (\`part.x -
 ### Required next validation
 
 Download a fresh ZIP, extract to a new folder, run the launcher with its console open, and test the original invoice in hybrid mode. Inspect at least the first two pages: labels, long specifications, numbers, table heading text, masks around letters, and any remaining overlap. This update has not been verified end-to-end against the real PDF in Microsoft Word; don't merge PR #9 or change production until that review is satisfactory.
+
+
+## Resume checkpoint — hybrid masking investigation (2026-10-22)
+
+- Branch: `feature/local-pdf-to-word-engine`
+- Base commit reviewed: `96c53d2b71cfd1a386a1b1c3f668392bd36556d9` (PR #9 remains draft/open).
+- Prior engine version: `2.7.7-local`; cache `toolvault-pdf-word-v25`; local URL `http://127.0.0.1:8019/documents/pdf-to-word.html`.
+- The screenshot indicates text overlay misalignment and duplicate/poorly masked glyphs. The main causes to inspect are per-fragment flat-color rectangle masking, DOCX paragraph-based page positioning, and OCR boxes needing consistent page coordinate mapping.
+- New synthetic test page: `documents/pdf-to-word-hybrid-tests.html`. It checks coordinate scaling, mask box clamping/merging, color sampling, rule restoration, multiple page sizes, and OCR box coordinate conversion. These tests cannot certify output appearance in Word.
+- Actual invoice/FBR PDF conversion and Microsoft Word visual comparison are still mandatory. Do not merge or deploy until reviewed.
