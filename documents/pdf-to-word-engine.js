@@ -1585,13 +1585,13 @@
           // PDF.js text advance widths can be slightly narrower than painted
           // glyphs. Leave a larger mask around each item to remove the source
           // glyphs and their antialiasing before editable text is placed above.
-          const maskPadX = 1.8;
-          const maskPadY = 1.7;
+          const maskPadX = 2.4;
+          const maskPadY = 2.1;
           const rect = {
             x: Math.max(0, (item.x - maskPadX) * scaleX),
             y: Math.max(0, (item.top - maskPadY) * scaleY),
             width: Math.max(1, (item.width + maskPadX * 2) * scaleX),
-            height: Math.max(fontSize + 3.2, (item.height || fontSize) + maskPadY * 2.2) * scaleY
+            height: Math.max(fontSize + 4, (item.height || fontSize) + maskPadY * 2.4) * scaleY
           };
           const bgRect = {
             x: Math.max(0, rect.x - 2.5 * scaleX),
@@ -2075,6 +2075,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.7.5-local"
+    version: "2.7.6-local"
   };
 })();
