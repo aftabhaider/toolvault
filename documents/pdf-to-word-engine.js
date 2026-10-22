@@ -1571,100 +1571,89 @@
   function maskHybridText(canvas, metrics, lines, scaleX, scaleY) {
     const context = canvas.getContext("2d", { willReadFrequently: true });
     if (!context) return;
-    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-    const gridScale = (scaleX + scaleY) / 2;
-    // Detect border geometry before masking glyphs so rule segments remain detectable.
-    const grid = detectRasterGrid(canvas, metrics, gridScale);
+    const source = context.getImageData(0, 0, canvas.width, canvas.height);
+    const grid = detectRasterGrid(canvas, metrics, (scaleX + scaleY) / 2);
     const masks = [];
+
     for (const line of lines || []) {
-      const items = line.items && line.items.length ? line.items : [];
-      if (items.length) {
-        for (const item of items) {
-          if (!item.str || !String(item.str).trim()) continue;
-          const fontSize = clampFontSize(item.fontSize || line.fontSize);
-          // PDF.js text advance widths can be slightly narrower than painted
-          // glyphs. Leave a larger mask around each item to remove the source
-          // glyphs and their antialiasing before editable text is placed above.
-          const maskPadX = 2.4;
-          const maskPadY = 2.1;
-          const rect = {
-            x: Math.max(0, (item.x - maskPadX) * scaleX),
-            y: Math.max(0, (item.top - maskPadY) * scaleY),
-            width: Math.max(1, (item.width + maskPadX * 2) * scaleX),
-            height: Math.max(fontSize + 4, (item.height || fontSize) + maskPadY * 2.4) * scaleY
-          };
-          const bgRect = {
-            x: Math.max(0, rect.x - 2.5 * scaleX),
-            y: Math.max(0, rect.y - 2.2 * scaleY),
-            width: Math.min(canvas.width - Math.max(0, rect.x - 2.5 * scaleX), rect.width + 5 * scaleX),
-            height: Math.min(canvas.height - Math.max(0, rect.y - 2.2 * scaleY), rect.height + 4.4 * scaleY)
-          };
-          const background = sampleCanvasColor(imageData, bgRect);
-          item.wordColor = estimateForegroundColor(imageData, rect, background);
-          masks.push({ rect, color: background });
-        }
-      } else if (line.width && Number.isFinite(line.left) && Number.isFinite(line.top)) {
-        const rect = {
-          x: Math.max(0, (line.left - 1.4) * scaleX),
-          y: Math.max(0, (line.top - 1.3) * scaleY),
-          width: Math.max(1, (line.width + 2.8) * scaleX),
-          height: Math.max(1, (line.height + 2.6) * scaleY)
-        };
-        const bgRect = {
-          x: Math.max(0, rect.x - 2.5 * scaleX),
-          y: Math.max(0, rect.y - 2.2 * scaleY),
-          width: Math.min(canvas.width - Math.max(0, rect.x - 2.5 * scaleX), rect.width + 5 * scaleX),
-          height: Math.min(canvas.height - Math.max(0, rect.y - 2.2 * scaleY), rect.height + 4.4 * scaleY)
-        };
-        masks.push({ rect, color: sampleCanvasColor(imageData, bgRect) });
+      const items = line && Array.isArray(line.items) ? line.items : [];
+      for (const item of items) {
+        if (!item || !String(item.str || "").trim()) continue;
+        const fontSize = clampFontSize(item.fontSize || line.fontSize);
+        const padX = Math.min(1.15, Math.max(0.35, fontSize * 0.045));
+        const padY = Math.min(0.9, Math.max(0.25, fontSize * 0.035));
+        const x0 = Math.max(0, Math.floor((item.x - padX) * scaleX));
+        const y0 = Math.max(0, Math.floor((item.top - padY) * scaleY));
+        const x1 = Math.min(canvas.width, Math.ceil((item.x + item.width + padX) * scaleX));
+        const y1 = Math.min(canvas.height, Math.ceil((item.top + Math.max(item.height || 0, fontSize) + padY) * scaleY));
+        if (x1 <= x0 || y1 <= y0) continue;
+        const rect = { x:x0, y:y0, width:x1-x0, height:y1-y0 };
+        const extraX = Math.max(2, Math.round(1.5 * scaleX));
+        const extraY = Math.max(2, Math.round(1.5 * scaleY));
+        const sx0 = Math.max(0, x0-extraX), sy0 = Math.max(0,y0-extraY);
+        const sample = sampleCanvasColor(source, {
+          x:sx0, y:sy0,
+          width:Math.max(1,Math.min(canvas.width-sx0,rect.width+extraX*2)),
+          height:Math.max(1,Math.min(canvas.height-sy0,rect.height+extraY*2))
+        });
+        item.wordColor = estimateForegroundColor(source, rect, sample);
+        masks.push({ rect, color:sample });
       }
+    }
+
+    // Merge true intersections only; preserve the boundary between adjacent
+    // cells and same-line fields so one mask cannot wipe out neighboring labels.
+    const groups = [];
+    for (const mask of masks) {
+      let g = {x:mask.rect.x,y:mask.rect.y,right:mask.rect.x+mask.rect.width,
+        bottom:mask.rect.y+mask.rect.height,colors:[mask.color]};
+      let joined = true;
+      while(joined) {
+        joined=false;
+        for(let i=groups.length-1;i>=0;i--) {
+          const p=groups[i];
+          if(g.x<=p.right && g.right>=p.x && g.y<=p.bottom && g.bottom>=p.y) {
+            g={x:Math.min(g.x,p.x),y:Math.min(g.y,p.y),right:Math.max(g.right,p.right),
+              bottom:Math.max(g.bottom,p.bottom),colors:g.colors.concat(p.colors)};
+            groups.splice(i,1);
+            joined=true;
+          }
+        }
+      }
+      groups.push(g);
     }
 
     context.save();
     context.imageSmoothingEnabled = false;
-    for (const mask of masks) {
-      context.fillStyle = "rgb(" + mask.color[0] + ", " + mask.color[1] + ", " + mask.color[2] + ")";
-      context.fillRect(mask.rect.x, mask.rect.y, mask.rect.width, mask.rect.height);
+    for (const g of groups) {
+      const color = medianColor(g.colors);
+      context.fillStyle = "rgb("+color[0]+", "+color[1]+", "+color[2]+")";
+      context.fillRect(g.x,g.y,g.right-g.x,g.bottom-g.y);
     }
     context.restore();
 
-    // Text masks can cross thin table rules. Restore the original dark border
-    // pixels after masking glyphs so the line work remains intact behind the
-    // editable text overlay.
-    const target = context.getImageData(0, 0, canvas.width, canvas.height);
-    const targetData = target.data;
-    const sourceData = imageData.data;
-    const restorePixel = (x, y) => {
-      if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) return;
-      const offset = (y * canvas.width + x) * 4;
-      const r = sourceData[offset], g = sourceData[offset + 1], b = sourceData[offset + 2];
-      if (r < 155 && g < 155 && b < 155) {
-        targetData[offset] = r;
-        targetData[offset + 1] = g;
-        targetData[offset + 2] = b;
-        targetData[offset + 3] = sourceData[offset + 3];
+    // Restore detected table rules/dividers from the untouched source raster.
+    const target=context.getImageData(0,0,canvas.width,canvas.height);
+    const out=target.data, src=source.data;
+    const restore=(x,y)=>{
+      if(x<0||x>=canvas.width||y<0||y>=canvas.height)return;
+      const i=(y*canvas.width+x)*4;
+      if(src[i]<175&&src[i+1]<175&&src[i+2]<175){
+        out[i]=src[i];out[i+1]=src[i+1];out[i+2]=src[i+2];out[i+3]=src[i+3];
       }
     };
-
-    for (const rule of grid.horizontals || []) {
-      const y = Math.round(rule.y * scaleY);
-      const x0 = Math.max(0, Math.floor(rule.x0 * scaleX));
-      const x1 = Math.min(canvas.width - 1, Math.ceil(rule.x1 * scaleX));
-      for (let dy = -1; dy <= 1; dy++) {
-        for (let x = x0; x <= x1; x++) restorePixel(x, y + dy);
+    for(const rule of grid.horizontals||[]){
+      const y=Math.round(rule.y*scaleY),x0=Math.max(0,Math.floor(rule.x0*scaleX)),x1=Math.min(canvas.width-1,Math.ceil(rule.x1*scaleX));
+      for(let dy=-1;dy<=1;dy++)for(let x=x0;x<=x1;x++)restore(x,y+dy);
+    }
+    for(const rule of grid.verticals||[]){
+      const x=Math.round(rule.x*scaleX);
+      for(const seg of rule.segments||[]){
+        const y0=Math.max(0,Math.floor(seg.top*scaleY)),y1=Math.min(canvas.height-1,Math.ceil(seg.bottom*scaleY));
+        for(let dx=-1;dx<=1;dx++)for(let y=y0;y<=y1;y++)restore(x+dx,y);
       }
     }
-    for (const rule of grid.verticals || []) {
-      const x = Math.round(rule.x * scaleX);
-      for (const segment of rule.segments || []) {
-        const y0 = Math.max(0, Math.floor(segment.top * scaleY));
-        const y1 = Math.min(canvas.height - 1, Math.ceil(segment.bottom * scaleY));
-        for (let dx = -1; dx <= 1; dx++) {
-          for (let y = y0; y <= y1; y++) restorePixel(x + dx, y);
-        }
-      }
-    }
-    context.putImageData(target, 0, 0);
+    context.putImageData(target,0,0);
   }
 
   async function renderHybridBackground(page, metrics, lines) {
@@ -2077,6 +2066,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.8.0-local"
+    version: "2.8.1-local"
   };
 })();
