@@ -234,3 +234,26 @@ The hybrid editable mode now uses absolute original PDF X positions for Word tab
 ### Still needed
 
 The screenshot-driven improvements have **not** yet been verified with a new full conversion of the user's RO plant invoice or bill in Microsoft Word. Current approach is a visual/editability compromise: artwork and borders are part of a page background, while text overlays are editable. Mask residuals, text-font width differences, and line alignment may still need tuning. Next test should use a fresh ZIP extracted into a new folder, run the launcher with the console left open, open the local URL above, convert the same PDF in default hybrid mode, and compare the text overlays and table headings. Do not merge to production until an actual Word output review is satisfactory.
+
+
+## Resume checkpoint — hybrid editable mode 2.7.7 (2026-10-22)
+
+- Working branch: \`feature/local-pdf-to-word-engine\`
+- Draft PR: https://github.com/aftabhaider/toolvault/pull/9
+- Current local engine: \`2.7.7-local\`
+- Cache version: \`toolvault-pdf-word-v25\`
+- Test launcher: \`START-LOCAL-PDF-WORD-TEST.bat\`
+- Test URL: \`http://127.0.0.1:8019/documents/pdf-to-word.html\`
+- Live ToolVault production remains unchanged and the PR is not merged.
+
+### Current recommended mode: Hybrid editable
+
+Hybrid mode renders a high-resolution background of each PDF page, masks detected text glyphs using locally sampled nearby background color, and overlays editable Word text with source-derived font/color metadata and line coordinates. This aims to keep visible page colors, logos, borders, and table fills close to the source while keeping the text selectable/editable. It is not a native Word table reconstruction: graphics and table rules remain part of the page image, and the editable text overlay can still misalign or leave mask artifacts.
+
+### Latest change
+
+The paragraph tab stop is now relative to the paragraph's text start (\`part.x - leftX\`) to reduce double indentation on same-line fields. Hybrid-mode completion status describes the background-artwork/editable-text trade-off. Engine JavaScript syntax passes.
+
+### Required next validation
+
+Download a fresh ZIP, extract to a new folder, run the launcher with its console open, and test the original invoice in hybrid mode. Inspect at least the first two pages: labels, long specifications, numbers, table heading text, masks around letters, and any remaining overlap. This update has not been verified end-to-end against the real PDF in Microsoft Word; don't merge PR #9 or change production until that review is satisfactory.
