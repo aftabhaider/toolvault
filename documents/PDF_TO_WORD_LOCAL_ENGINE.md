@@ -201,3 +201,8 @@ The recommended mode is now the hybrid workflow: render the original PDF page as
 - Tab stops in hybrid editable text use original page X positions (absolute positions relative to the paragraph/page text area), reducing horizontal shift for separated fields on the same baseline.
 - Glyph-removal masks include a slightly larger margin to cover PDF.js width/antialiasing discrepancies. The hybrid renderer restores detected dark horizontal and vertical rules after masking, so ruled table borders should remain intact.
 - JavaScript syntax validation passes. This was not end-to-end tested against the real invoice in Microsoft Word; the next required check is a new hybrid conversion of the same PDF, focused on table headings, numbers and wrapped specification lines.
+
+
+## Hybrid overlay refinement (2.7.6-local)
+
+The overlay now uses absolute PDF X coordinates for Word tab stops in lines containing multiple horizontal fields. Text-clearing rectangles were expanded to cover more of the PDF.js glyph bounds and antialiasing; detected dark table rules are restored after masking. This should reduce residual double-printing and horizontal shifts but requires validation against real PDFs. Engine, service-worker and page syntax checks are required before use; no production changes have been made.
