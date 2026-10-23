@@ -680,7 +680,19 @@
         if (span > 1) options.columnSpan = span;
         return new docx.TableCell(options);
       });
-      return new docx.TableRow({ children: cells });
+      const sourceHeight = row.line && Number.isFinite(row.line.height)
+        ? Math.max(5, Math.min(240, row.line.height))
+        : null;
+      return new docx.TableRow({
+        children: cells,
+        height: sourceHeight
+          ? {
+              value: Math.round(sourceHeight * 20),
+              rule: docx.HeightRule ? docx.HeightRule.ATLEAST : "atLeast"
+            }
+          : undefined,
+        cantSplit: true
+      });
     });
 
     return new docx.Table({
@@ -743,6 +755,28 @@
       const hasStrongRuledGrid = ruledTableCandidates.length > 0;
       const table = ruledTable || (!hasStrongRuledGrid ? detectTableAt(lines, index, metrics.width, grid) : null);
       if (table) {
+        // Word tables participate in normal document flow. Preserve the PDF's
+        // vertical gap before a detected table with an exact-height spacer;
+        // paragraph spacing alone can collapse or be ignored at table starts.
+        const tableTop = table.rows && table.rows[0] && table.rows[0].line
+          ? table.rows[0].line.top
+          : (lines[index].top || 0);
+        const previousBottom = previousLine
+          ? previousLine.top + previousLine.height
+          : 0;
+        const verticalGap = Math.max(0, Math.min(metrics.height * 0.8, tableTop - previousBottom));
+        if (verticalGap > 4) {
+          children.push(new docx.Paragraph({
+            children: [new docx.TextRun({ text: "", size: 2 })],
+            spacing: {
+              before: 0,
+              after: 0,
+              line: Math.max(20, Math.round(verticalGap * 20)),
+              lineRule: docx.LineRule ? docx.LineRule.EXACT : "exact"
+            },
+            keepNext: true
+          }));
+        }
         children.push(createTable(table.rows, metrics.width, docx, table));
         previousLine = table.lastLine;
         index = table.endIndex;
@@ -2208,6 +2242,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.10.1-local"
+    version: "2.11.0-local"
   };
 })();
