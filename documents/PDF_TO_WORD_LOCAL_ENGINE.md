@@ -314,3 +314,12 @@ Fixed a malformed duplicate OCR loader that made the full engine fail syntax val
 - Added approximate source-inspired fills for RO/solar/civil section bands and grey table headers/summaries. Fill classification is text-based and not pixel-perfect.
 - Engine: `2.10.1-local`; service-worker cache: `toolvault-pdf-word-v32`.
 - Known limitation: native tables are inserted in document flow, so vertical position/pagination may shift compared with absolute PDF coordinates. Header logos and divider still remain in the page artwork and are not yet independently movable. Must test with the supplied invoice PDF and open the DOCX in Word; verify that the table is native, cells are correct, borders are not duplicated, and totals remain in their columns before considering this complete.
+
+
+
+## Native table vertical alignment mitigation — 2.11.0-local (2026-10-23)
+
+- Added an exact-height spacer before detected native tables based on the gap between the preceding extracted line and the first table row's PDF coordinates. This is intended to prevent tables near the top of a PDF page from jumping into the header area when Word lays out floating page artwork and normal-flow tables separately.
+- Added source-derived minimum row heights and `cantSplit` to reconstructed table rows to better retain row geometry and reduce rows splitting across pages. Long text can still expand rows; this is an `ATLEAST` height, not fixed clipping.
+- Engine: `2.11.0-local`; cache: `toolvault-pdf-word-v33`.
+- This is a targeted layout mitigation, not a verified fix. It does not yet separate header logos/divider into independent objects. Must run the user's DOCX through Word/LibreOffice rendering and compare all pages; verify no clipping, added pages, or misaligned totals.
