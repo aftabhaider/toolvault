@@ -284,3 +284,8 @@ Download a fresh ZIP, extract to a new folder, run the launcher with its console
 - The helper geometry functions are exposed only for the local synthetic test page at `documents/pdf-to-word-hybrid-tests.html`; they are not a remote API and do not receive the selected PDF.
 - The overlay paragraph builder avoids applying inferred native Word left/right indents to the hybrid page overlay; the background is anchored at page origin. Real Word output still needs visual review.
 - Engine: `2.8.5-local`; service worker cache: `toolvault-pdf-word-v28`; launcher URL remains `http://127.0.0.1:8019/documents/pdf-to-word.html`.
+
+
+## Hybrid mode positioning fix (2.8.7-local)
+
+Fixed a malformed duplicate OCR loader that made the full engine fail syntax validation. Hybrid mode is now passed explicitly to every page-text paragraph, not inferred from whether that individual paragraph contains the background image. Each selectable PDF text line begins at its page-local X coordinate using a Word tab stop, later separated fields use page-local tab stops, and large vertical gaps are not clipped by the smaller reflow-mode spacing limit. Mask padding was slightly increased to cover more source glyph edges while keeping detected table rules restored. This should reduce duplicate/overlapping text in hybrid output. It has passed whole-engine syntax validation and needs another real DOCX check in Microsoft Word.
