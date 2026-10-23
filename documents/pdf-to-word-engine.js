@@ -1653,11 +1653,10 @@
       for (const item of items) {
         if (!item || !String(item.str || "").trim()) continue;
         const fontSize = clampFontSize(item.fontSize || line.fontSize);
-        // Tight padding is deliberate: broad rectangles paint over cell fills,
-        // short dividers and nearby values. Original text is removed only close
-        // to its source geometry; residual antialiasing is preferable to damage.
-        const padX = Math.min(1.0, Math.max(0.3, fontSize * 0.04));
-        const padY = Math.min(0.8, Math.max(0.2, fontSize * 0.03));
+        // Slightly wider glyph clearance reduces ghost text in dense BOQ table headers/cells.
+        // Detected long table rules are restored from the original raster below.
+        const padX = Math.min(1.25, Math.max(0.45, fontSize * 0.055));
+        const padY = Math.min(1.65, Math.max(0.55, fontSize * 0.075));
         const rect = hybridMapRect({
           x: Number(item.x) || 0,
           y: Number(item.top) || 0,
@@ -1665,8 +1664,8 @@
           height: Math.max(fontSize, Number(item.height) || fontSize)
         }, scaleX, scaleY, canvas.width, canvas.height, padX, padY);
         if (!rect) continue;
-        const padXpx = Math.max(2, Math.round(1.5 * scaleX));
-        const padYpx = Math.max(2, Math.round(1.4 * scaleY));
+        const padXpx = Math.max(2, Math.round(1.7 * scaleX));
+        const padYpx = Math.max(2, Math.round(2.2 * scaleY));
         const sx = Math.max(0, rect.x - padXpx);
         const sy = Math.max(0, rect.y - padYpx);
         const sampleRect = {
@@ -2165,6 +2164,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.9.0-local"
+    version: "2.9.1-local"
   };
 })();
