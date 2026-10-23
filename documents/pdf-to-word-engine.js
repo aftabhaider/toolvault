@@ -747,7 +747,7 @@
     return children;
   }
 
-    function createLineParagraph(line, previousLine, docx, pageWidth, pageHeight, isOcr, backgroundImage) {
+    function createLineParagraph(line, previousLine, docx, pageWidth, pageHeight, isOcr, backgroundImage, isHybridLayout) {
     const runs = [];
     const tabStops = [];
     const items = line.items && line.items.length ? line.items : [];
@@ -757,7 +757,7 @@
       ? Math.max(...items.map(item => item.x + item.width))
       : leftX + String(line.text || "").length * fontSize * 0.45;
     const lineCenter = (leftX + rightX) / 2;
-    const hybridLayout = Boolean(backgroundImage);
+    const hybridLayout = Boolean(isHybridLayout);
     const returnFormTitle = /114\s*\(1\)|return of income filed voluntarily/i.test(line.text || "");
     const billTitle = /^bill$/i.test(String(line.text || "").trim()) && line.top < pageHeight * 0.4;
     const invoiceHeading = /^installation of .*solar system/i.test(String(line.text || "").trim());
@@ -767,6 +767,13 @@
 
     if (isOcr || !items.length) {
       if (line.text) {
+        if (hybridLayout) {
+          runs.push(new docx.TextRun({ text: "\t" }));
+          tabStops.push({
+            type: docx.TabStopType ? docx.TabStopType.LEFT : "left",
+            position: Math.max(20, Math.round(leftX * 20))
+          });
+        }
         runs.push(new docx.TextRun({
           text: line.text,
           size: Math.round(fontSize * 2),
@@ -778,13 +785,20 @@
     } else {
       let previous = null;
       for (const part of items) {
+        if (hybridLayout && !previous) {
+          runs.push(new docx.TextRun({ text: "\t" }));
+          tabStops.push({
+            type: docx.TabStopType ? docx.TabStopType.LEFT : "left",
+            position: Math.max(20, Math.round(part.x * 20))
+          });
+        }
         if (previous) {
           const gap = part.x - (previous.x + previous.width);
           if (gap > Math.max(9, line.fontSize * 1.7)) {
             runs.push(new docx.TextRun({ text: "\t" }));
             tabStops.push({
               type: docx.TabStopType ? docx.TabStopType.LEFT : "left",
-              position: Math.max(20, Math.round((part.x - leftX) * 20))
+              position: Math.max(20, Math.round((hybridLayout ? part.x : part.x - leftX) * 20))
             });
           } else if (gap > Math.max(1.2, line.fontSize * 0.18)) {
             runs.push(new docx.TextRun({ text: " " }));
@@ -825,7 +839,7 @@
     // applying the inferred left indent a second time causes double shifting.
     const priorBottom = previousLine ? previousLine.top + previousLine.height : 0;
     const rawGap = previousLine ? line.top - priorBottom : line.top;
-    const maxParagraphBefore = backgroundImage ? pageHeight * 1.5 : pageHeight * 0.4;
+    const maxParagraphBefore = hybridLayout ? pageHeight * 1.5 : pageHeight * 0.4;
     const before = Math.round(Math.max(0, Math.min(maxParagraphBefore, rawGap)) * 20);
     const leftIndent = hybridLayout ? 0 : (centered || rightAligned ? 0 :
       Math.round(Math.max(0, Math.min(pageWidth * 0.95, leftX)) * 20));
@@ -851,28 +865,6 @@
 
   async function loadTesseract() {
     if (window.Tesseract) return window.Tesseract;
-    if (!ocrScriptPromise) {
-      ocrScriptPromise = new Promise((resolve, reject) => {
-        const existing = document.querySelector('script[data-toolvault-tesseract="true"]');
-        if (existing) {
-          existing.addEventListener("load", () => resolve(window.Tesseract), { once: true });
-          existing.addEventListener("error", () => reject(new Error("Could not load the browser OCR library.")), { once: true });
-          return;
-        }
-        const script = document.createElement("script");
-        script.src = localAssetCacheActive() ? OCR_SCRIPT_LOCAL : OCR_SCRIPT_CDN;
-        script.async = true;
-        script.crossOrigin = "anonymous";
-        script.dataset.toolvaultTesseract = "true";
-        script.onload = () => window.Tesseract ? resolve(window.Tesseract) : reject(new Error("The OCR library loaded, but its API was not available."));
-        script.onerror = () => { script.remove(); ocrScriptPromise = null; reject(new Error("Could not load the browser OCR library. Check your connection and try again.")); };
-        document.head.appendChild(script);
-      });
-    }
-    return ocrScriptPromise;
-  }
-
-  async function runOcr(
     if (!ocrScriptPromise) {
       ocrScriptPromise = new Promise((resolve, reject) => {
         const existing = document.querySelector('script[data-toolvault-tesseract="true"]');
@@ -1819,7 +1811,8 @@
         metrics.width,
         metrics.height,
         !line.items || !line.items.length,
-        index === 0 ? background : null
+        index === 0 ? background : null,
+        true
       )
     );
   }
@@ -2162,6 +2155,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.8.6-local"
+    version: "2.8.7-local"
   };
 })();
