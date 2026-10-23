@@ -362,8 +362,13 @@
       if (!cells.some(cell => cell.fragments.length)) continue;
       const fullWidthMerge = cells.length === 1 && cells[0].colSpan === columnCount;
       const rowText = cells.map(cell => cell.text).join(" ").toLowerCase();
-      const isSummary = /\b(total amount|totalamount|total amount in words|total amount of|grand total|net total)\b/i.test(rowText);
+      const isSummary = /\\b(total amount|totalamount|total amount in words|total amount of|grand total|net total|total \\([abc]\\))\\b/i.test(rowText);
       const isHeader = rowIndex === 0;
+      let fill = null;
+      if (/solar system/.test(rowText)) fill = "00B050";
+      else if (/civil work/.test(rowText)) fill = "FFFF00";
+      else if (/reverse osmosis/.test(rowText)) fill = "00B6E8";
+      else if (isHeader || isSummary || /^(a|b|c)$/.test(rowText.trim())) fill = "D9D9D9";
       const fontSizes = cells.flatMap(cell => cell.fragments.map(fragment => fragment.fontSize)).filter(Number.isFinite);
       rows.push({
         cells,
@@ -371,6 +376,7 @@
         centered: fullWidthMerge && cells[0].fragments.some(fragment => Math.abs(fragment.center - pageWidth / 2) < pageWidth * 0.2),
         isHeader,
         isSummary,
+        fill,
         ruled: true,
         line: {
           fontSize: fontSizes.length ? fontSizes.reduce((sum, size) => sum + size, 0) / fontSizes.length : 10,
@@ -664,7 +670,11 @@
         const options = {
           children: makeCellParagraphs(cell, row.line.fontSize, row.isHeader || row.isSummary || row.merged, startColumn, row.isHeader),
           width: { size: cellWidth, type: widthType },
-          shading: row.isHeader || row.isSummary || row.merged ? { fill: "EAF2F8" } : undefined,
+          shading: row.fill
+            ? { fill: row.fill }
+            : row.isHeader || row.isSummary || row.merged
+              ? { fill: "D9D9D9" }
+              : undefined,
           margins: { top: 25, bottom: 25, left: 45, right: 45 }
         };
         if (span > 1) options.columnSpan = span;
@@ -2198,6 +2208,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.10.0-local"
+    version: "2.10.1-local"
   };
 })();
