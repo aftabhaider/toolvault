@@ -1749,7 +1749,30 @@
     context.fillStyle = "#ffffff";
     context.fillRect(0, 0, canvas.width, canvas.height);
     await page.render({ canvasContext: context, viewport, background: "#ffffff" }).promise;
-    maskHybridText(canvas, metrics, lines, viewport.width / metrics.width, viewport.height / metrics.height);
+    const scaleX = viewport.width / metrics.width;
+    const scaleY = viewport.height / metrics.height;
+    maskHybridText(canvas, metrics, lines, scaleX, scaleY);
+
+    // Find strongly ruled table regions before clearing them from the raster.
+    // The rules/fills in these rectangles will be represented by native Word
+    // table cells instead of a second, flattened copy behind editable text.
+    const grid = detectRasterGrid(canvas, metrics, (scaleX + scaleY) / 2);
+    const tableCandidates = getRuledTableCandidates(grid, metrics.width);
+    const nativeTableRects = tableCandidates.map(table => ({
+      x0: Math.max(0, table.x0), x1: Math.min(metrics.width, table.x1),
+      top: Math.max(0, table.top), bottom: Math.min(metrics.height, table.bottom)
+    })).filter(rect => rect.x1 - rect.x0 > metrics.width * 0.3 && rect.bottom - rect.top > 18);
+
+    context.save();
+    context.fillStyle = "#ffffff";
+    for (const rect of nativeTableRects) {
+      context.fillRect(
+        Math.floor(rect.x0 * scaleX), Math.floor(rect.top * scaleY),
+        Math.ceil((rect.x1 - rect.x0) * scaleX), Math.ceil((rect.bottom - rect.top) * scaleY)
+      );
+    }
+    context.restore();
+
     const blob = await new Promise((resolve, reject) =>
       canvas.toBlob(value => value ? resolve(value) : reject(new Error("Could not prepare the editable page background.")), "image/png")
     );
@@ -1766,7 +1789,9 @@
       widthPoints: metrics.width,
       heightPoints: metrics.height,
       native: false,
-      pageBackground: true
+      pageBackground: true,
+      grid,
+      nativeTableRects
     };
   }
 
@@ -1917,7 +1942,16 @@
             pagesWithText += 1;
             outputCharCount += lines.reduce((sum, line) => sum + String(line.text || "").length, 0);
           }
-          const children = createHybridPageChildren(lines, metrics, docx, background);
+          // Keep the page artwork behind the document, but reconstruct detected
+          // ruled tables as actual Word tables. The table rectangles have been
+          // cleared from the raster, so text and borders are not duplicated.
+          const backgroundParagraph = new docx.Paragraph({
+            children: [createHybridBackgroundRun(background, docx)],
+            spacing: { before: 0, after: 0 },
+            indent: { left: 0 }
+          });
+          const nativeChildren = createEditableChildren(lines, metrics, docx, background.grid);
+          const children = [backgroundParagraph, ...nativeChildren];
           sections.push({
             properties: {
               page: {
@@ -2164,6 +2198,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.9.1-local"
+    version: "2.10.0-local"
   };
 })();
