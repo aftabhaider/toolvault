@@ -1861,7 +1861,12 @@
 
     try {
       if (mode === "hybrid") {
-        if (useOcr) {
+        // OCR is initialized lazily only when a page has no usable selectable
+        // text. This makes scanned-page fallback automatic in Hybrid mode,
+        // without forcing every user to download OCR assets for normal PDFs.
+        const ensureOcrWorker = async (pageNumber) => {
+          if (ocrWorker) return ocrWorker;
+          report(onProgress, 8, "Preparing browser OCR…", "Page " + pageNumber + " has no usable text. Loading English OCR locally in this browser.");
           const Tesseract = await loadTesseract();
           ocrWorker = await Tesseract.createWorker("eng", 1, {
             workerPath: localAssetCacheActive()
@@ -1876,12 +1881,13 @@
             workerBlobURL: localAssetCacheActive() ? false : true,
             logger: event => {
               if (event && event.status === "recognizing text") {
-                report(onProgress, 12, "Running browser OCR…", "Recognizing text for the editable text layer.");
+                report(onProgress, 12, "Running browser OCR…", "Recognizing text on scanned page " + pageNumber + ".");
               }
             }
           });
           await ocrWorker.setParameters({ preserve_interword_spaces: "1" });
-        }
+          return ocrWorker;
+        };
 
         for (let index = 1; index <= pdf.numPages; index++) {
           report(onProgress, (index - 1) / pdf.numPages * 88 + 5, "Preserving page design and adding editable text…", "Processing page " + index + " of " + pdf.numPages + ".");
@@ -1891,15 +1897,19 @@
           const sourceLines = groupTextLines(content.items, metrics, content.styles);
           let lines = sourceLines;
           let maskLines = sourceLines;
-          const pageChars = sourceLines.reduce((sum, line) => sum + (line.text || "").replace(/\s/g, "").length, 0);
-          if ((!sourceLines.length || pageChars < 8) && useOcr) {
+          const pageChars = sourceLines.reduce((sum, line) => sum + (line.text || "").replace(/\\s/g, "").length, 0);
+          if (!sourceLines.length || pageChars < 8) {
+            // Automatic per-page OCR fallback: a mixed PDF can contain scanned
+            // pages alongside normal text pages, so do not make one decision
+            // for the whole document based on its first page.
+            await ensureOcrWorker(index);
             const ocrLines = await runOcr(page, metrics, ocrWorker, onProgress, index, pdf.numPages);
             if (ocrLines.length) {
               lines = ocrLines;
-              // Mask native selectable text as well as OCR-recognized text to
-              // avoid leaving duplicate glyphs behind the editable OCR overlay.
               maskLines = sourceLines.concat(ocrLines);
               pagesOcr += 1;
+            } else {
+              report(onProgress, (index / pdf.numPages) * 88 + 5, "No OCR text found on page " + index, "The original page artwork will be preserved, but no editable text was recognized on this page.");
             }
           }
 
@@ -2155,6 +2165,6 @@
     convert: convert,
     maxFileBytes: MAX_FILE_BYTES,
     maxPages: MAX_PAGES,
-    version: "2.8.7-local"
+    version: "2.9.0-local"
   };
 })();
