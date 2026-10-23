@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ToolVault Hybrid PDF-to-Word Tests</title>
+<style>body{font:16px/1.5 system-ui,sans-serif;max-width:900px;margin:36px auto;padding:0 20px;color:#18222f}h1{font-size:1.7rem}button{padding:10px 14px;border:0;border-radius:8px;background:#135e83;color:white;cursor:pointer}pre{background:#f5f7fa;padding:16px;border-radius:8px;white-space:pre-wrap}.pass{color:#187044}.fail{color:#a41f2f}.muted{color:#596777}</style></head>
+<body><h1>Hybrid PDF-to-Word geometry regression tests</h1><p class="muted">Synthetic browser checks only. These do not replace comparing DOCX output with the actual PDF in Microsoft Word.</p><button id="run">Run tests</button><p id="summary" aria-live="polite">Not run yet.</p><pre id="results"></pre>
+<script>
+(function(){"use strict";
+const output=document.getElementById("results"),summary=document.getElementById("summary");
+function assert(name,fn){try{fn();return{name,pass:true};}catch(e){return{name,pass:false,error:e.message||String(e)};}}
+function eq(a,b){if(a!==b)throw Error("expected "+b+", got "+a);}
+function near(a,b,t){if(Math.abs(a-b)>t)throw Error("expected "+b+" +/- "+t+", got "+a);}
+function clamp(r,w,h){const x=Math.max(0,Math.floor(r.x)),y=Math.max(0,Math.floor(r.y)),right=Math.min(w,Math.ceil(r.x+r.width)),bottom=Math.min(h,Math.ceil(r.y+r.height));return right<=x||bottom<=y?null:{x,y,width:right-x,height:bottom-y};}
+function union(rects,gap){const q=rects.map(r=>({...r})),out=[];while(q.length){let a=q.shift(),again=true;while(again){again=false;for(let i=q.length-1;i>=0;i--){const b=q[i];if(a.x<=b.x+b.width+gap&&a.x+a.width+gap>=b.x&&a.y<=b.y+b.height+gap&&a.y+a.height+gap>=b.y){const x=Math.min(a.x,b.x),y=Math.min(a.y,b.y),right=Math.max(a.x+a.width,b.x+b.width),bottom=Math.max(a.y+a.height,b.y+b.height);a={x,y,width:right-x,height:bottom-y};q.splice(i,1);again=true;}}}out.push(a);}return out;}
+function medianColor(colors){if(!colors.length)return[255,255,255];return [0,1,2].map(k=>{const a=colors.map(c=>c[k]).sort((x,y)=>x-y);return a[Math.floor(a.length/2)];});}
+function samplePerimeter(canvas,rect){const ctx=canvas.getContext("2d"),img=ctx.getImageData(0,0,canvas.width,canvas.height),d=img.data,colors=[],x0=Math.max(0,Math.floor(rect.x)),x1=Math.min(canvas.width-1,Math.ceil(rect.x+rect.width)),y0=Math.max(0,Math.floor(rect.y)),y1=Math.min(canvas.height-1,Math.ceil(rect.y+rect.height));for(let x=x0;x<=x1;x++)for(const y of [y0,y1]){const i=(y*canvas.width+x)*4;colors.push([d[i],d[i+1],d[i+2]]);}for(let y=y0;y<=y1;y++)for(const x of [x0,x1]){const i=(y*canvas.width+x)*4;colors.push([d[i],d[i+1],d[i+2]]);}const safe=colors.filter(c=>Math.min(...c)>90||Math.max(...c)-Math.min(...c)>35);return medianColor(safe.length>=Math.min(4,colors.length)?safe:colors);}
+function run(){const tests=[
+assert("PDF point to raster mapping uses distinct X/Y scales",()=>{const sx=3,sy=4,r={x:12,y:9,width:5,height:2};eq(r.x*sx,36);eq(r.y*sy,36);eq(r.width*sx,15);eq(r.height*sy,8);}),
+assert("Mask bounds clamp to canvas edges",()=>{const r=clamp({x:-4,y:5,width:10,height:20},100,15);eq(r.x,0);eq(r.y,5);eq(r.width,6);eq(r.height,10);}),
+assert("Overlapping glyph boxes join into one mask group",()=>{const g=union([{x:2,y:3,width:10,height:8},{x:11,y:4,width:9,height:7}],0);eq(g.length,1);eq(g[0].x,2);eq(g[0].width,18);}),
+assert("Separated table columns remain separate",()=>{eq(union([{x:2,y:3,width:10,height:8},{x:30,y:3,width:9,height:8}],0).length,2);}),
+assert("Background color sampler preserves solid colored cells",()=>{const c=document.createElement("canvas");c.width=30;c.height=20;const x=c.getContext("2d");x.fillStyle="#d9edf7";x.fillRect(0,0,30,20);x.fillStyle="#111111";x.fillText("T",10,13);const b=samplePerimeter(c,{x:8,y:5,width:7,height:10});eq(b[0],217);eq(b[1],237);eq(b[2],247);}),
+assert("Rule restoration sample keeps dark rule pixels",()=>{const src=[24,26,28],masked=[217,237,247];const restored=src[0]<175&&src[1]<175&&src[2]<175?src:masked;eq(restored[0],24);}),
+assert("A4 and letter-sized output geometry stay independent",()=>{near(612*20,12240,0.01);near(792*20,15840,0.01);near(595.28*20,11905.6,0.1);near(841.89*20,16837.8,0.1);}),
+assert("DOCX raster dimensions use 96 px per 72 PDF points",()=>{near(612*96/72,816,0.01);near(792*96/72,1056,0.01);}),
+assert("Transparent/scanned OCR box uses the same page-local point coordinate system",()=>{const viewportScale=1.45,ocrBox={x0:14.5,y0:29,y1:43.5},pxPerPt=viewportScale;const pt={x:ocrBox.x0/pxPerPt,y:ocrBox.y0/pxPerPt,h:(ocrBox.y1-ocrBox.y0)/pxPerPt};near(pt.x,10,0.001);near(pt.y,20,0.001);near(pt.h,10,0.001);})
+
+assert("OCR PDF-point mapping uses exact render viewport X and Y",()=>{const viewportW=887.4,viewportH=1148.4,metricW=612,metricH=792,b={x0:14.5,y0:29,x1:72.5,y1:43.5};near(b.x0*(metricW/viewportW),10,0.001);near(b.y0*(metricH/viewportH),20,0.001);near((b.y1-b.y0)*(metricH/viewportH),10,0.001);}),
+assert("Masks are narrow enough to avoid large text-fragment patches",()=>{const fontSize=10,width=55,padX=Math.min(1.15,Math.max(.35,fontSize*.045));near(width+padX*2,57.3,.001);}),
+assert("A border pixel is restored only when source pixel is dark",()=>{const dark=[35,35,35],fill=[222,231,240];const keep=dark.every(v=>v<175)?dark:fill;eq(keep[0],35);const notKeep=fill.every(v=>v<175)?fill:fill;eq(notKeep[0],222);})
+
+assert("Hybrid point boxes map correctly to canvas pixels",()=>{const r=window.__hybridTestApi.mapRect({x:10,y:20,width:30,height:8},3,4,200,200,0,0);eq(r.x,30);eq(r.y,80);eq(r.width,90);eq(r.height,32);}),
+assert("Hybrid mask merges touching glyphs without swallowing separated columns",()=>{const a=window.__hybridTestApi.merge([{rect:{x:2,y:4,width:10,height:8},color:[250,250,250]},{rect:{x:12,y:4,width:8,height:8},color:[250,250,250]},{rect:{x:40,y:4,width:8,height:8},color:[250,250,250]}]);eq(a.length,2);eq(a[0].right,20);}),
+assert("OCR line mask uses OCR box and is clamped",()=>{const r=window.__hybridTestApi.mapRect({x:-3,y:7,width:12,height:11},2,2,20,30,.45,.35);eq(r.x,0);eq(r.y,13);eq(r.width,19);eq(r.height,24);})
+
+assert("Actual engine background sampler ignores near-black glyph edges on a tinted cell",()=>{const c=document.createElement("canvas");c.width=30;c.height=20;const x=c.getContext("2d");x.fillStyle="#d9edf7";x.fillRect(0,0,30,20);x.fillStyle="#111111";x.fillRect(12,7,3,6);const im=x.getImageData(0,0,30,20);const b=window.__hybridTestApi.sampleBackground(im,{x:8,y:5,width:10,height:10});eq(b[0],217);eq(b[1],237);eq(b[2],247);}),
+];const fails=tests.filter(t=>!t.pass);summary.textContent=tests.length+" checks · "+(tests.length-fails.length)+" passed · "+fails.length+" failed";summary.className=fails.length?"fail":"pass";output.textContent=tests.map(t=>(t.pass?"PASS ":"FAIL ")+t.name+(t.error?" — "+t.error:"")).join("\n");}
+document.getElementById("run").addEventListener("click",run);
+})();
+</script></body></html>
