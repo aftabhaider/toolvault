@@ -46,3 +46,10 @@ test("parseFraction reads fractions, mixed numbers and decimals", () => {
   assert.equal(parseFraction("abc", 7), 7);
   assert.equal(parseFraction("1/0", 7), 7);
 });
+
+test("parseFraction never returns a negative length", () => {
+  assert.equal(parseFraction("-3/4"), 0);
+  assert.equal(parseFraction("-1 1/2"), 0);
+  assert.equal(parseFraction("-2"), 0);
+  assert.equal(parseFraction(-2, 5), 5);
+});
