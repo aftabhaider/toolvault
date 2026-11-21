@@ -1,0 +1,12 @@
+{
+  "name": "toolvault",
+  "private": true,
+  "type": "module",
+  "description": "ToolVault static site. No build step; package.json exists only to run engine tests.",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

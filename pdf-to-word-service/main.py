@@ -10,9 +10,24 @@ from starlette.background import BackgroundTask
 from starlette.concurrency import run_in_threadpool
 from pdf2docx import Converter
 
-# This endpoint is a public, cookie-free utility API. Allow browser requests
-# from ToolVault's current and future frontend hostnames; do not enable credentials.
-APP_ORIGINS = ["*"]
+DEFAULT_ALLOWED_ORIGINS = "https://toolvault.aftabjordan1.workers.dev"
+
+
+def parse_allowed_origins(raw: str | None) -> list[str]:
+    """Parse the comma-separated ALLOWED_ORIGINS setting.
+
+    Origins are compared exactly by the CORS middleware, so trailing slashes are
+    stripped. An unset or blank value falls back to the ToolVault frontend; an
+    explicit "*" is honoured but must be opted into deliberately.
+    """
+    value = raw if raw and raw.strip() else DEFAULT_ALLOWED_ORIGINS
+    origins = [item.strip().rstrip("/") for item in value.split(",") if item.strip()]
+    return ["*"] if "*" in origins else origins
+
+
+# Browser access is limited to the configured frontend origins. Credentials stay
+# disabled because the API is cookie-free.
+APP_ORIGINS = parse_allowed_origins(os.getenv("ALLOWED_ORIGINS"))
 MAX_UPLOAD_BYTES = int(os.getenv("MAX_UPLOAD_MB", "25")) * 1024 * 1024
 
 app = FastAPI(

@@ -29,7 +29,7 @@ docker run --rm -p 8000:8000 -e ALLOWED_ORIGINS=https://toolvault.aftabjordan1.w
 
 ## Configuration
 
-- `ALLOWED_ORIGINS`: comma-separated browser origins permitted by CORS. Defaults to the current ToolVault Workers hostname.
+- `ALLOWED_ORIGINS`: comma-separated browser origins permitted by CORS. Defaults to the current ToolVault Workers hostname. Requests from any other origin are not granted CORS access. Set `*` only if you deliberately want any website to call the API.
 - `MAX_UPLOAD_MB`: maximum accepted PDF size in megabytes; defaults to 25.
 
 ## Important limitations
