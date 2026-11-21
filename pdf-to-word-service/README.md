@@ -31,7 +31,18 @@ docker run --rm -p 8000:8000 -e ALLOWED_ORIGINS=https://toolvault.aftabjordan1.w
 
 - `ALLOWED_ORIGINS`: comma-separated browser origins permitted by CORS. Defaults to the current ToolVault Workers hostname. Requests from any other origin are not granted CORS access. Set `*` only if you deliberately want any website to call the API.
 - `MAX_UPLOAD_MB`: maximum accepted PDF size in megabytes; defaults to 25.
+- `CONVERSION_TIMEOUT_SECONDS`: hard limit for one conversion; defaults to 90. Each conversion runs in a child process (`converter.py`) that is killed when the limit is reached, and the API returns `504`. Keep this below the frontend's 120-second request timeout.
+- `MAX_CONCURRENT_CONVERSIONS`: how many conversions may run at once; defaults to 1, which suits small free instances. Extra requests get `503` with a `Retry-After` header instead of queueing.
+
+## Tests
+
+```bash
+pip install fastapi python-multipart pytest httpx
+python -m pytest tests
+```
+
+The tests replace `converter.py` with small fake scripts, so they do not need `pdf2docx` installed. `requirements-dev.txt` installs the full set, including `pdf2docx`.
 
 ## Important limitations
 
-This is an independent conversion service; it does not use iLovePDF's private code or API. It attempts to reconstruct editable text, images and tables in DOCX, but PDFs are a fixed-layout format and exact visual reproduction cannot be guaranteed. Complex page designs, unusual fonts, forms, and scanned PDFs may require additional handling. This initial version does not run OCR. Do not expose this API publicly without HTTPS, upload-size limits, request timeouts, monitoring, and suitable abuse protection.
+This is an independent conversion service; it does not use iLovePDF's private code or API. It attempts to reconstruct editable text, images and tables in DOCX, but PDFs are a fixed-layout format and exact visual reproduction cannot be guaranteed. Complex page designs, unusual fonts, forms, and scanned PDFs may require additional handling. This initial version does not run OCR. The service limits upload size, conversion time and concurrency itself, but it does not rate-limit per client: add rate limiting at the hosting platform or a proxy in front of it before heavy public use, and monitor it.
