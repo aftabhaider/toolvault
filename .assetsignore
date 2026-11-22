@@ -1,4 +1,5 @@
 package.json
 tests
+scripts
 .gitignore
 .assetsignore

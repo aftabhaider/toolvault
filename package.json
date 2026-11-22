@@ -4,7 +4,10 @@
   "type": "module",
   "description": "ToolVault static site. No build step; package.json exists only to run engine tests.",
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "seo": "node scripts/og-images.mjs && python3 scripts/seo.py",
+    "seo:check": "python3 scripts/seo.py --check",
+    "indexnow": "node scripts/indexnow.mjs"
   },
   "engines": {
     "node": ">=20"

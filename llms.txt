@@ -1,0 +1,51 @@
+# ToolVault
+
+> Free online calculators and PDF tools with visible formulas, unit conversion and worked examples. Calculations run in the browser; every result states its assumptions.
+
+Calculators normalise units before calculating, keep full precision internally and round only for display. Engines are covered by known-case tests. Results are planning estimates, not engineering, legal or financial advice.
+
+## Construction
+
+- [Construction Calculators & Estimating Tools](https://toolvault.aftabjordan1.workers.dev/construction/): Free construction calculators and estimating tools for material quantities, gravel, concrete, masonry, area, volume, cost planning and BOQ workflows.
+- [Board Foot Calculator — Lumber Volume, Waste & Cost](https://toolvault.aftabjordan1.workers.dev/construction/board-foot-calculator): Free board foot calculator for lumber and hardwood. Calculate board feet for single or mixed board sizes, fractional dimensions, waste allowance, cubic volume and optional cost in metric or imperial units.
+- [Concrete Calculator — Volume, Weight, Bags & Cost](https://toolvault.aftabjordan1.workers.dev/construction/concrete-calculator): Free concrete calculator for slabs, footings, walls, columns and circular forms. Calculate concrete volume in cubic metres, yards and feet, plus weight, bag count and optional cost using metric or imperial inputs.
+- [Gravel Calculator — Volume, Weight, Bags & Cost](https://toolvault.aftabjordan1.workers.dev/construction/gravel-calculator): Free gravel calculator to estimate gravel volume, weight, bags and cost. Supports metric and imperial units, waste allowance, custom density and multiple shapes.
+- [How to Calculate Concrete Volume — Slabs, Footings & Yards](https://toolvault.aftabjordan1.workers.dev/construction/how-to-calculate-concrete): Learn how to calculate concrete volume for slabs, footings, walls and round forms. Includes formulas, worked examples, cubic-yard conversion, waste allowance and a free concrete calculator.
+- [Mulch Calculator — Cubic Yards, Bags & Coverage](https://toolvault.aftabjordan1.workers.dev/construction/mulch-calculator): Free mulch calculator for garden beds, landscaping and tree rings. Estimate cubic yards, cubic feet, bags, coverage, optional weight and cost using metric or imperial measurements.
+- [Paint Calculator — How Much Paint Do I Need?](https://toolvault.aftabjordan1.workers.dev/construction/paint-calculator): Free paint calculator to estimate how much paint you need for walls, rooms and ceilings. Calculate paint coverage, litres, US gallons and cans from area, coats and product coverage.
+- [Roof Pitch Calculator — Slope, Angle & Rafter Length](https://toolvault.aftabjordan1.workers.dev/construction/roof-pitch-calculator): Free roof pitch calculator. Enter rise and run, a pitch ratio, angle or slope percentage to calculate roof pitch, degrees, slope, pitch multiplier and rafter length.
+- [Stair Calculator — Rise, Run, Risers & Stringer Length](https://toolvault.aftabjordan1.workers.dev/construction/stair-calculator): Free stair calculator for straight stairs. Calculate riser height, tread count, total run, stair angle, stringer length, fit and optional planning-reference checks in imperial or metric units.
+
+## Calculators
+
+- [Free Online Calculators: Construction, Solar & Electrical](https://toolvault.aftabjordan1.workers.dev/calculators/): Every free ToolVault calculator in one place: concrete, gravel, paint, stairs, roof pitch, square footage, AC BTU, voltage drop and solar sizing, in metric or imperial units.
+- [AC BTU Calculator — Air Conditioner Size for Any Room](https://toolvault.aftabjordan1.workers.dev/calculators/ac-btu-calculator): Free AC BTU calculator for room air-conditioner sizing. Enter room dimensions, ceiling height, sunlight, occupants and kitchen use to estimate cooling BTU, tons and kW.
+- [Square Footage Calculator — Calculate Square Feet & Square Meters](https://toolvault.aftabjordan1.workers.dev/calculators/square-footage-calculator): Free square footage calculator for rooms, floors and simple shapes. Enter length and width to calculate square feet, square meters and square yards, with support for multiple rooms, triangles and circles.
+
+## Solar
+
+- [Solar Tools & Calculators | Load, Generation & Panel Area](https://toolvault.aftabjordan1.workers.dev/solar/): Free solar calculators for load sizing, solar energy generation and solar panel area planning. Use ToolVault solar tools for practical PV system planning.
+- [How to Calculate Solar System Size: Panels, Inverter & Battery](https://toolvault.aftabjordan1.workers.dev/solar/how-to-calculate-solar-system-size): Learn how to calculate solar system size from electricity load, daily energy use, solar PV capacity, inverter size and battery capacity with a practical step-by-step example.
+- [Solar Energy Generation Calculator — Daily PV Output, kWh & Weather](https://toolvault.aftabjordan1.workers.dev/solar/solar-energy-generation-calculator): Free solar energy generation calculator for PV systems. Estimate daily and multi-day solar output in kWh from panel count, panel wattage, location, weather, solar radiation, tilt, azimuth and system losses.
+- [Solar Load Calculator — PV, Inverter & Battery Sizing](https://toolvault.aftabjordan1.workers.dev/solar/solar-load-calculator): Free solar load calculator for appliance energy use, daily kWh, PV capacity, inverter sizing and 12V, 24V or 48V battery capacity.
+- [Solar Panel Area Calculator — Roof Space & Panel Surface Area](https://toolvault.aftabjordan1.workers.dev/solar/solar-panel-area-calculator): Free solar panel area calculator to estimate panel surface area, total PV capacity and practical roof or installation space in square meters and square feet from panel dimensions and layout spacing.
+
+## Engineering
+
+- [Engineering](https://toolvault.aftabjordan1.workers.dev/engineering/): Technical calculators for electrical, mechanical, civil, structural, energy and engineering design support.
+- [How to Calculate Voltage Drop — Formula, AWG & Cable Length](https://toolvault.aftabjordan1.workers.dev/engineering/how-to-calculate-voltage-drop): Learn how to calculate voltage drop for DC, single-phase and three-phase circuits. Includes resistance formulas, AWG and mm² guidance, worked examples and a free voltage drop calculator.
+- [Voltage Drop Calculator — DC, 1-Phase & 3-Phase](https://toolvault.aftabjordan1.workers.dev/engineering/voltage-drop-calculator): Free voltage drop calculator for DC, single-phase and three-phase circuits. Calculate voltage drop, percentage, load-end voltage, power loss, maximum cable length and required conductor area using metric or AWG sizes.
+
+## PDF & Documents
+
+- [Free PDF Tools Online | Merge PDF Files](https://toolvault.aftabjordan1.workers.dev/documents/): Use free PDF tools online with ToolVault. Merge PDF files or convert selectable PDF text into an editable Word DOCX document in your browser.
+- [Merge PDF Files Online Free — Combine PDFs Privately](https://toolvault.aftabjordan1.workers.dev/documents/merge-pdf): Merge multiple PDF files into one document for free. Reorder or remove files before combining them. Files are processed in your browser and are not uploaded to ToolVault.
+- [PDF to Word Converter Online Free — PDF to DOCX](https://toolvault.aftabjordan1.workers.dev/documents/pdf-to-word): Convert PDF to Word online for free. Preserve the original page appearance in a Word DOCX, including logos, headers, footers and fonts, or extract selectable text for editing. Process files in your browser.
+
+## About
+
+- [Free Online Calculators, Converters & PDF Tools](https://toolvault.aftabjordan1.workers.dev/): Use free online calculators, unit converters, solar and construction tools, merge PDF files, and convert PDF text to Word online. Practical tools with clear results, formulas and examples.
+- [About ToolVault — Free Online Calculators & Tools](https://toolvault.aftabjordan1.workers.dev/about): Learn what ToolVault is, how its calculators and online tools are built, and the principles used for accuracy, usefulness and simple user experiences.
+- [Contact ToolVault](https://toolvault.aftabjordan1.workers.dev/contact): Contact ToolVault about calculator accuracy, tool suggestions, technical issues, corrections and general feedback.
+- [Privacy Policy](https://toolvault.aftabjordan1.workers.dev/privacy): ToolVault privacy information covering general website use, calculator inputs, analytics and third-party services.
+- [Terms of Use](https://toolvault.aftabjordan1.workers.dev/terms): Terms of use for ToolVault calculators, converters, generators and other online utilities.

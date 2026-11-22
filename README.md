@@ -29,3 +29,24 @@ Calculator engines (`*-engine.js`) have known-case tests in `tests/`, as require
 ```bash
 npm test
 ```
+
+## SEO maintenance
+
+Run after adding or changing a page:
+
+```bash
+npm run seo        # share images (og/*.jpg, logo.png), then scripts/seo.py
+npm test           # includes site-wide SEO checks (tests/site-seo.test.js)
+```
+
+`scripts/seo.py` is safe to re-run. It:
+
+- adds FAQPage structured data built from each page's visible FAQ section;
+- adds Open Graph and Twitter share-image tags;
+- fills in Article dates, author and publisher, and the Organization logo;
+- keeps placeholder category pages (`NOINDEX` in the script) out of search results;
+- regenerates `sitemap.xml` and `llms.txt`.
+
+Pass `--touch path/to/page.html` when a page's content changed, so its sitemap `lastmod` becomes today. When a placeholder category gets its first real tool, remove it from `NOINDEX`.
+
+After a deploy is live, `npm run indexnow` notifies Bing and other IndexNow engines. The key file (`fe7d079fb00a97f7e051c835347fd49e.txt`) must stay at the site root.
