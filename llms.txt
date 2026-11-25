@@ -44,7 +44,7 @@ Calculators normalise units before calculating, keep full precision internally a
 
 ## About
 
-- [Free Online Calculators, Converters & PDF Tools](https://toolvault.aftabjordan1.workers.dev/): Use free online calculators, unit converters, solar and construction tools, merge PDF files, and convert PDF text to Word online. Practical tools with clear results, formulas and examples.
+- [Free Online Calculators & PDF Tools](https://toolvault.aftabjordan1.workers.dev/): Free online calculators for concrete, paint, stairs, roof pitch, solar sizing, voltage drop and AC size, plus PDF merge and PDF to Word. Formulas and worked examples shown.
 - [About ToolVault — Free Online Calculators & Tools](https://toolvault.aftabjordan1.workers.dev/about): Learn what ToolVault is, how its calculators and online tools are built, and the principles used for accuracy, usefulness and simple user experiences.
 - [Contact ToolVault](https://toolvault.aftabjordan1.workers.dev/contact): Contact ToolVault about calculator accuracy, tool suggestions, technical issues, corrections and general feedback.
 - [Privacy Policy](https://toolvault.aftabjordan1.workers.dev/privacy): ToolVault privacy information covering general website use, calculator inputs, analytics and third-party services.
