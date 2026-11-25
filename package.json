@@ -8,7 +8,8 @@
     "layout": "python3 scripts/layout.py",
     "seo": "python3 scripts/layout.py && node scripts/og-images.mjs && python3 scripts/seo.py",
     "seo:check": "python3 scripts/layout.py --check && python3 scripts/seo.py --check",
-    "indexnow": "node scripts/indexnow.mjs"
+    "indexnow": "node scripts/indexnow.mjs",
+    "check:calculators": "node scripts/check-calculators.cjs"
   },
   "engines": {
     "node": ">=20"

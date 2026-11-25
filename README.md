@@ -30,6 +30,15 @@ Calculator engines (`*-engine.js`) have known-case tests in `tests/`, as require
 npm test
 ```
 
+## Calculator accuracy check
+
+`scripts/check-calculators.cjs` opens every calculator in a real browser (Playwright), enters known cases, switches units, and compares what each page displays with values computed from first principles. Run it before publishing calculator changes:
+
+```bash
+python3 -m http.server 8811 --bind 127.0.0.1 &
+npm run check:calculators
+```
+
 ## Layout and theme
 
 Every page shares one theme (`assets/site.css`), one header and main menu, breadcrumbs, and one footer. `scripts/layout.py` writes them into each page, and the menu and footer are built from its `SECTIONS` list. To add a tool to the menu, add it there and run:

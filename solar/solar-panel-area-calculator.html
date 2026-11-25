@@ -206,7 +206,7 @@ const W_PER={W:1,kW:1000};
 function fmt(n){return new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n)}
 function convertOnUnitChange(input,select,map){
   const raw=Number(input.value)||0,old=select.dataset.prev||select.value,next=select.value;
-  if(raw>0){input.value=(raw*map[old]/map[next]).toFixed(6).replace(/.?0+$/,'');}
+  if(raw>0){input.value=String(Number((raw*map[old]/map[next]).toFixed(6)));}
   select.dataset.prev=next;
 }
 function calculate(){
@@ -226,7 +226,7 @@ el.totalArea.textContent=fmt(totalArea);
 el.installM2.textContent=fmt(installation);
 el.installFt.textContent=fmt(feet);
 el.quickArea.textContent=fmt(installation)+' m²';
-el.quickText.textContent=fmt(feet)+' ft² estimated installation area for '+fmt(panels)+' panels.';
+el.quickText.textContent=fmt(feet)+' ft² estimated installation area for '+panels.toLocaleString()+(panels===1?' panel.':' panels.');
 }
 [el.wattUnit,el.lengthUnit,el.widthUnit].forEach(x=>x.dataset.prev=x.value);
 el.wattUnit.addEventListener('change',()=>{convertOnUnitChange(el.watt,el.wattUnit,W_PER);calculate()});
