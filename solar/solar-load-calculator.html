@@ -46,7 +46,7 @@ body{margin:0;background:
 .load-table{width:100%;border-collapse:collapse;table-layout:fixed}
 .load-table th{background:#f0f7f3;color:#60776e;text-transform:uppercase;letter-spacing:.055em;font-size:10px;text-align:left;padding:10px 8px}
 .load-table td{border-top:1px solid #edf2ef;padding:7px 8px;background:#fff}
-.load-table th:nth-child(1){width:37%}.load-table th:nth-child(2){width:15%}.load-table th:nth-child(3){width:18%}.load-table th:nth-child(4){width:18%}.load-table th:nth-child(5){width:12%}
+.load-table th:nth-child(1){width:28%}.load-table th:nth-child(2){width:14%}.load-table th:nth-child(3){width:24%}.load-table th:nth-child(4){width:24%}.load-table th:nth-child(5){width:10%}
 .control{height:38px;width:100%;border:1px solid #cddbd5;background:#fbfdfc;border-radius:9px;padding:0 9px;color:var(--ink);font:inherit;font-size:13px;outline:none;transition:.18s}
 .control:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(8,127,115,.10);background:#fff}
 .remove{height:32px;width:32px;border:1px solid #f1cccc;background:#fff7f7;color:var(--danger);border-radius:9px;font-weight:900;cursor:pointer}
@@ -85,8 +85,8 @@ body{margin:0;background:
 .note{padding:13px 20px;background:#f6faf8;border-top:1px solid var(--line);font-size:11px;line-height:1.65;color:#687a73}
 .info{margin-top:18px;padding:18px 20px}.info h2{margin:0 0 7px;font-size:15px}.info p{margin:0;color:var(--muted);font-size:12px;line-height:1.7}
 footer{text-align:center;color:#80918a;font-size:11px;padding:28px}
-@media(max-width:900px){.layout{grid-template-columns:1fr}.summary{position:relative}.hero{align-items:start;flex-direction:column}.hero-badge{width:100%}.result-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:620px){.page,.topbar-inner{width:min(100% - 22px,1180px)}.hero{padding:28px 0 20px}.card-head,.card-body{padding:14px}.table-wrap{overflow-x:auto}.load-table{min-width:650px}.settings{grid-template-columns:1fr}.result-grid{grid-template-columns:1fr}.mini-grid{padding-left:14px;padding-right:14px}.battery-list{padding-left:14px;padding-right:14px}}
+@media(max-width:1100px){.layout{grid-template-columns:1fr}.summary{position:relative}.hero{align-items:start;flex-direction:column}.hero-badge{width:100%}.result-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:620px){.page,.topbar-inner{width:min(100% - 22px,1180px)}.hero{padding:28px 0 20px}.card-head,.card-body{padding:14px}.table-wrap{overflow-x:auto}.load-table{min-width:700px}.settings{grid-template-columns:1fr}.result-grid{grid-template-columns:1fr}.mini-grid{padding-left:14px;padding-right:14px}.battery-list{padding-left:14px;padding-right:14px}}
 
 /* ToolVault UX + SEO presentation layer */
 .seo-details{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:0 7px 24px rgba(16,35,31,.04);overflow:hidden}
@@ -108,7 +108,7 @@ body{background:#edf5f2!important}
 input,select,.control{background:#fbfefd;border-color:#c9ddd7}
 .unitChoice,.shape,.seg,.choice{background:#f7fcfa}
 .unitChoice.active,.shape.active,.seg.active,.choice.active{background:#e3f6f0;border-color:#99cdbf;color:#086c5b}
-.inlineMeasure{display:grid;grid-template-columns:minmax(0,1fr) 76px}.inlineMeasure input{border-radius:9px 0 0 9px}.inlineMeasure select{height:38px;border:1px solid #cddbd5;border-left:0;border-radius:0 9px 9px 0;padding:0 6px;background:#f7fcfa;color:#086c5b;font:inherit;font-size:11px;font-weight:850;outline:none}.inlineMeasure select:focus{border-color:#087f73;box-shadow:0 0 0 3px rgba(8,127,115,.10)}</style>
+.inlineMeasure{display:grid;grid-template-columns:minmax(0,1fr) 60px}.inlineMeasure input{border-radius:9px 0 0 9px}.inlineMeasure select{height:38px;border:1px solid #cddbd5;border-left:0;border-radius:0 9px 9px 0;padding:0 6px;background:#f7fcfa;color:#086c5b;font:inherit;font-size:11px;font-weight:850;outline:none;padding:0 2px 0 6px}.inlineMeasure select:focus{border-color:#087f73;box-shadow:0 0 0 3px rgba(8,127,115,.10)}</style>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"WebApplication","name":"Solar Load Calculator","url":"https://toolvault.aftabjordan1.workers.dev/solar/solar-load-calculator","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}},
