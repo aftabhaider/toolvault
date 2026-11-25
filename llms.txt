@@ -68,3 +68,11 @@ Calculators normalise units before calculating, keep full precision internally a
 - [Miles to KM Converter (mi to km) – Exact](https://toolvault.aftabjordan1.workers.dev/converters/miles-to-km): Convert miles to kilometres and km to miles. Exact (1 mile = 1.609344 km), with a chart including 5K, 10K, half marathon and marathon distances.
 - [ML to OZ Converter (ml to fl oz, US & UK)](https://toolvault.aftabjordan1.workers.dev/converters/ml-to-oz): Convert millilitres to fluid ounces and fl oz to ml, in US or UK fluid ounces. Exact definitions, with a chart for drinks, cooking and bottles.
 - [MM to Inches Converter with Fractions (mm to in)](https://toolvault.aftabjordan1.workers.dev/converters/mm-to-inches): Convert millimetres to inches and inches to mm. Exact (1 in = 25.4 mm), with a chart that also shows the nearest 1/16-inch fraction for tape measures and drill bits.
+
+## Image Tools
+
+- [Free Image Tools: HEIC to JPG, Compress, Resize & Convert](https://toolvault.aftabjordan1.workers.dev/images/): Free image tools that run in your browser: convert iPhone HEIC to JPG, compress and resize photos, and convert between JPG, PNG and WebP. No upload, no sign-up.
+- [Compress Image – Reduce JPG, PNG and WebP File Size (Free)](https://toolvault.aftabjordan1.workers.dev/images/compress-image): Reduce image file size in your browser for email, websites and upload limits. Compress JPG, PNG and WebP, optionally shrink large photos, and see the size saved. No upload.
+- [Image Converter – PNG to JPG, JPG to PNG, WebP to JPG (Free)](https://toolvault.aftabjordan1.workers.dev/images/convert-image): Convert images between JPG, PNG and WebP in your browser: PNG to JPG, JPG to PNG, WebP to JPG and more, in bulk. No upload, no sign-up.
+- [HEIC to JPG Converter – Convert iPhone Photos (Free, No Upload)](https://toolvault.aftabjordan1.workers.dev/images/heic-to-jpg): Convert HEIC photos from iPhone and iPad to JPG or PNG in your browser. Convert many photos at once and download a ZIP. No upload, no sign-up.
+- [Resize Image – Change Image Size in Pixels or Percent (Free)](https://toolvault.aftabjordan1.workers.dev/images/resize-image): Resize images in your browser by percentage, width, height or to fit a box, keeping the aspect ratio. Resize JPG, PNG and WebP in bulk. No upload.

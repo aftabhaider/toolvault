@@ -6,8 +6,8 @@
   "scripts": {
     "test": "node --test",
     "layout": "python3 scripts/layout.py",
-    "seo": "node scripts/converters.mjs && node scripts/pdf-tools.mjs && python3 scripts/layout.py && node scripts/og-images.mjs && python3 scripts/seo.py",
-    "seo:check": "node scripts/converters.mjs --check && node scripts/pdf-tools.mjs --check && python3 scripts/layout.py --check && python3 scripts/seo.py --check",
+    "seo": "node scripts/converters.mjs && node scripts/file-tools.mjs && python3 scripts/layout.py && node scripts/og-images.mjs && python3 scripts/seo.py",
+    "seo:check": "node scripts/converters.mjs --check && node scripts/file-tools.mjs --check && python3 scripts/layout.py --check && python3 scripts/seo.py --check",
     "indexnow": "node scripts/indexnow.mjs",
     "check:calculators": "node scripts/check-calculators.cjs"
   },

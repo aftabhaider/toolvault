@@ -60,6 +60,7 @@ SECTION_NAMES = {
     "documents": "PDF & Documents",
     "business": "Business",
     "converters": "Converters",
+    "images": "Image Tools",
     "developer": "Developer",
     "education": "Education",
     "smart-tools": "Smart Tools",

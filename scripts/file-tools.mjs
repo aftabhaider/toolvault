@@ -1,8 +1,9 @@
-// Generates the browser PDF tool pages (documents/<slug>.html) from the
-// definitions below. Processing code lives in documents/pdf-tools.js.
+// Generates the browser file-tool pages from the definitions below:
+// PDF tools in documents/<slug>.html (processing: documents/pdf-tools.js) and
+// image tools in images/<slug>.html (processing: images/image-tools.js).
 //
-//   node scripts/pdf-tools.mjs          (part of npm run seo)
-//   node scripts/pdf-tools.mjs --check
+//   node scripts/file-tools.mjs          (part of npm run seo)
+//   node scripts/file-tools.mjs --check
 //
 // Only the <!-- tv:pdf-head --> and <!-- tv:pdf --> regions are written.
 
@@ -19,7 +20,14 @@ const LIBS = {
   pdflib: "https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js",
   pdfjs: "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js",
   jszip: "https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js",
+  heic2any: "https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js",
 };
+
+const GROUPS = {
+  pdf: { dir: "documents", hub: "PDF Tools", attr: "pdftool", script: "/documents/pdf-tools.js", more: "More PDF tools", all: "All PDF tools" },
+  image: { dir: "images", hub: "Image Tools", attr: "imgtool", script: "/images/image-tools.js", more: "More image tools", all: "All image tools" },
+};
+const groupOf = t => GROUPS[t.group || "pdf"];
 
 const radio = (name, items, checked, toggle = false) =>
   `<div class="tv-seg" role="radiogroup">${items.map(([v, label]) => `<label><input type="radio" name="${name}" value="${v}"${v === checked ? " checked" : ""}${toggle ? " data-toggle" : ""}><span>${esc(label)}</span></label>`).join("")}</div>`;
@@ -121,6 +129,80 @@ export const TOOLS = [
           ["Why did my PDF not get smaller?", "Text-only PDFs are already compact. Try Basic for a small saving, or keep the original."]],
     related: ["merge-pdf", "split-pdf", "pdf-to-jpg", "jpg-to-pdf"],
   },
+  {
+    slug: "heic-to-jpg", group: "image", libs: ["heic2any", "jszip"], multiple: true, accept: ".heic,.heif,image/heic,image/heif",
+    title: "HEIC to JPG Converter – Convert iPhone Photos (Free, No Upload)",
+    h1: "HEIC to JPG Converter",
+    description: "Convert HEIC photos from iPhone and iPad to JPG or PNG in your browser. Convert many photos at once and download a ZIP. No upload, no sign-up.",
+    intro: "iPhones save photos as HEIC, which many websites, Windows apps and printers cannot open. Convert them to JPG or PNG here; the photos are decoded on your device and never uploaded.",
+    drop: "Drop HEIC photos here", chooseLabel: "Choose HEIC photos", run: "Convert photos",
+    options: () => field("Convert to", radio("format", [["jpg", "JPG"], ["png", "PNG"]], "jpg"), "JPG is smaller and opens everywhere; PNG is lossless but much larger.")
+      + field("JPG quality", radio("quality", [["0.92", "High"], ["0.8", "Smaller files"]], "0.92")),
+    steps: ["Choose or drop one or more .heic or .heif photos.", "Pick JPG (best for sharing) or PNG.", "Select Convert photos. One photo downloads directly; several download as a ZIP."],
+    about: [["What is HEIC?", "HEIC (High Efficiency Image Container) is the photo format iPhones and iPads use by default since iOS 11. It stores photos at about half the size of JPG, but many apps, websites and Windows PCs still cannot open it."],
+            ["Privacy", "The photos are decoded in your browser with the open-source heic2any library. The converted files do not carry the original’s embedded metadata, such as the GPS location where a photo was taken."]],
+    faq: [["How do I convert HEIC to JPG for free?", "Choose your HEIC photos, keep JPG selected and select Convert photos. There is no sign-up, watermark or limit on the number of photos."],
+          ["Are my photos uploaded?", "No. Conversion happens on your device; the photos never leave it."],
+          ["Can I stop my iPhone saving HEIC?", "Yes: Settings → Camera → Formats → Most Compatible saves new photos as JPG. Photos you already took stay HEIC, which is what this converter is for."],
+          ["Is the quality reduced?", "JPG at High quality is visually identical for normal viewing. Choose PNG if you need a lossless copy."]],
+    related: ["compress-image", "resize-image", "convert-image", "jpg-to-pdf"],
+  },
+  {
+    slug: "compress-image", group: "image", libs: ["jszip"], multiple: true, accept: "image/*",
+    title: "Compress Image – Reduce JPG, PNG and WebP File Size (Free)",
+    h1: "Compress Image",
+    description: "Reduce image file size in your browser for email, websites and upload limits. Compress JPG, PNG and WebP, optionally shrink large photos, and see the size saved. No upload.",
+    intro: "Make photos and images smaller for email, websites and upload limits. Pick a quality level and, for large photos, a maximum size; you see exactly how much each file shrinks.",
+    drop: "Drop images here", chooseLabel: "Choose images", run: "Compress images",
+    options: () => field("Quality", radio("quality", [["0.85", "High"], ["0.72", "Balanced"], ["0.55", "Smallest"]], "0.72"), "Balanced is hard to tell apart from the original on screen.")
+      + field("Maximum size", radio("max", [["0", "Keep size"], ["2560", "2560 px"], ["1920", "1920 px"], ["1280", "1280 px"]], "1920"), "Limits the longest side. Phone photos are often 4000 px or more; 1920 px is plenty for screens and email.")
+      + field("Save as", radio("format", [["same", "Same format"], ["webp", "WebP"], ["jpg", "JPG"]], "same"), "WebP is usually the smallest and works in all modern browsers; PNG files only get smaller when resized or saved as WebP or JPG."),
+    steps: ["Choose or drop your images.", "Pick a quality level and, for large photos, a maximum size.", "Select Compress images. Each file shows its size before and after; several files download as a ZIP."],
+    about: [["How image compression works", "JPG and WebP store photos with adjustable quality: a lower setting removes detail the eye barely notices. Most of the saving on phone photos comes from reducing their pixel dimensions, which is what the maximum-size option does."],
+            ["Files that are already small", "If an image would not get smaller at the chosen settings, it is skipped and listed as kept, so you never download a larger file."]],
+    faq: [["How do I reduce the file size of a photo?", "Choose the photo, keep Balanced quality and a maximum size of 1920 px, and select Compress images. A 4 MB phone photo usually becomes a few hundred kilobytes."],
+          ["Are my images uploaded?", "No. Compression runs in your browser using its built-in image encoder; the images never leave your device."],
+          ["Will compression remove location data?", "Yes. The compressed files are newly encoded and do not include the original’s embedded metadata, such as GPS location."],
+          ["Why did my PNG not get smaller?", "PNG is lossless, so its quality cannot be lowered. Choose a maximum size, or save as WebP or JPG for a much smaller file."]],
+    related: ["resize-image", "convert-image", "heic-to-jpg", "compress-pdf"],
+  },
+  {
+    slug: "resize-image", group: "image", libs: ["jszip"], multiple: true, accept: "image/*",
+    title: "Resize Image – Change Image Size in Pixels or Percent (Free)",
+    h1: "Resize Image",
+    description: "Resize images in your browser by percentage, width, height or to fit a box, keeping the aspect ratio. Resize JPG, PNG and WebP in bulk. No upload.",
+    intro: "Change the pixel size of one image or many at once. Resize by percentage, to a set width or height, or to fit inside a box; the proportions are always kept.",
+    drop: "Drop images here", chooseLabel: "Choose images", run: "Resize images",
+    options: () => field("Resize by", radio("mode", [["percent", "Percentage"], ["width", "Width"], ["height", "Height"], ["box", "Fit in box"]], "percent", true))
+      + field("Percentage", `<input type="number" name="percent" min="1" max="1000" step="1" value="50">`, "50% halves the width and height.", ` data-when="mode" data-value="percent"`)
+      + field("Width (px)", `<input type="number" name="a" min="1" step="1" value="1200">`, "", ` data-when="mode" data-value="width box"`)
+      + field("Height (px)", `<input type="number" name="b" min="1" step="1" value="1200">`, "", ` data-when="mode" data-value="height box"`),
+    steps: ["Choose or drop one or more images.", "Pick how to resize: a percentage, a width, a height, or a box the image must fit inside.", "Select Resize images. Each image keeps its format; several download as a ZIP."],
+    about: [["Keeping proportions", "With Width or Height, the other side is calculated from the original aspect ratio, so the image is never stretched. Fit in box shrinks or enlarges the image until it just fits inside the width and height you give."],
+            ["Common sizes", "1920 px wide suits full-screen web images, 1080 × 1080 px suits Instagram posts, and 1200 × 630 px suits link previews on social media."]],
+    faq: [["How do I resize an image without losing quality?", "Making an image smaller keeps it sharp. Enlarging beyond its original size cannot add detail, so use percentages above 100% sparingly."],
+          ["Can I resize many images at once?", "Yes. Add several images; they are all resized with the same setting and downloaded as a ZIP."],
+          ["Are my images uploaded?", "No. Resizing runs in your browser; the images stay on your device."],
+          ["What format will the resized image be?", "The same as the original: JPG stays JPG, PNG stays PNG, WebP stays WebP. Other formats such as GIF or BMP are saved as JPG."]],
+    related: ["compress-image", "convert-image", "heic-to-jpg", "jpg-to-pdf"],
+  },
+  {
+    slug: "convert-image", group: "image", libs: ["jszip"], multiple: true, accept: "image/*",
+    title: "Image Converter – PNG to JPG, JPG to PNG, WebP to JPG (Free)",
+    h1: "Image Converter: PNG, JPG and WebP",
+    description: "Convert images between JPG, PNG and WebP in your browser: PNG to JPG, JPG to PNG, WebP to JPG and more, in bulk. No upload, no sign-up.",
+    intro: "Convert images to JPG, PNG or WebP. Use it for PNG to JPG, JPG to PNG, WebP to JPG or any other combination; GIF, BMP and AVIF files can be converted too.",
+    drop: "Drop images here", chooseLabel: "Choose images", run: "Convert images",
+    options: () => field("Convert to", radio("format", [["jpg", "JPG"], ["png", "PNG"], ["webp", "WebP"]], "jpg"), "Transparent areas become white in JPG; PNG and WebP keep transparency."),
+    steps: ["Choose or drop one or more images.", "Pick the format you need.", "Select Convert images. One image downloads directly; several download as a ZIP."],
+    about: [["Which format should I use?", "JPG for photos you want to share or upload; PNG for screenshots, logos and graphics with sharp edges or transparency; WebP for websites, where it is usually the smallest of the three."],
+            ["Quality", "JPG and WebP are saved at 92% quality, which is visually identical to the original for normal viewing. PNG is lossless."]],
+    faq: [["How do I convert PNG to JPG?", "Choose the PNG, pick JPG and select Convert images. Transparent areas are filled with white because JPG cannot store transparency."],
+          ["How do I convert WebP to JPG?", "Choose the WebP image, pick JPG and select Convert images. Use this when an app or website will not accept WebP."],
+          ["Are my images uploaded?", "No. Conversion runs in your browser; the images never leave your device."],
+          ["Why was my WebP saved as PNG?", "A few browsers, mostly older Safari versions, cannot create WebP files. The tool tells you when this happens; use Chrome, Edge or Firefox for WebP."]],
+    related: ["compress-image", "resize-image", "heic-to-jpg", "jpg-to-pdf"],
+  },
 ];
 
 const EXISTING = {
@@ -129,11 +211,15 @@ const EXISTING = {
 };
 
 function body(t, byslug) {
-  const related = t.related.map(s => byslug[s] ? [byslug[s].h1, byslug[s].intro.split(". ")[0] + "."] : EXISTING[s])
-    .map(([name, desc], i) => `<a class="tv-card" href="/documents/${t.related[i]}"><span class="tv-card-body"><span class="tv-card-title">${esc(name)}</span><span class="tv-card-desc">${esc(desc)}</span></span></a>`).join("");
+  const g = groupOf(t);
+  const related = t.related.map(s => {
+    const r = byslug[s];
+    const [name, desc] = r ? [r.h1, r.intro.split(". ")[0] + "."] : EXISTING[s];
+    return `<a class="tv-card" href="/${r ? groupOf(r).dir : "documents"}/${s}"><span class="tv-card-body"><span class="tv-card-title">${esc(name)}</span><span class="tv-card-desc">${esc(desc)}</span></span></a>`;
+  }).join("");
   return `<!-- tv:pdf -->
 <section class="tv-page-hero tv-conv-hero"><div class="tv-conv-head"><h1>${esc(t.h1)}</h1><p class="tv-lead">${esc(t.intro)}</p></div>
-<div class="tv-pdftool" data-pdftool="${t.slug}">
+<div class="tv-pdftool" data-${g.attr}="${t.slug}">
 <div class="tv-drop" data-drop role="button" tabindex="0" aria-label="${esc(t.chooseLabel)}"><strong>${esc(t.drop)}</strong><span>or</span><button type="button" class="tv-btn tv-btn-secondary" data-choose>${esc(t.chooseLabel)}</button>
 <input type="file" accept="${t.accept}"${t.multiple ? " multiple" : ""} hidden></div>
 <ul class="tv-files" data-list aria-live="polite"></ul>
@@ -151,21 +237,21 @@ ${t.about.map(([h, p]) => `<h2>${esc(h)}</h2><p>${esc(p)}</p>`).join("\n")}
 <h2>Frequently asked questions</h2>
 ${t.faq.map(([q, a]) => `<h3>${esc(q)}</h3><p>${esc(a)}</p>`).join("\n")}
 </article>
-<aside class="tv-conv-aside"><h2 class="tv-aside-h">More PDF tools</h2><div class="tv-related">${related}</div>
-<a class="tv-aside-all" href="/documents/">All PDF tools →</a></aside></div>
+<aside class="tv-conv-aside"><h2 class="tv-aside-h">${g.more}</h2><div class="tv-related">${related}</div>
+<a class="tv-aside-all" href="/${g.dir}/">${g.all} →</a></aside></div>
 ${t.libs.map(l => `<script src="${LIBS[l]}"></script>`).join("\n")}
-<script type="module" src="/documents/pdf-tools.js"></script>
+<script type="module" src="${g.script}"></script>
 <!-- /tv:pdf -->`;
 }
 
 function head(t) {
-  const url = `${SITE}/documents/${t.slug}`, title = `${t.title} | ToolVault`;
+  const g = groupOf(t), url = `${SITE}/${g.dir}/${t.slug}`, title = `${t.title} | ToolVault`;
   const ld = { "@context": "https://schema.org", "@graph": [
     { "@type": "WebApplication", "@id": `${url}#app`, name: t.h1, url, applicationCategory: "UtilitiesApplication", operatingSystem: "Any", offers: { "@type": "Offer", price: "0", priceCurrency: "USD" }, description: t.description },
     { "@type": "WebPage", "@id": `${url}#page`, name: title, url, description: t.description, isPartOf: { "@type": "WebSite", name: "ToolVault", url: `${SITE}/` } },
     { "@type": "BreadcrumbList", itemListElement: [
       { "@type": "ListItem", position: 1, name: "ToolVault", item: `${SITE}/` },
-      { "@type": "ListItem", position: 2, name: "PDF Tools", item: `${SITE}/documents/` },
+      { "@type": "ListItem", position: 2, name: g.hub, item: `${SITE}/${g.dir}/` },
       { "@type": "ListItem", position: 3, name: t.h1, item: url }] }] };
   return `<!-- tv:pdf-head -->
 <title>${esc(title)}</title>
@@ -193,16 +279,16 @@ async function main() {
   const byslug = Object.fromEntries(TOOLS.map(t => [t.slug, t]));
   let stale = 0;
   for (const t of TOOLS) {
-    const file = join(ROOT, "documents", `${t.slug}.html`);
+    const file = join(ROOT, groupOf(t).dir, `${t.slug}.html`);
     const exists = await access(file).then(() => true, () => false);
     const original = exists ? await readFile(file, "utf8") : "";
     const html = exists
       ? original.replace(HEAD_RE, () => head(t)).replace(BODY_RE, () => body(t, byslug))
       : `<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n${head(t)}\n</head>\n<body>\n<main id="main" class="wrap">${body(t, byslug)}</main>\n</body>\n</html>\n`;
     if (html !== original) { stale++; if (!check) await writeFile(file, html); }
-    console.log(`documents/${t.slug}.html`);
+    console.log(`${groupOf(t).dir}/${t.slug}.html`);
   }
-  if (check && stale) { console.error(`${stale} PDF tool page(s) out of date: run node scripts/pdf-tools.mjs`); process.exitCode = 1; }
+  if (check && stale) { console.error(`${stale} file tool page(s) out of date: run node scripts/file-tools.mjs`); process.exitCode = 1; }
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) await main();

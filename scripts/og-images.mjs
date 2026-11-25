@@ -17,7 +17,7 @@ const SKIP = new Set(["google8f42117352f976c7.html", "404.html"]);
 const SKIP_DIRS = new Set(["og", "scripts", "tests", "node_modules", "pdf-to-word-service", "assets", ".git"]);
 const SECTIONS = {
   "": "ToolVault", calculators: "Calculators", construction: "Construction", engineering: "Engineering",
-  solar: "Solar", documents: "PDF & Documents", business: "Business", converters: "Converters",
+  solar: "Solar", documents: "PDF & Documents", images: "Image Tools", business: "Business", converters: "Converters",
   developer: "Developer", education: "Education", "smart-tools": "Smart Tools",
 };
 const TAGLINES = {
@@ -25,6 +25,7 @@ const TAGLINES = {
   Engineering: "formulas shown · metric &amp; imperial", Solar: "formulas shown · metric &amp; imperial",
   "PDF & Documents": "no account needed",
   Converters: "exact definitions · metric, US &amp; UK units",
+  "Image Tools": "no upload · runs in your browser",
 };
 const ICONS = { Construction: "🏗️", Calculators: "🧮", Engineering: "⚡", Solar: "☀️", "PDF & Documents": "📄", ToolVault: "🧰" };
 

@@ -35,11 +35,11 @@ from site_data import POPULAR, SECTIONS as SITE_SECTIONS, all_tools, icon  # noq
 # Menu view of the site structure: (label, hub path, [(name, path, short description), ...]).
 SECTIONS = [(sec["label"], sec["hub"], [(t[0], t[1], t[2]) for t in sec["tools"]]) for sec in SITE_SECTIONS]
 SECTION_OF_DIR = {"construction": "/construction/", "solar": "/solar/", "engineering": "/engineering/",
-                  "calculators": "/calculators/", "converters": "/converters/", "documents": "/documents/"}
+                  "calculators": "/calculators/", "converters": "/converters/", "images": "/images/", "documents": "/documents/"}
 ALL_LINK = {"/calculators/": "Browse all calculators"}
 # One name per section, used in the menu, the breadcrumbs and their structured data.
 HUB_NAMES = {"/construction/": "Construction", "/solar/": "Solar", "/engineering/": "Engineering",
-             "/calculators/": "Calculators", "/converters/": "Converters", "/documents/": "PDF Tools"}
+             "/calculators/": "Calculators", "/converters/": "Converters", "/images/": "Image Tools", "/documents/": "PDF Tools"}
 SEARCH_ICON = ('<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" '
                'stroke-width="2"/><path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>')
 LEGAL = {"about.html", "contact.html", "privacy.html", "terms.html", "404.html"}
@@ -108,7 +108,7 @@ def header_block(current_section: str | None, current_path: str | None) -> str:
         f'{MENU_ICON}<span class="tv-menu-label">Menu</span></button>'
         f'<nav id="tv-nav" class="tv-nav" aria-label="Main"><ul>{"".join(items)}</ul>'
         '<a class="tv-mobile-cta" href="/calculators/">Browse all calculators</a></nav>'
-        f'<a class="tv-cta" href="/#search">{SEARCH_ICON}<span>Search tools</span></a>'
+        f'<a class="tv-cta" href="/#search" aria-label="Search tools" title="Search tools">{SEARCH_ICON}</a>'
         "</div></header>"
         "<!-- /tv:header -->"
     )
@@ -224,12 +224,14 @@ def noun_for(tools: list[dict]) -> str:
         return "tools"
     if all(t["path"].startswith("/converters/") for t in tools):
         return "converters"
+    if all(t["path"].startswith("/images/") for t in tools):
+        return "tools"
     return "calculators"
 
 
 # Sections that belong on the all-calculators page (converters and PDF tools have their own).
 def is_calculator_section(sec: dict) -> bool:
-    return sec["hub"] not in ("/documents/", "/converters/")
+    return sec["hub"] not in ("/documents/", "/converters/", "/images/")
 
 
 def category_cards(exclude: str | None = None) -> str:
@@ -292,7 +294,8 @@ HOME_SCRIPT = """<script>
 def home_block() -> str:
     tools = [t for _, t in all_tools()]
     by_path = {t["path"]: t for t in tools}
-    calcs = sum(t["kind"] == "tool" and not t["path"].startswith(("/documents/", "/converters/")) for t in tools)
+    calcs = sum(t["kind"] == "tool" and not t["path"].startswith(("/documents/", "/converters/", "/images/")) for t in tools)
+    imgs = sum(t["path"].startswith("/images/") for t in tools)
     convs = sum(t["path"].startswith("/converters/") for t in tools)
     guides = sum(t["kind"] == "guide" for t in tools)
     pdf = sum(t["path"].startswith("/documents/") for t in tools)
@@ -310,7 +313,7 @@ def home_block() -> str:
         '<input id="search" name="q" type="search" placeholder="Search tools, e.g. concrete, paint, voltage drop" autocomplete="off">'
         '<button type="submit">Search</button></form>'
         f'<p class="tv-popular"><span>Popular:</span>{popular}</p>'
-        f'<ul class="tv-stats"><li><b>{calcs}</b> calculators</li><li><b>{convs}</b> unit converters</li><li><b>{guides}</b> step-by-step guides</li><li><b>{pdf}</b> PDF tools</li></ul>'
+        f'<ul class="tv-stats"><li><b>{calcs}</b> calculators</li><li><b>{convs}</b> unit converters</li><li><b>{guides}</b> step-by-step guides</li><li><b>{pdf}</b> PDF tools</li><li><b>{imgs}</b> image tools</li></ul>'
         "</div></section>"
         '<section class="tv-container tv-home-section" id="tv-browse" aria-labelledby="tv-cats-h">'
         '<h2 id="tv-cats-h" class="tv-h2">Browse by category</h2>'
