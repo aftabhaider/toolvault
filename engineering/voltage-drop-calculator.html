@@ -173,7 +173,7 @@ input,select,.control{background:#fbfefd;border-color:#c9ddd7}
 <p>These are voltage-drop constraints only. They do not prove that a conductor is suitable for ampacity, short-circuit withstand, temperature, installation method or code compliance.</p>
 
 <h2>Important Accuracy and Scope Notes</h2>
-<p>The default resistivity values are reference values at approximately 20°C. Actual conductor resistance changes with temperature. AC circuits can also have inductive reactance and power-factor effects, while terminals and connections add resistance. For a final design, use the cable manufacturer's resistance/impedance data and applicable electrical requirements.</p>
+<p>The default resistivity values are standard references at 20°C: 1.724 × 10⁻⁸ Ω·m for annealed copper and 2.826 × 10⁻⁸ Ω·m for conductor-grade aluminium. Actual conductor resistance changes with temperature. AC circuits can also have inductive reactance and power-factor effects, while terminals and connections add resistance. For a final design, use the cable manufacturer's resistance/impedance data and applicable electrical requirements.</p>
 
 <h2>Frequently Asked Questions</h2>
 <h3>What is an acceptable voltage drop?</h3>
@@ -206,7 +206,7 @@ function num(v){const n=Number(v);return Number.isFinite(n)?Math.max(0,n):0}
 function fixed(n,d=2){return Number(n).toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d})}
 function convertUnit(input,select,map){
   const raw=num(input.value),old=select.dataset.prev||select.value,next=select.value;
-  if(raw>0)input.value=(raw*map[old]/map[next]).toFixed(6).replace(/.?0+$/,'');
+  if(raw>0)input.value=String(Number((raw*map[old]/map[next]).toFixed(6)));
   select.dataset.prev=next;
 }
 function canonicalVoltage(){return num($('voltage').value)*V_PER[$('voltageUnit').value]}

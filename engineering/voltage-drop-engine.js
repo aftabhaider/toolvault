@@ -3,7 +3,10 @@
 // AC reactance, conduit effects, temperature correction, ampacity and code-specific
 // installation factors are intentionally outside this base model.
 
-export const RHO_OHM_M = { copper:1.724e-8, aluminum:2.65e-8 };
+// Standard conductor resistivity at 20 °C: annealed copper (100% IACS) and
+// conductor-grade aluminium (61% IACS, e.g. EC/1350), as used for cable sizing.
+// Pure aluminium (2.65e-8) understates the drop in real aluminium cable by ~6%.
+export const RHO_OHM_M = { copper:1.724e-8, aluminum:2.826e-8 };
 export const PHASE_FACTOR = { dc:2, single:2, three:Math.sqrt(3) };
 
 export const METRIC_SIZES_MM2=[0.5,0.75,1,1.5,2.5,4,6,10,16,25,35,50,70,95,120,150,185,240,300,400,500,630];

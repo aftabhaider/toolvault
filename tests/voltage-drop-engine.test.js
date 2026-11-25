@@ -23,7 +23,7 @@ test("three-phase uses √3 and DC uses 2", () => {
 });
 
 test("aluminium and resistivity override", () => {
-  approx(calculateVoltageDrop({ ...base, material: "aluminum" }).rPerM, 2.65e-8 / 2.5e-6);
+  approx(calculateVoltageDrop({ ...base, material: "aluminum" }).rPerM, 2.826e-8 / 2.5e-6);
   approx(resistanceOhmPerMeter({ material: "copper", areaMm2: 1, rhoOverride: 2e-8 }), 0.02);
 });
 

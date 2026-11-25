@@ -206,7 +206,7 @@ function num(v,f=0){const n=Number(v);return Number.isFinite(n)?Math.max(0,n):f}
 function fmt(v,max=2){return new Intl.NumberFormat("en-US",{minimumFractionDigits:0,maximumFractionDigits:max}).format(v)}
 function setModeButton(){document.querySelectorAll(".seg").forEach(x=>x.classList.toggle("active",x.querySelector("input")?.value===mode))}
 function updateLabels(){els.coverageHint.textContent="Use the product label for best accuracy.";els.priceLabel.textContent="Paint price";}
-function convertSelect(input,select,map){const raw=num(input.value),old=select.dataset.prev||select.value,next=select.value;if(raw>0)input.value=(raw*map[old]/map[next]).toFixed(6).replace(/.?0+$/,'');select.dataset.prev=next}
+function convertSelect(input,select,map){const raw=num(input.value),old=select.dataset.prev||select.value,next=select.value;if(raw>0)input.value=String(Number((raw*map[old]/map[next]).toFixed(6)));select.dataset.prev=next}
 function toM(id){return num($(id).value)*M[document.getElementById(id+"Unit").value]}
 function toM2(id,unitId){return num($(id).value)*AREA[$(unitId).value]}
 function coverageM2L(){return num(els.coverage.value)*COVERAGE[els.coverageUnit.value]}
