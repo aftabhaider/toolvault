@@ -1,5 +1,14 @@
-package.json
-tests
-scripts
+# Files in the repo that must not be served on the public site.
+.git
+.github
 .gitignore
 .assetsignore
+wrangler.jsonc
+node_modules
+package.json
+package-lock.json
+tests
+scripts
+pdf-to-word-service
+render.yaml
+*.md
