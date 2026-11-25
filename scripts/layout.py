@@ -9,7 +9,9 @@ For each HTML page this script:
   * replaces (or adds) the shared footer;
   * tags <body> with the page type, which sets the content width.
 
-The site structure lives in SECTIONS below. Add a new tool there and re-run:
+It also generates the homepage tool directory and the category pages' tool
+grids. The site structure lives in scripts/site_data.py. Add a new tool there
+and re-run:
   python3 scripts/layout.py      (npm run layout)
 """
 
@@ -27,37 +29,11 @@ YEAR = "2026"
 SKIP = {"google8f42117352f976c7.html"}
 SKIP_DIRS = ("og/", "scripts/", "tests/", "node_modules/", "pdf-to-word-service/", "assets/")
 
-# Main menu: (label, hub path, [(name, path, short description), ...]).
-SECTIONS = [
-    ("Construction", "/construction/", [
-        ("Concrete Calculator", "/construction/concrete-calculator", "Slabs, footings, walls and columns"),
-        ("Gravel Calculator", "/construction/gravel-calculator", "Volume, weight, bags and cost"),
-        ("Mulch Calculator", "/construction/mulch-calculator", "Cubic yards, bags and coverage"),
-        ("Paint Calculator", "/construction/paint-calculator", "Litres, gallons and cans"),
-        ("Stair Calculator", "/construction/stair-calculator", "Risers, treads and stringers"),
-        ("Roof Pitch Calculator", "/construction/roof-pitch-calculator", "Pitch, angle and rafter length"),
-        ("Board Foot Calculator", "/construction/board-foot-calculator", "Lumber volume and cost"),
-        ("How to Calculate Concrete", "/construction/how-to-calculate-concrete", "Step-by-step guide"),
-    ]),
-    ("Solar", "/solar/", [
-        ("Solar Load Calculator", "/solar/solar-load-calculator", "PV, inverter and battery sizing"),
-        ("Solar Energy Generation", "/solar/solar-energy-generation-calculator", "Daily kWh from your location"),
-        ("Solar Panel Area", "/solar/solar-panel-area-calculator", "Roof space for your panels"),
-        ("How to Size a Solar System", "/solar/how-to-calculate-solar-system-size", "Step-by-step guide"),
-    ]),
-    ("Engineering", "/engineering/", [
-        ("Voltage Drop Calculator", "/engineering/voltage-drop-calculator", "Cable drop, length and size"),
-        ("How to Calculate Voltage Drop", "/engineering/how-to-calculate-voltage-drop", "Step-by-step guide"),
-    ]),
-    ("Calculators", "/calculators/", [
-        ("Square Footage Calculator", "/calculators/square-footage-calculator", "Area of rooms and shapes"),
-        ("AC BTU Calculator", "/calculators/ac-btu-calculator", "Air conditioner size for a room"),
-    ]),
-    ("PDF Tools", "/documents/", [
-        ("Merge PDF", "/documents/merge-pdf", "Combine PDFs in your browser"),
-        ("PDF to Word", "/documents/pdf-to-word", "Convert PDF to editable DOCX"),
-    ]),
-]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from site_data import POPULAR, SECTIONS as SITE_SECTIONS, all_tools, icon  # noqa: E402
+
+# Menu view of the site structure: (label, hub path, [(name, path, short description), ...]).
+SECTIONS = [(sec["label"], sec["hub"], [(t[0], t[1], t[2]) for t in sec["tools"]]) for sec in SITE_SECTIONS]
 SECTION_OF_DIR = {"construction": "/construction/", "solar": "/solar/", "engineering": "/engineering/",
                   "calculators": "/calculators/", "documents": "/documents/"}
 ALL_LINK = {"/calculators/": "Browse all calculators"}
@@ -207,6 +183,173 @@ def footer_block() -> str:
     )
 
 
+# ------------------------------------------------------------ homepage and category pages
+
+HOME_RE = re.compile(r"<!-- tv:home -->.*?<!-- /tv:home -->", re.S)
+HUB_RE = re.compile(r"<!-- tv:hub -->.*?<!-- /tv:hub -->", re.S)
+HUB_MORE_RE = re.compile(r"<!-- tv:hub-more -->.*?<!-- /tv:hub-more -->", re.S)
+SECTION_BY_HUB = {sec["hub"]: sec for sec in SITE_SECTIONS}
+
+
+def tool_card(tool: dict) -> str:
+    tag = '<span class="tv-tag">Guide</span>' if tool["kind"] == "guide" else ""
+    search = e(f'{tool["name"]} {tool["keywords"]} {tool["card"]}'.lower())
+    return (f'<a class="tv-card" href="{tool["path"]}" data-search="{search}">'
+            f'<span class="tv-card-ic">{icon(tool["icon"])}</span>'
+            f'<span class="tv-card-body"><span class="tv-card-title">{e(tool["name"])}{tag}</span>'
+            f'<span class="tv-card-desc">{e(tool["card"])}</span></span>'
+            f'{icon("arrow", "tv-card-go")}</a>')
+
+
+def section_tools(sec: dict) -> list[dict]:
+    return [t for s, t in all_tools() if s is sec]
+
+
+def count_label(tools: list[dict]) -> str:
+    calc = sum(t["kind"] == "tool" for t in tools)
+    guides = len(tools) - calc
+    noun = "tools" if sec_is_pdf(tools) else "calculators"
+    parts = [f"{calc} {noun if calc != 1 else noun[:-1]}"]
+    if guides:
+        parts.append(f"{guides} guide" + ("s" if guides != 1 else ""))
+    return " · ".join(parts)
+
+
+def sec_is_pdf(tools: list[dict]) -> bool:
+    return all(t["path"].startswith("/documents/") for t in tools)
+
+
+def category_cards(exclude: str | None = None) -> str:
+    cards = []
+    for sec in SITE_SECTIONS:
+        if sec["hub"] == exclude:
+            continue
+        if sec["hub"] == "/calculators/":
+            listed = [t for s, t in all_tools() if s["hub"] != "/documents/"]
+        else:
+            listed = section_tools(sec)
+        cards.append(f'<a class="tv-cat" href="{sec["hub"]}"><span class="tv-cat-ic">{icon(sec["icon"])}</span>'
+                     f'<span class="tv-cat-title">{e(sec.get("card_label", sec["label"]))}</span>'
+                     f'<span class="tv-cat-desc">{e(sec.get("card_summary", sec["summary"]))}</span>'
+                     f'<span class="tv-cat-meta">{count_label(listed)} {icon("arrow", "tv-cat-go")}</span></a>')
+    return f'<div class="tv-cats">{"".join(cards)}</div>'
+
+
+def tool_groups(sections: list[dict], heading_tag: str = "h3") -> str:
+    out = []
+    for sec in sections:
+        cards = "".join(tool_card(t) for t in section_tools(sec))
+        label = sec.get("group_label", sec["label"])
+        out.append(f'<div class="tv-group" data-group><div class="tv-group-head">'
+                   f'<{heading_tag}>{icon(sec["icon"])}{e(label)}</{heading_tag}>'
+                   f'<a href="{sec["hub"]}" aria-label="View all {e(label)} tools">View all →</a></div>'
+                   f'<div class="tv-grid">{cards}</div></div>')
+    return "".join(out)
+
+
+FEATURES = [
+    ("formula", "Formulas shown", "Every calculator shows the formula and a worked example, so you can check the result."),
+    ("units", "Metric and imperial", "Enter metres, feet, inches or litres. Units are converted before anything is calculated."),
+    ("check", "Tested calculations", "Each calculation engine is covered by automated tests built from hand-checked examples."),
+    ("free", "Free, no account", "No sign-up and no paywall. Calculators run in your browser."),
+]
+
+HOME_SCRIPT = """<script>
+(function(){
+ var input=document.getElementById("search"),form=document.getElementById("tv-search-form");
+ if(!input)return;
+ var cards=[].slice.call(document.querySelectorAll("#tools .tv-card")),groups=[].slice.call(document.querySelectorAll("#tools [data-group]"));
+ var count=document.getElementById("tv-count"),empty=document.getElementById("tv-empty"),browse=document.getElementById("tv-browse");
+ function apply(){
+  var words=input.value.toLowerCase().trim().split(/\\s+/).filter(Boolean),shown=0;
+  cards.forEach(function(c){var ok=words.every(function(w){return c.dataset.search.indexOf(w)>-1});c.hidden=!ok;if(ok)shown++});
+  groups.forEach(function(g){g.hidden=!g.querySelector(".tv-card:not([hidden])")});
+  count.textContent=words.length?shown+" of "+cards.length+" tools match":cards.length+" tools";
+  empty.hidden=shown>0;browse.hidden=words.length>0;
+ }
+ input.addEventListener("input",apply);
+ form.addEventListener("submit",function(ev){ev.preventDefault();apply();var first=document.querySelector("#tools .tv-card:not([hidden])");
+  if(first&&input.value.trim())document.getElementById("tools").scrollIntoView({behavior:"smooth"});});
+ if(location.hash==="#search")input.focus();
+ apply();
+})();
+</script>"""
+
+
+def home_block() -> str:
+    tools = [t for _, t in all_tools()]
+    by_path = {t["path"]: t for t in tools}
+    calcs = sum(t["kind"] == "tool" and not t["path"].startswith("/documents/") for t in tools)
+    guides = sum(t["kind"] == "guide" for t in tools)
+    pdf = sum(t["path"].startswith("/documents/") for t in tools)
+    popular = "".join(f'<a href="{p}">{e(by_path[p]["name"].replace(" Calculator", ""))}</a>' for p in POPULAR)
+    features = "".join(f'<li>{icon(i)}<div><h3>{e(t)}</h3><p>{e(d)}</p></div></li>' for i, t, d in FEATURES)
+    return (
+        "<!-- tv:home -->"
+        '<section class="tv-home-hero"><div class="tv-container">'
+        '<p class="tv-eyebrow">Free · No sign-up · Formulas shown</p>'
+        "<h1>Free online calculators and PDF tools</h1>"
+        '<p class="tv-lead">Estimate concrete, paint, stairs and solar systems, check cable voltage drop and air-conditioner size, '
+        "and merge or convert PDFs. Every calculator shows the formula, the units and the assumptions behind its result.</p>"
+        '<form class="tv-search" id="tv-search-form" role="search" action="/">'
+        f'<label class="tv-sr" for="search">Search ToolVault tools</label>{icon("search")}'
+        '<input id="search" name="q" type="search" placeholder="Search tools, e.g. concrete, paint, voltage drop" autocomplete="off">'
+        '<button type="submit">Search</button></form>'
+        f'<p class="tv-popular"><span>Popular:</span>{popular}</p>'
+        f'<ul class="tv-stats"><li><b>{calcs}</b> calculators</li><li><b>{guides}</b> step-by-step guides</li><li><b>{pdf}</b> PDF tools</li></ul>'
+        "</div></section>"
+        '<section class="tv-container tv-home-section" id="tv-browse" aria-labelledby="tv-cats-h">'
+        '<h2 id="tv-cats-h" class="tv-h2">Browse by category</h2>'
+        f"{category_cards()}</section>"
+        '<section class="tv-container tv-home-section" id="tools" aria-labelledby="tv-tools-h">'
+        '<div class="tv-dir-head"><h2 id="tv-tools-h" class="tv-h2">All tools</h2><p id="tv-count" aria-live="polite"></p></div>'
+        f"{tool_groups(SITE_SECTIONS)}"
+        '<p id="tv-empty" class="tv-empty" hidden>No tools match your search. Try a shorter word, or '
+        '<a href="/calculators/">browse all calculators</a>.</p></section>'
+        '<section class="tv-container tv-home-section" aria-labelledby="tv-why-h">'
+        f'<h2 id="tv-why-h" class="tv-h2">Why people use ToolVault</h2><ul class="tv-features">{features}</ul></section>'
+        '<section class="tv-container tv-home-section tv-home-about"><h2 class="tv-h2">About ToolVault</h2>'
+        "<p>ToolVault is a growing library of free calculators and practical web tools. Each tool puts the task first, "
+        "then shows the formula, a worked example and the assumptions behind the result, so you can understand the number "
+        'rather than simply receive it. <a href="/about">How results are checked →</a></p></section>'
+        f"{HOME_SCRIPT}"
+        "<!-- /tv:home -->"
+    )
+
+
+def hub_block(sec: dict) -> str:
+    if sec["hub"] == "/calculators/":
+        # The calculators hub lists every calculator on the site, grouped by category.
+        groups = tool_groups([s for s in SITE_SECTIONS if s["hub"] != "/documents/"], "h2")
+        tools = [t for s, t in all_tools() if s["hub"] != "/documents/"]
+        body = f'<div class="tv-hub-groups">{groups}</div>'
+    else:
+        tools = section_tools(sec)
+        calcs = [t for t in tools if t["kind"] == "tool"]
+        guides = [t for t in tools if t["kind"] == "guide"]
+        noun = "Tools" if sec_is_pdf(tools) else "Calculators"
+        body = (f'<section class="tv-hub-section"><h2 class="tv-h2">{noun}</h2>'
+                f'<div class="tv-grid">{"".join(tool_card(t) for t in calcs)}</div></section>')
+        if guides:
+            body += (f'<section class="tv-hub-section"><h2 class="tv-h2">Guides</h2>'
+                     f'<div class="tv-grid">{"".join(tool_card(t) for t in guides)}</div></section>')
+    return (
+        "<!-- tv:hub -->"
+        f'<section class="tv-page-hero"><span class="tv-page-ic">{icon(sec["icon"])}</span>'
+        f'<div><h1>{e(sec["h1"])}</h1><p class="tv-lead">{e(sec["intro"])}</p>'
+        f'<p class="tv-page-meta">{count_label(tools)} · Free · No account needed</p></div></section>'
+        f"{body}"
+        "<!-- /tv:hub -->"
+    )
+
+
+def hub_more_block(sec: dict) -> str:
+    return ("<!-- tv:hub-more -->"
+            '<section class="tv-hub-section"><h2 class="tv-h2">Other categories</h2>'
+            f"{category_cards(exclude=sec['hub'])}</section>"
+            "<!-- /tv:hub-more -->")
+
+
 # ------------------------------------------------------------ apply
 
 def apply(source: str, rel: str) -> str:
@@ -245,6 +388,15 @@ def apply(source: str, rel: str) -> str:
     crumbs = crumbs_block(source, rel, path) if kind != "home" else None
     if crumbs:
         source = source.replace("<!-- /tv:header -->", "<!-- /tv:header -->\n" + crumbs, 1)
+
+    # Generated page bodies (homepage directory, category tool grids).
+    if HOME_RE.search(source):
+        source = HOME_RE.sub(lambda _: home_block(), source, count=1)
+    sec = SECTION_BY_HUB.get(path or "") if kind == "hub" else None
+    if sec and HUB_RE.search(source):
+        source = HUB_RE.sub(lambda _: hub_block(sec), source, count=1)
+    if sec and HUB_MORE_RE.search(source):
+        source = HUB_MORE_RE.sub(lambda _: hub_more_block(sec), source, count=1)
 
     # Skip-link target.
     if 'id="main"' not in source:
