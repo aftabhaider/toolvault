@@ -1,0 +1,188 @@
+/* ToolVault shared theme.
+   Loaded last on every page (see scripts/layout.py), so it aligns each page's
+   own colour variables, typography and container width with one design.
+   Site chrome (header, breadcrumbs, footer) is scoped to #tv-* ids so the
+   pages' older element selectors (header, nav, .logo, footer) cannot leak in. */
+
+@font-face{font-family:"Inter var";font-style:normal;font-weight:100 900;font-display:swap;
+  src:url(/assets/fonts/inter-latin.woff2) format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Inter var";font-style:normal;font-weight:100 900;font-display:swap;
+  src:url(/assets/fonts/inter-latin-ext.woff2) format("woff2");
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+
+:root{
+  /* Design tokens */
+  --tv-font:"Inter var",Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --tv-brand:#0b8f78;
+  --tv-brand-strong:#086c5b;
+  --tv-brand-soft:#e4f6f0;
+  --tv-accent:#42e6ad;
+  --tv-ink:#10231f;
+  --tv-muted:#5d6f68;
+  --tv-line:#dce8e3;
+  --tv-bg:#f4f8f6;
+  --tv-surface:#ffffff;
+  --tv-surface-2:#f7fbfa;
+  --tv-dark:#0b2e28;
+  --tv-radius:16px;
+  --tv-shadow:0 1px 2px rgba(16,35,31,.04),0 8px 24px rgba(16,35,31,.06);
+  --tv-width:1200px;
+  --tv-narrow:880px;
+  --tv-gutter:24px;
+  --tv-header-h:64px;
+
+  /* Align the variables individual pages already use with the tokens above. */
+  --ink:var(--tv-ink);
+  --muted:var(--tv-muted);
+  --line:var(--tv-line);
+  --soft:var(--tv-brand-soft);
+  --brand:var(--tv-brand);
+  --brand2:var(--tv-brand-strong);
+  --bg:var(--tv-bg);
+  --page:var(--tv-bg);
+  --card:var(--tv-surface);
+  --surface:var(--tv-surface);
+  --surface2:var(--tv-surface-2);
+  --dark:var(--tv-dark);
+  --shadow:var(--tv-shadow);
+}
+@media (max-width:640px){:root{--tv-gutter:16px;--tv-header-h:58px}}
+
+/* ------------------------------------------------------------ base */
+html{scroll-padding-top:calc(var(--tv-header-h) + 12px);-webkit-text-size-adjust:100%}
+body.tv-site{
+  margin:0;font-family:var(--tv-font)!important;color:var(--tv-ink);
+  background:var(--tv-bg)!important;line-height:1.6;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  display:flex;flex-direction:column;min-height:100vh;
+}
+body.tv-site > main{flex:1 0 auto}
+.tv-site input,.tv-site select,.tv-site textarea,.tv-site button{font-family:inherit}
+.tv-site :focus-visible{outline:3px solid rgba(11,143,120,.45);outline-offset:2px}
+.tv-site h1,.tv-site h2,.tv-site h3{text-wrap:balance}
+
+/* One container width and gutter for every page, matching the header. */
+.tv-site .wrap{max-width:var(--tv-width)!important;padding-left:var(--tv-gutter)!important;padding-right:var(--tv-gutter)!important;box-sizing:border-box;margin-left:auto;margin-right:auto}
+.tv-article .wrap,.tv-legal .wrap{max-width:calc(var(--tv-narrow) + 2 * var(--tv-gutter))!important}
+
+/* Fallbacks for classes some pages use without styling. :where() has zero
+   specificity, so any page's own rule for the same class still wins. */
+:where(.tv-site) :where(.hint){display:block;margin-top:5px;font-size:12px;line-height:1.45;color:var(--tv-muted)}
+
+/* Repairs for page rules that override each other by source order.
+   Highlighted result cards inherited the white text of the .primary button
+   style, and the dark call-to-action boxes were repainted white by .card. */
+.tv-site .metric.primary{color:var(--tv-ink)}
+.tv-site .card.cta{background:var(--tv-dark);color:#fff}
+.tv-site .card.cta h2,.tv-site .card.cta h3{color:#fff}
+.tv-site .card.cta p{color:#c8d9d5}
+
+/* Breadcrumbs are rendered by the shared block; hide any legacy copy. */
+.tv-site .crumb{display:none!important}
+
+.tv-container{max-width:var(--tv-width);margin:0 auto;padding:0 var(--tv-gutter);box-sizing:border-box}
+.tv-article .tv-crumbs-inner,.tv-legal .tv-crumbs-inner{max-width:calc(var(--tv-narrow) + 2 * var(--tv-gutter))}
+
+/* ------------------------------------------------------------ skip link */
+#tv-skip{position:absolute;left:12px;top:-60px;z-index:1000;background:var(--tv-dark);color:#fff;
+  padding:10px 16px;border-radius:10px;font-weight:700;font-size:14px;text-decoration:none;transition:top .15s}
+#tv-skip:focus{top:12px}
+
+/* ------------------------------------------------------------ header */
+#tv-header{position:sticky;top:0;z-index:900;background:rgba(255,255,255,.92);
+  -webkit-backdrop-filter:saturate(1.4) blur(10px);backdrop-filter:saturate(1.4) blur(10px);
+  border-bottom:1px solid var(--tv-line);box-shadow:none;margin:0;padding:0;font-family:var(--tv-font);
+  display:block;height:auto;width:auto;max-width:none}
+#tv-header .tv-bar{display:flex;align-items:center;gap:20px;height:var(--tv-header-h);min-height:0;padding-top:0;padding-bottom:0}
+#tv-header a{text-decoration:none}
+#tv-header .tv-logo{display:inline-flex;align-items:center;gap:10px;color:var(--tv-ink);font-weight:800;
+  font-size:20px;letter-spacing:-.4px;line-height:1;flex:0 0 auto;margin:0;padding:0;background:none}
+#tv-header .tv-logo svg{width:32px;height:32px;display:block}
+#tv-header .tv-logo b{color:var(--tv-brand);font-weight:800}
+
+#tv-header .tv-nav{display:flex;align-items:center;gap:2px;margin:0 0 0 auto;padding:0;background:none;border:0;position:static}
+#tv-header .tv-nav ul{list-style:none;margin:0;padding:0}
+#tv-header .tv-nav > ul{display:flex;align-items:center;gap:2px}
+#tv-header .tv-item{position:relative;margin:0;padding:0}
+#tv-header .tv-top{display:flex;align-items:center;gap:6px;height:40px;padding:0 12px;border-radius:10px;
+  color:#33463f;font-size:14.5px;font-weight:600;white-space:nowrap;background:none;border:0}
+#tv-header .tv-top:hover,#tv-header .tv-item:focus-within > .tv-top{background:var(--tv-surface-2);color:var(--tv-ink)}
+#tv-header .tv-top[aria-current="true"]{color:var(--tv-brand-strong);background:var(--tv-brand-soft)}
+#tv-header .tv-caret{width:10px;height:10px;opacity:.55;transition:transform .15s}
+#tv-header .tv-item:hover .tv-caret{transform:rotate(180deg)}
+
+#tv-header .tv-panel{position:absolute;top:calc(100% + 8px);left:50%;transform:translate(-50%,4px);min-width:280px;
+  background:#fff;border:1px solid var(--tv-line);border-radius:14px;box-shadow:0 18px 40px rgba(16,35,31,.14);
+  padding:8px;opacity:0;visibility:hidden;transition:opacity .15s,transform .15s,visibility .15s}
+#tv-header .tv-panel::before{content:"";position:absolute;left:0;right:0;top:-10px;height:10px}
+#tv-header .tv-item:hover > .tv-panel,#tv-header .tv-item:focus-within > .tv-panel{opacity:1;visibility:visible;transform:translate(-50%,0)}
+#tv-header .tv-panel a{display:block;padding:9px 12px;border-radius:9px;color:var(--tv-ink);font-size:14px;font-weight:600;line-height:1.3}
+#tv-header .tv-panel a span{display:block;font-size:12.5px;font-weight:500;color:var(--tv-muted);margin-top:2px}
+#tv-header .tv-panel a:hover,#tv-header .tv-panel a:focus-visible{background:var(--tv-brand-soft)}
+#tv-header .tv-panel a[aria-current="page"]{background:var(--tv-brand-soft);color:var(--tv-brand-strong)}
+#tv-header .tv-panel .tv-all{margin-top:4px;border-top:1px solid var(--tv-line);border-radius:0 0 9px 9px;padding-top:11px;color:var(--tv-brand-strong);font-size:13.5px}
+
+#tv-header .tv-cta{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:10px;margin-left:8px;
+  background:var(--tv-brand);color:#fff;font-weight:700;font-size:14px;white-space:nowrap;border:0}
+#tv-header .tv-cta:hover{background:var(--tv-brand-strong)}
+#tv-header .tv-cta svg{width:17px;height:17px}
+
+#tv-header .tv-menu-btn{display:none;margin-left:auto;align-items:center;gap:8px;height:40px;padding:0 14px;border-radius:10px;
+  border:1px solid var(--tv-line);background:#fff;color:var(--tv-ink);font:600 14px/1 var(--tv-font);cursor:pointer}
+#tv-header .tv-menu-btn svg{width:18px;height:18px}
+
+@media (max-width:1040px){
+  /* backdrop-filter would make the fixed menu panel position relative to the header. */
+  #tv-header{-webkit-backdrop-filter:none;backdrop-filter:none;background:#fff}
+  #tv-header .tv-bar{gap:12px}
+  #tv-header .tv-menu-btn{display:inline-flex}
+  #tv-header .tv-cta{display:none}
+  #tv-header .tv-nav{display:none;position:fixed;left:0;right:0;top:var(--tv-header-h);bottom:0;margin:0;
+    background:#fff;border-top:1px solid var(--tv-line);overflow-y:auto;padding:12px var(--tv-gutter) 32px;align-items:stretch}
+  #tv-header.tv-open .tv-nav{display:block}
+  #tv-header .tv-nav > ul{display:block}
+  #tv-header .tv-item{border-bottom:1px solid var(--tv-line);padding:6px 0 10px}
+  #tv-header .tv-top{height:44px;padding:0 4px;font-size:16px;font-weight:700;color:var(--tv-ink);background:none!important}
+  #tv-header .tv-caret{display:none}
+  #tv-header .tv-panel{position:static;transform:none!important;opacity:1;visibility:visible;box-shadow:none;border:0;
+    padding:0;min-width:0;display:grid;grid-template-columns:1fr 1fr;gap:2px 10px}
+  #tv-header .tv-panel::before{display:none}
+  #tv-header .tv-panel a{padding:8px 4px;font-weight:500;font-size:14.5px}
+  #tv-header .tv-panel a span{display:none}
+  #tv-header .tv-panel .tv-all{grid-column:1/-1;border-top:0;padding-top:8px}
+  #tv-header .tv-mobile-cta{display:flex!important}
+  body.tv-menu-open{overflow:hidden}
+}
+@media (max-width:480px){#tv-header .tv-panel{grid-template-columns:1fr}}
+#tv-header .tv-mobile-cta{display:none;margin-top:18px;justify-content:center;height:46px;align-items:center;border-radius:12px;
+  background:var(--tv-brand);color:#fff;font-weight:700}
+
+/* ------------------------------------------------------------ breadcrumbs */
+#tv-crumbs{background:transparent;margin:0;padding:0;font-family:var(--tv-font)}
+#tv-crumbs ol{list-style:none;margin:0;padding:14px 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:4px 0;font-size:13px;color:var(--tv-muted)}
+#tv-crumbs li{display:inline-flex;align-items:center;margin:0}
+#tv-crumbs li+li::before{content:"";width:6px;height:6px;margin:0 10px;border-right:1.5px solid #9fb2ab;border-top:1.5px solid #9fb2ab;transform:rotate(45deg)}
+#tv-crumbs a{color:var(--tv-brand-strong);font-weight:600;text-decoration:none}
+#tv-crumbs a:hover{text-decoration:underline}
+#tv-crumbs [aria-current="page"]{color:var(--tv-muted);font-weight:500}
+body.tv-site > main,body.tv-site > .tv-main{padding-top:14px}
+
+/* ------------------------------------------------------------ footer */
+#tv-footer{display:block;height:auto;width:auto;max-width:none;margin-top:56px;background:var(--tv-dark);color:#c3d6d0;font-family:var(--tv-font);font-size:14px;border:0;padding:0}
+#tv-footer a{color:#e6f1ee;text-decoration:none}
+#tv-footer a:hover{color:var(--tv-accent);text-decoration:underline}
+#tv-footer .tv-foot-grid{display:grid;grid-template-columns:1.4fr repeat(4,1fr);gap:32px;padding-top:48px;padding-bottom:36px}
+#tv-footer .tv-logo{display:inline-flex;align-items:center;gap:10px;color:#fff;font-weight:800;font-size:20px;letter-spacing:-.4px}
+#tv-footer .tv-logo b{color:var(--tv-accent)}
+#tv-footer .tv-logo svg{width:32px;height:32px}
+#tv-footer p{margin:14px 0 0;line-height:1.6;color:#a9c2bb;max-width:320px}
+#tv-footer h2{margin:0 0 12px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#7fa69b;font-weight:700}
+#tv-footer ul{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+#tv-footer .tv-foot-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:18px;padding-bottom:22px;display:flex;flex-wrap:wrap;
+  justify-content:space-between;gap:8px 24px;font-size:12.5px;color:#89a89f}
+@media (max-width:900px){#tv-footer .tv-foot-grid{grid-template-columns:1fr 1fr;gap:28px}#tv-footer .tv-foot-brand{grid-column:1/-1}}
+@media (max-width:480px){#tv-footer .tv-foot-grid{grid-template-columns:1fr}}
+
+/* ------------------------------------------------------------ print */
+@media print{#tv-header,#tv-footer,#tv-crumbs,#tv-skip{display:none!important}body.tv-site{background:#fff!important}}

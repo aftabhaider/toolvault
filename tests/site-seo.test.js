@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const SITE = "https://toolvault.aftabjordan1.workers.dev";
-const SKIP_DIRS = new Set(["og", "scripts", "tests", "node_modules", "pdf-to-word-service", ".git"]);
+const SKIP_DIRS = new Set(["og", "scripts", "tests", "node_modules", "pdf-to-word-service", "assets", ".git"]);
 const SKIP = new Set(["google8f42117352f976c7.html", "404.html"]);
 
 async function htmlFiles(dir) {
@@ -77,7 +77,7 @@ test("pages with a visible FAQ carry matching FAQPage data", () => {
 test("internal links point at pages that exist", async () => {
   for (const { rel, source } of pages) {
     for (const [, href] of source.matchAll(/href="(\/(?!\/)[^"#?]*)"/g)) {
-      if (/\.(svg|png|jpg|xml|txt|css|js)$/.test(href)) continue;
+      if (/\.(svg|png|jpg|xml|txt|css|js|woff2)$/.test(href)) continue;
       const base = join(ROOT, href);
       const found = href.endsWith("/") ? await exists(join(base, "index.html")) : (await exists(base + ".html")) || (await exists(join(base, "index.html")));
       assert.ok(found, `${rel}: broken internal link ${href}`);

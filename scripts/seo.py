@@ -75,7 +75,7 @@ def pages() -> list[Path]:
     out = []
     for path in sorted(ROOT.rglob("*.html")):
         rel = path.relative_to(ROOT).as_posix()
-        if rel in SKIP or rel.startswith(("og/", "scripts/", "tests/", "node_modules/", "pdf-to-word-service/")):
+        if rel in SKIP or rel.startswith(("og/", "scripts/", "tests/", "node_modules/", "pdf-to-word-service/", "assets/")):
             continue
         out.append(path)
     return out

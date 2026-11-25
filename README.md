@@ -30,13 +30,23 @@ Calculator engines (`*-engine.js`) have known-case tests in `tests/`, as require
 npm test
 ```
 
+## Layout and theme
+
+Every page shares one theme (`assets/site.css`), one header and main menu, breadcrumbs, and one footer. `scripts/layout.py` writes them into each page, and the menu and footer are built from its `SECTIONS` list. To add a tool to the menu, add it there and run:
+
+```bash
+npm run layout
+```
+
+Page-specific styles stay in each page. The shared theme loads last, so it sets the common colours, font (Inter, self-hosted under `assets/fonts/`, SIL Open Font License) and content width. Breadcrumbs are generated from each page's BreadcrumbList structured data, so the visible trail always matches what search engines read.
+
 ## SEO maintenance
 
 Run after adding or changing a page:
 
 ```bash
-npm run seo        # share images (og/*.jpg, logo.png), then scripts/seo.py
-npm test           # includes site-wide SEO checks (tests/site-seo.test.js)
+npm run seo        # layout, share images (og/*.jpg, logo.png), then scripts/seo.py
+npm test           # includes site-wide layout and SEO checks
 ```
 
 `scripts/seo.py` is safe to re-run. It:

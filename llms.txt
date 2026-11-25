@@ -40,7 +40,7 @@ Calculators normalise units before calculating, keep full precision internally a
 
 - [Free PDF Tools Online | Merge PDF Files](https://toolvault.aftabjordan1.workers.dev/documents/): Use free PDF tools online with ToolVault. Merge PDF files or convert selectable PDF text into an editable Word DOCX document in your browser.
 - [Merge PDF Files Online Free — Combine PDFs Privately](https://toolvault.aftabjordan1.workers.dev/documents/merge-pdf): Merge multiple PDF files into one document for free. Reorder or remove files before combining them. Files are processed in your browser and are not uploaded to ToolVault.
-- [PDF to Word Converter Online Free — PDF to DOCX](https://toolvault.aftabjordan1.workers.dev/documents/pdf-to-word): Convert PDF to Word online for free. Preserve the original page appearance in a Word DOCX, including logos, headers, footers and fonts, or extract selectable text for editing. Process files in your browser.
+- [PDF to Word Converter Online Free — PDF to DOCX](https://toolvault.aftabjordan1.workers.dev/documents/pdf-to-word): Convert PDF to Word online for free. Preserve the original page appearance in a Word DOCX, including logos, headers, footers and fonts, or extract selectable text for editing. Two of the three modes run entirely in your browser.
 
 ## About
 

@@ -14,7 +14,7 @@ const { chromium } = createRequire(import.meta.url)("playwright");
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const SITE = "https://toolvault.aftabjordan1.workers.dev";
 const SKIP = new Set(["google8f42117352f976c7.html", "404.html"]);
-const SKIP_DIRS = new Set(["og", "scripts", "tests", "node_modules", "pdf-to-word-service", ".git"]);
+const SKIP_DIRS = new Set(["og", "scripts", "tests", "node_modules", "pdf-to-word-service", "assets", ".git"]);
 const SECTIONS = {
   "": "ToolVault", calculators: "Calculators", construction: "Construction", engineering: "Engineering",
   solar: "Solar", documents: "PDF & Documents", business: "Business", converters: "Converters",
