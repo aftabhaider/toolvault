@@ -40,7 +40,6 @@ OG_DIR = ROOT / "og"
 # Remove a path from this set as soon as its first tool is published.
 NOINDEX = {
     "business/index.html",
-    "converters/index.html",
     "developer/index.html",
     "education/index.html",
     "smart-tools/index.html",

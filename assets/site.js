@@ -15,5 +15,5 @@
     if (event.key === "Escape" && header.classList.contains("tv-open")) { setOpen(false); button.focus(); }
   });
   // Close the panel if the window grows back to desktop width.
-  matchMedia("(min-width: 1041px)").addEventListener("change", event => { if (event.matches) setOpen(false); });
+  matchMedia("(min-width: 1121px)").addEventListener("change", event => { if (event.matches) setOpen(false); });
 })();

@@ -31,6 +31,11 @@ ICONS = {
     "check": '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.5"/>',
     "free": '<path d="M12 21s-7-4.4-7-10.5A4 4 0 0 1 12 7a4 4 0 0 1 7 3.5C19 16.6 12 21 12 21z"/>',
     "arrow": '<path d="M5 12h14M13 6l6 6-6 6"/>',
+    "scale": '<path d="M6 8h12l2 12H4z"/><circle cx="12" cy="5" r="2"/><path d="M12 11v4"/>',
+    "thermo": '<path d="M10 14.5V5a2 2 0 0 1 4 0v9.5a4 4 0 1 1-4 0z"/><path d="M12 9v7"/>',
+    "drop": '<path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/>',
+    "route": '<circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h6.5a3 3 0 0 0 0-6h-5a3 3 0 0 1 0-6H16"/>',
+    "height": '<circle cx="9" cy="5" r="2"/><path d="M9 7v7M6 21l3-7 3 7M5.5 10.5h7"/><path d="M18 3v18M16 5l2-2 2 2M16 19l2 2 2-2"/>',
 }
 
 
@@ -126,6 +131,44 @@ SECTIONS = [
         ],
     },
     {
+        "label": "Converters", "hub": "/converters/", "icon": "units",
+        "h1": "Unit Converters",
+        "intro": "Convert length, weight, volume and temperature between metric and US or UK units. Every converter uses the exact legal definition of each unit and includes a conversion chart.",
+        "summary": "Length, weight, volume and temperature: cm to inches, kg to lbs, °C to °F and more.",
+        "tools": [
+            ("CM to Inches", "/converters/cm-to-inches", "Centimetres ↔ inches",
+             "Convert centimetres to inches and inches to cm, with a chart.", "units",
+             "cm to inches centimeters to inches inches to cm convert length", "tool"),
+            ("KG to LBS", "/converters/kg-to-lbs", "Kilograms ↔ pounds",
+             "Convert kilograms to pounds and lbs to kg, including stones.", "scale",
+             "kg to lbs kilograms to pounds lbs to kg pounds to kg weight stone", "tool"),
+            ("Celsius to Fahrenheit", "/converters/celsius-to-fahrenheit", "Celsius ↔ Fahrenheit",
+             "Convert °C to °F and °F to °C for weather, cooking and body temperature.", "thermo",
+             "celsius to fahrenheit c to f fahrenheit to celsius temperature oven", "tool"),
+            ("Height: Feet & Inches to CM", "/converters/feet-and-inches-to-cm", "Feet and inches ↔ cm",
+             "Convert height in feet and inches to centimetres and back.", "height",
+             "height converter feet and inches to cm cm to feet ft to cm", "tool"),
+            ("Feet to Meters", "/converters/feet-to-meters", "Feet ↔ metres",
+             "Convert feet to metres and metres to feet.", "units",
+             "feet to meters ft to m meters to feet metres", "tool"),
+            ("Miles to KM", "/converters/miles-to-km", "Miles ↔ kilometres",
+             "Convert miles to kilometres, with 5K, 10K and marathon distances.", "route",
+             "miles to km mi to km km to miles kilometers distance running", "tool"),
+            ("Grams to Ounces", "/converters/grams-to-ounces", "Grams ↔ ounces",
+             "Convert grams to ounces and back for cooking and weighing.", "scale",
+             "grams to ounces g to oz ounces to grams cooking baking", "tool"),
+            ("ML to OZ", "/converters/ml-to-oz", "Millilitres ↔ fluid ounces",
+             "Convert millilitres to US or UK fluid ounces and back.", "drop",
+             "ml to oz ml to fl oz oz to ml fluid ounces milliliters", "tool"),
+            ("Liters to Gallons", "/converters/liters-to-gallons", "Litres ↔ gallons",
+             "Convert litres to US or UK gallons and back.", "drop",
+             "liters to gallons litres gallons to liters us uk imperial fuel", "tool"),
+            ("MM to Inches", "/converters/mm-to-inches", "Millimetres ↔ inches",
+             "Convert millimetres to inches, with the nearest 1/16-inch fraction.", "units",
+             "mm to inches millimeters to inches inches to mm fraction", "tool"),
+        ],
+    },
+    {
         "label": "PDF Tools", "hub": "/documents/", "icon": "merge",
         "h1": "Free PDF Tools Online",
         "intro": "Merge PDF files in your browser, or convert a PDF to an editable Word document.",
@@ -142,8 +185,8 @@ SECTIONS = [
 ]
 
 # Homepage "popular" shortcuts under the search box.
-POPULAR = ["/construction/concrete-calculator", "/construction/paint-calculator",
-           "/calculators/square-footage-calculator", "/calculators/ac-btu-calculator", "/documents/pdf-to-word"]
+POPULAR = ["/converters/cm-to-inches", "/converters/kg-to-lbs", "/construction/concrete-calculator",
+           "/calculators/square-footage-calculator", "/documents/pdf-to-word"]
 
 
 def all_tools():

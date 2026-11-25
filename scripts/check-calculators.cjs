@@ -193,6 +193,39 @@ const tests = {
     check("solar area: result unchanged after unit switch", (await text(p)).includes(install.toFixed(2)));
     noErrors(p, "solar area"); await p.close();
   },
+  async converters(b) {
+    const cases = [
+      ["cm-to-inches", 30, 30 / 2.54, 12, 12 * 2.54],
+      ["mm-to-inches", 19, 19 / 25.4, 1, 25.4],
+      ["feet-to-meters", 12, 12 * 0.3048, 5, 5 / 0.3048],
+      ["miles-to-km", 26.2, 26.2 * 1.609344, 10, 10 / 1.609344],
+      ["kg-to-lbs", 70, 70 / 0.45359237, 150, 150 * 0.45359237],
+      ["grams-to-ounces", 250, 250 / 28.349523125, 8, 8 * 28.349523125],
+      ["ml-to-oz", 330, 330 / 29.5735295625, 16, 16 * 29.5735295625],
+      ["liters-to-gallons", 50, 50 / 3.785411784, 5, 5 * 3.785411784],
+      ["celsius-to-fahrenheit", 37, 37 * 9 / 5 + 32, 350, (350 - 32) * 5 / 9],
+    ];
+    for (const [slug, a, aExpected, bIn, bExpected] of cases) {
+      const p = await open(b, `/converters/${slug}.html`);
+      await set(p, "#conv-a", a);
+      check(`${slug}: forward`, close(await value(p, "#conv-b"), aExpected, 1e-6), `got ${await value(p, "#conv-b")}`);
+      await set(p, "#conv-b", bIn);
+      check(`${slug}: reverse`, close(await value(p, "#conv-a"), bExpected, 1e-6), `got ${await value(p, "#conv-a")}`);
+      if (slug === "ml-to-oz" || slug === "liters-to-gallons") {
+        await set(p, "#conv-a", 100);
+        await choose(p, "#conv-b-unit", slug === "ml-to-oz" ? "ukfloz" : "ukgal");
+        const uk = slug === "ml-to-oz" ? 100 / 28.4130625 : 100 / 4.54609;
+        check(`${slug}: UK unit`, close(await value(p, "#conv-b"), uk, 1e-6), `got ${await value(p, "#conv-b")}`);
+      }
+      noErrors(p, slug); await p.close();
+    }
+    const p = await open(b, "/converters/feet-and-inches-to-cm.html");
+    await set(p, "#conv-ft", 6); await set(p, "#conv-in", 2);
+    check("height: 6 ft 2 in → 187.96 cm", close(await value(p, "#conv-cm"), 74 * 2.54, 1e-6));
+    await set(p, "#conv-cm", 170);
+    check("height: 170 cm → 5 ft 6.93 in", (await value(p, "#conv-ft")) === 5 && close(await value(p, "#conv-in"), 170 / 2.54 - 60, 0.006));
+    noErrors(p, "height"); await p.close();
+  },
 };
 
 (async () => {
