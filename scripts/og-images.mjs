@@ -24,6 +24,7 @@ const TAGLINES = {
   Construction: "formulas shown · metric &amp; imperial", Calculators: "formulas shown · metric &amp; imperial",
   Engineering: "formulas shown · metric &amp; imperial", Solar: "formulas shown · metric &amp; imperial",
   "PDF & Documents": "no account needed",
+  Converters: "exact definitions · metric, US &amp; UK units",
 };
 const ICONS = { Construction: "🏗️", Calculators: "🧮", Engineering: "⚡", Solar: "☀️", "PDF & Documents": "📄", ToolVault: "🧰" };
 
