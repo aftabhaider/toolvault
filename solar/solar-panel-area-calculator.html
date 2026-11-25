@@ -10,7 +10,6 @@
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 <meta name="theme-color" content="#0b8f78">
 <meta property="og:site_name" content="ToolVault">
-<meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Solar Panel Area Calculator — Roof Space &amp; Panel Surface Area | ToolVault">
 <meta name="twitter:description" content="Free solar panel area calculator to estimate panel surface area, total PV capacity and practical roof or installation space in square meters and square feet from panel dimensions and layout spacing.">
 <style>
@@ -21,7 +20,7 @@
 .card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 30px rgba(18,54,48,.08)}.heroMain{padding:30px}
 .badge{display:inline-block;background:var(--soft);color:var(--green);font-size:12px;font-weight:800;padding:7px 11px;border-radius:999px;margin-bottom:12px}
 h1{font-size:38px;line-height:1.08;margin:0 0 12px}.sub{font-size:16px;line-height:1.65;color:var(--muted)}
-.quick{padding:24px;background:linear-gradient(145deg,#087f6b,#0ca98d);color:#fff}.quick h3{margin:0}.big{font-size:35px;font-weight:800;margin:12px 0 4px}.quick p{margin:0;font-size:13px}
+.card.quick{padding:24px;background:linear-gradient(145deg,#087f6b,#0ca98d);color:#fff;display:flex;flex-direction:column;justify-content:center}.card.quick h3{color:#fff}.hint{margin-top:5px;font-size:12px;line-height:1.45;color:var(--muted)}.quick h3{margin:0}.big{font-size:35px;font-weight:800;margin:12px 0 4px}.quick p{margin:0;font-size:13px}
 .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:20px;margin-top:20px}.panel{padding:24px}.panel h2{font-size:20px;margin:0 0 18px}
 .formgrid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.field label{display:block;font-size:13px;font-weight:800;margin-bottom:7px}
 input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font-size:15px;color:var(--ink);background:#fff}.note{font-size:12px;color:var(--muted);margin-top:7px;line-height:1.45}
@@ -58,19 +57,32 @@ input,select,.control{background:#fbfefd;border-color:#c9ddd7}
 {"@type":"WebPage","name":"Solar Panel Area Calculator — Roof Space & Panel Surface Area","url":"https://toolvault.aftabjordan1.workers.dev/solar/solar-panel-area-calculator","isPartOf":{"@type":"WebSite","name":"ToolVault","url":"https://toolvault.aftabjordan1.workers.dev/"}},
 {"@type":"BreadcrumbList","itemListElement":[
 {"@type":"ListItem","position":1,"name":"ToolVault","item":"https://toolvault.aftabjordan1.workers.dev/"},
-{"@type":"ListItem","position":2,"name":"Solar & Energy","item":"https://toolvault.aftabjordan1.workers.dev/solar/"},
+{"@type":"ListItem","position":2,"name":"Solar","item":"https://toolvault.aftabjordan1.workers.dev/solar/"},
 {"@type":"ListItem","position":3,"name":"Solar Panel Area Calculator","item":"https://toolvault.aftabjordan1.workers.dev/solar/solar-panel-area-calculator"}]}
 ]}
 </script>
+<!-- tv:head -->
+<link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js" defer></script>
+<!-- /tv:head -->
+
+<!-- seo:social -->
+<meta property="og:image" content="https://toolvault.aftabjordan1.workers.dev/og/solar-solar-panel-area-calculator.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Solar Panel Area Calculator — Roof Space &amp; Panel Surface Area | ToolVault">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://toolvault.aftabjordan1.workers.dev/og/solar-solar-panel-area-calculator.jpg">
+<!-- /seo:social -->
+
+<script type="application/ld+json" data-seo="faq">{"@context":"https://schema.org","@type":"FAQPage","@id":"https://toolvault.aftabjordan1.workers.dev/solar/solar-panel-area-calculator#faq","url":"https://toolvault.aftabjordan1.workers.dev/solar/solar-panel-area-calculator","mainEntity":[{"@type":"Question","name":"How much roof space does one solar panel need?","acceptedAnswer":{"@type":"Answer","text":"It depends on the panel's physical dimensions. Multiply its length by its width to find the module footprint, then allow additional space for the actual installation layout."}},{"@type":"Question","name":"How many solar panels fit on my roof?","acceptedAnswer":{"@type":"Answer","text":"Divide the usable roof area by the practical area required per panel, while accounting for roof shape, orientation, access and obstructions. This calculator estimates area from panel dimensions; it does not perform a detailed roof drawing."}},{"@type":"Question","name":"Does panel wattage determine panel area?","acceptedAnswer":{"@type":"Answer","text":"Not directly. Wattage is an electrical rating. Physical dimensions determine the panel surface area. Two panels with the same wattage can have different dimensions."}},{"@type":"Question","name":"What is the difference between panel area and installation area?","acceptedAnswer":{"@type":"Answer","text":"Panel area is the physical footprint of the modules. Installation area is a larger planning estimate that can include spacing and layout allowance."}}]}</script>
 </head>
-<body>
-<header class="header"><div class="nav"><div class="logo">Tool<span>Vault</span></div><a href="../">← All tools</a></div></header>
-<main class="wrap">
-<div class="crumb">
-  <a href="../">ToolVault</a> /
-  <a href="/solar/">Solar Tools</a> /
-  Solar Panel Area
-</div>
+<body class="tv-site tv-tool">
+<!-- tv:header --><a id="tv-skip" href="#main">Skip to content</a><header id="tv-header"><div class="tv-container tv-bar"><a class="tv-logo" href="/" aria-label="ToolVault home"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><rect width="64" height="64" rx="14" fill="#073f39"/><path d="M18 17h28v7H35v23h-6V24H18z" fill="#fff"/><path d="M34 25l8 16 9-18h-8l-5 10-5-10z" fill="#42e6ad"/><path d="M12 49h40" stroke="#0b8f78" stroke-width="3" stroke-linecap="round"/></svg><span>Tool<b>Vault</b></span></a><button class="tv-menu-btn" type="button" aria-expanded="false" aria-controls="tv-nav"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="tv-menu-label">Menu</span></button><nav id="tv-nav" class="tv-nav" aria-label="Main"><ul><li class="tv-item"><a class="tv-top" href="/construction/">Construction<svg class="tv-caret" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></a><ul class="tv-panel"><li><a href="/construction/concrete-calculator">Concrete Calculator<span>Slabs, footings, walls and columns</span></a></li><li><a href="/construction/gravel-calculator">Gravel Calculator<span>Volume, weight, bags and cost</span></a></li><li><a href="/construction/mulch-calculator">Mulch Calculator<span>Cubic yards, bags and coverage</span></a></li><li><a href="/construction/paint-calculator">Paint Calculator<span>Litres, gallons and cans</span></a></li><li><a href="/construction/stair-calculator">Stair Calculator<span>Risers, treads and stringers</span></a></li><li><a href="/construction/roof-pitch-calculator">Roof Pitch Calculator<span>Pitch, angle and rafter length</span></a></li><li><a href="/construction/board-foot-calculator">Board Foot Calculator<span>Lumber volume and cost</span></a></li><li><a href="/construction/how-to-calculate-concrete">How to Calculate Concrete<span>Step-by-step guide</span></a></li><li><a class="tv-all" href="/construction/">All construction tools →</a></li></ul></li><li class="tv-item"><a class="tv-top" href="/solar/" aria-current="true">Solar<svg class="tv-caret" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></a><ul class="tv-panel"><li><a href="/solar/solar-load-calculator">Solar Load Calculator<span>PV, inverter and battery sizing</span></a></li><li><a href="/solar/solar-energy-generation-calculator">Solar Energy Generation<span>Daily kWh from your location</span></a></li><li><a href="/solar/solar-panel-area-calculator" aria-current="page">Solar Panel Area<span>Roof space for your panels</span></a></li><li><a href="/solar/how-to-calculate-solar-system-size">How to Size a Solar System<span>Step-by-step guide</span></a></li><li><a class="tv-all" href="/solar/">All solar tools →</a></li></ul></li><li class="tv-item"><a class="tv-top" href="/engineering/">Engineering<svg class="tv-caret" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></a><ul class="tv-panel"><li><a href="/engineering/voltage-drop-calculator">Voltage Drop Calculator<span>Cable drop, length and size</span></a></li><li><a href="/engineering/how-to-calculate-voltage-drop">How to Calculate Voltage Drop<span>Step-by-step guide</span></a></li><li><a class="tv-all" href="/engineering/">All engineering tools →</a></li></ul></li><li class="tv-item"><a class="tv-top" href="/calculators/">Calculators<svg class="tv-caret" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></a><ul class="tv-panel"><li><a href="/calculators/square-footage-calculator">Square Footage Calculator<span>Area of rooms and shapes</span></a></li><li><a href="/calculators/ac-btu-calculator">AC BTU Calculator<span>Air conditioner size for a room</span></a></li><li><a class="tv-all" href="/calculators/">Browse all calculators →</a></li></ul></li><li class="tv-item"><a class="tv-top" href="/documents/">PDF Tools<svg class="tv-caret" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></a><ul class="tv-panel"><li><a href="/documents/merge-pdf">Merge PDF<span>Combine PDFs in your browser</span></a></li><li><a href="/documents/pdf-to-word">PDF to Word<span>Convert PDF to editable DOCX</span></a></li><li><a class="tv-all" href="/documents/">All pdf tools tools →</a></li></ul></li></ul><a class="tv-mobile-cta" href="/calculators/">Browse all calculators</a></nav><a class="tv-cta" href="/#search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Search tools</span></a></div></header><!-- /tv:header -->
+<!-- tv:crumbs --><nav id="tv-crumbs" aria-label="Breadcrumb"><div class="tv-container tv-crumbs-inner"><ol><li><a href="/">ToolVault</a></li><li><a href="/solar/">Solar</a></li><li aria-current="page">Solar Panel Area Calculator</li></ol></div></nav><!-- /tv:crumbs -->
+<main id="main" class="wrap">
 
 <section class="hero">
 <div class="card heroMain">
@@ -101,7 +113,7 @@ input,select,.control{background:#fbfefd;border-color:#c9ddd7}
 </select>
 <div class="note">Extra space for gaps, mounting and access around the panels.</div></div><div class="field"><label for="unit">Display Unit</label>
 <select id="unit"><option value="both" selected>m² and ft²</option><option value="m2">m² only</option><option value="ft2">ft² only</option></select></div></div></details>
-</div></div>
+</div>
 </div>
 <div class="card panel">
 <h2>Calculation Results</h2>
@@ -167,8 +179,6 @@ input,select,.control{background:#fbfefd;border-color:#c9ddd7}
 </section></details>
 <a href="/solar/solar-load-calculator"><div class="rel"><strong>Solar Load Calculator →</strong><span>Estimate energy use, PV capacity, inverter and battery requirements.</span></div></a>
 <a href="/solar/solar-energy-generation-calculator"><div class="rel"><strong>Solar Energy Generation Calculator →</strong><span>Estimate solar generation using location, panel quantity and wattage.</span></div></a>
-</section>
-<div class="footer">© 2026 ToolVault · Practical tools for renewable energy planning.</div>
 </main>
 
 <script>
@@ -227,7 +237,7 @@ el.spacing.addEventListener('change',calculate);el.unit.addEventListener('change
 calculate();
 })();
 </script>
-</body>
-</html>
+
+<!-- tv:footer --><footer id="tv-footer"><div class="tv-container tv-foot-grid"><div class="tv-foot-brand"><a class="tv-logo" href="/"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><rect width="64" height="64" rx="14" fill="#073f39"/><path d="M18 17h28v7H35v23h-6V24H18z" fill="#fff"/><path d="M34 25l8 16 9-18h-8l-5 10-5-10z" fill="#42e6ad"/><path d="M12 49h40" stroke="#0b8f78" stroke-width="3" stroke-linecap="round"/></svg><span>Tool<b>Vault</b></span></a><p>Free calculators and PDF tools that show their working: the formula, the units and the assumptions behind every result.</p></div><div><h2>Construction</h2><ul><li><a href="/construction/concrete-calculator">Concrete Calculator</a></li><li><a href="/construction/gravel-calculator">Gravel Calculator</a></li><li><a href="/construction/mulch-calculator">Mulch Calculator</a></li><li><a href="/construction/paint-calculator">Paint Calculator</a></li><li><a href="/construction/stair-calculator">Stair Calculator</a></li><li><a href="/construction/roof-pitch-calculator">Roof Pitch Calculator</a></li><li><a href="/construction/board-foot-calculator">Board Foot Calculator</a></li></ul></div><div><h2>Solar &amp; electrical</h2><ul><li><a href="/solar/solar-load-calculator">Solar Load Calculator</a></li><li><a href="/solar/solar-energy-generation-calculator">Solar Energy Generation</a></li><li><a href="/solar/solar-panel-area-calculator">Solar Panel Area</a></li><li><a href="/engineering/voltage-drop-calculator">Voltage Drop Calculator</a></li></ul></div><div><h2>Home &amp; PDF</h2><ul><li><a href="/calculators/square-footage-calculator">Square Footage Calculator</a></li><li><a href="/calculators/ac-btu-calculator">AC BTU Calculator</a></li><li><a href="/documents/merge-pdf">Merge PDF</a></li><li><a href="/documents/pdf-to-word">PDF to Word</a></li></ul></div><div><h2>ToolVault</h2><ul><li><a href="/calculators/">All calculators</a></li><li><a href="/about">About</a></li><li><a href="/contact">Contact</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></div></div><div class="tv-container tv-foot-bottom"><span>© 2026 ToolVault. Free practical tools.</span><span>Results are planning estimates. Check critical work with a qualified professional.</span></div></footer><!-- /tv:footer -->
 </body>
 </html>

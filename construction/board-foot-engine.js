@@ -28,12 +28,12 @@ export function parseFraction(value,fallback=0){
   const mixed=s.match(/^([+-]?\d+(?:\.\d+)?)\s+(\d+)\s*\/\s*(\d+)$/);
   if(mixed){
     const whole=Number(mixed[1]),num=Number(mixed[2]),den=Number(mixed[3]);
-    return Number.isFinite(whole)&&den>0?whole+num/den:fallback;
+    return Number.isFinite(whole)&&den>0?Math.max(0,whole+num/den):fallback;
   }
-  const frac=s.match(/^(-?\d+)\s*\/\s*(\d+)$/);
+  const frac=s.match(/^([+-]?\d+)\s*\/\s*(\d+)$/);
   if(frac){
     const num=Number(frac[1]),den=Number(frac[2]);
-    return den>0?num/den:fallback;
+    return den>0?Math.max(0,num/den):fallback;
   }
   const n=Number(s);
   return Number.isFinite(n)?Math.max(0,n):fallback;

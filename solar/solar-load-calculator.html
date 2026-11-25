@@ -10,7 +10,6 @@
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 <meta name="theme-color" content="#0b8f78">
 <meta property="og:site_name" content="ToolVault">
-<meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Solar Load Calculator — PV, Inverter &amp; Battery Sizing | ToolVault">
 <meta name="twitter:description" content="Free solar load calculator for appliance energy use, daily kWh, PV capacity, inverter sizing and 12V, 24V or 48V battery capacity.">
 <style>
@@ -30,8 +29,8 @@ body{margin:0;background:
 .logo{display:flex;align-items:center;gap:10px;font-weight:850;font-size:20px}
 .logo-icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#19b866,#0a8062);box-shadow:inset 0 1px rgba(255,255,255,.25)}
 .top-status{font-size:12px;font-weight:750;padding:7px 12px;border:1px solid rgba(255,255,255,.18);border-radius:99px;background:rgba(255,255,255,.07)}
-.page{width:min(1180px,calc(100% - 36px));margin:auto}
-.hero{display:flex;align-items:end;justify-content:space-between;gap:30px;padding:42px 0 28px}
+.page{margin:auto}
+.hero{display:flex;align-items:end;justify-content:space-between;gap:30px;padding:18px 0 24px}
 .kicker{display:inline-flex;gap:7px;align-items:center;color:var(--green);font-size:12px;font-weight:850;letter-spacing:.04em;text-transform:uppercase}
 .hero h1{font-size:clamp(32px,4.5vw,52px);line-height:1.02;letter-spacing:-1.8px;margin:10px 0 10px}
 .hero p{margin:0;color:var(--muted);max-width:680px;font-size:15px;line-height:1.65}
@@ -116,15 +115,33 @@ input,select,.control{background:#fbfefd;border-color:#c9ddd7}
 {"@type":"WebPage","name":"Solar Load Calculator — PV, Inverter & Battery Sizing","url":"https://toolvault.aftabjordan1.workers.dev/solar/solar-load-calculator","isPartOf":{"@type":"WebSite","name":"ToolVault","url":"https://toolvault.aftabjordan1.workers.dev/"}},
 {"@type":"BreadcrumbList","itemListElement":[
 {"@type":"ListItem","position":1,"name":"ToolVault","item":"https://toolvault.aftabjordan1.workers.dev/"},
-{"@type":"ListItem","position":2,"name":"Solar & Energy","item":"https://toolvault.aftabjordan1.workers.dev/solar/"},
+{"@type":"ListItem","position":2,"name":"Solar","item":"https://toolvault.aftabjordan1.workers.dev/solar/"},
 {"@type":"ListItem","position":3,"name":"Solar Load Calculator","item":"https://toolvault.aftabjordan1.workers.dev/solar/solar-load-calculator"}]}
 ]}
 </script>
-</head>
-<body>
-<header class="topbar"><div class="topbar-inner"><div class="logo"><a href="./" style="color:inherit;text-decoration:none;"><span class="logo-icon">☀</span>ToolVault</a></div><div class="top-status"><a href="./" style="color:inherit;text-decoration:none;">☀ Solar Tools</a></div></div></header>
+<!-- tv:head -->
+<link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js" defer></script>
+<!-- /tv:head -->
 
-<main class="page">
+<!-- seo:social -->
+<meta property="og:image" content="https://toolvault.aftabjordan1.workers.dev/og/solar-solar-load-calculator.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Solar Load Calculator — PV, Inverter &amp; Battery Sizing | ToolVault">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://toolvault.aftabjordan1.workers.dev/og/solar-solar-load-calculator.jpg">
+<!-- /seo:social -->
+
+<script type="application/ld+json" data-seo="faq">{"@context":"https://schema.org","@type":"FAQPage","@id":"https://toolvault.aftabjordan1.workers.dev/solar/solar-load-calculator#faq","url":"https://toolvault.aftabjordan1.workers.dev/solar/solar-load-calculator","mainEntity":[{"@type":"Question","name":"How do I calculate solar load?","acceptedAnswer":{"@type":"Answer","text":"Multiply each appliance's quantity, wattage and average daily operating hours to find its daily watt-hours, then add all appliances together."}},{"@type":"Question","name":"How many solar panels do I need?","acceptedAnswer":{"@type":"Answer","text":"This calculator deliberately reports the required PV capacity rather than forcing one panel wattage. After choosing the panel wattage you plan to use, divide the required PV watts by that panel wattage and round up to a practical number of panels."}},{"@type":"Question","name":"What are peak sun hours?","acceptedAnswer":{"@type":"Answer","text":"Peak sun hours are an equivalent daily solar-resource measure. They are not simply the number of daylight hours and should be selected from a reasonable site or location estimate."}},{"@type":"Question","name":"Is the battery result a complete battery design?","acceptedAnswer":{"@type":"Answer","text":"No. It is an energy-based planning estimate. Final battery selection should also consider chemistry, depth-of-discharge limits, temperature, ageing, efficiency and the manufacturer's specifications."}}]}</script>
+</head>
+<body class="tv-site tv-tool">
+<!-- tv:header --><a id="tv-skip" href="#main">Skip to content</a><header id="tv-header"><div class="tv-container tv-bar"><a class="tv-logo" href="/" aria-label="ToolVault home"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><rect width="64" height="64" rx="14" fill="#073f39"/><path d="M18 17h28v7H35v23h-6V24H18z" fill="#fff"/><path d="M34 25l8 16 9-18h-8l-5 10-5-10z" fill="#42e6ad"/><path d="M12 49h40" stroke="#0b8f78" stroke-width="3" stroke-linecap="round"/></svg><span>Tool<b>Vault</b></span></a><button class="tv-menu-btn" type="button" aria-expanded="false" aria-controls="tv-nav"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="tv-menu-label">Menu</span></button><nav id="tv-nav" class="tv-nav" aria-label="Main"><ul><li class="tv-item"><a class="tv-top" href="/construction/">Construction<svg class="tv-caret" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></a><ul class="tv-panel"><li><a href="/construction/concrete-calculator">Concrete Calculator<span>Slabs, footings, walls and columns</span></a></li><li><a href="/construction/gravel-calculator">Gravel Calculator<span>Volume, weight, bags and cost</span></a></li><li><a href="/construction/mulch-calculator">Mulch Calculator<span>Cubic yards, bags and coverage</span></a></li><li><a href="/construction/paint-calculator">Paint Calculator<span>Litres, gallons and cans</span></a></li><li><a href="/construction/stair-calculator">Stair Calculator<span>Risers, treads and stringers</span></a></li><li><a href="/construction/roof-pitch-calculator">Roof Pitch Calculator<span>Pitch, angle and rafter length</span></a></li><li><a href="/construction/board-foot-calculator">Board Foot Calculator<span>Lumber volume and cost</span></a></li><li><a href="/construction/how-to-calculate-concrete">How to Calculate Concrete<span>Step-by-step guide</span></a></li><li><a class="tv-all" href="/construction/">All construction tools →</a></li></ul></li><li class="tv-item"><a class="tv-top" href="/solar/" aria-current="true">Solar<svg class="tv-caret" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></a><ul class="tv-panel"><li><a href="/solar/solar-load-calculator" aria-current="page">Solar Load Calculator<span>PV, inverter and battery sizing</span></a></li><li><a href="/solar/solar-energy-generation-calculator">Solar Energy Generation<span>Daily kWh from your location</span></a></li><li><a href="/solar/solar-panel-area-calculator">Solar Panel Area<span>Roof space for your panels</span></a></li><li><a href="/solar/how-to-calculate-solar-system-size">How to Size a Solar System<span>Step-by-step guide</span></a></li><li><a class="tv-all" href="/solar/">All solar tools →</a></li></ul></li><li class="tv-item"><a class="tv-top" href="/engineering/">Engineering<svg class="tv-caret" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></a><ul class="tv-panel"><li><a href="/engineering/voltage-drop-calculator">Voltage Drop Calculator<span>Cable drop, length and size</span></a></li><li><a href="/engineering/how-to-calculate-voltage-drop">How to Calculate Voltage Drop<span>Step-by-step guide</span></a></li><li><a class="tv-all" href="/engineering/">All engineering tools →</a></li></ul></li><li class="tv-item"><a class="tv-top" href="/calculators/">Calculators<svg class="tv-caret" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></a><ul class="tv-panel"><li><a href="/calculators/square-footage-calculator">Square Footage Calculator<span>Area of rooms and shapes</span></a></li><li><a href="/calculators/ac-btu-calculator">AC BTU Calculator<span>Air conditioner size for a room</span></a></li><li><a class="tv-all" href="/calculators/">Browse all calculators →</a></li></ul></li><li class="tv-item"><a class="tv-top" href="/documents/">PDF Tools<svg class="tv-caret" viewBox="0 0 10 10" aria-hidden="true"><path d="M1 3l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></a><ul class="tv-panel"><li><a href="/documents/merge-pdf">Merge PDF<span>Combine PDFs in your browser</span></a></li><li><a href="/documents/pdf-to-word">PDF to Word<span>Convert PDF to editable DOCX</span></a></li><li><a class="tv-all" href="/documents/">All pdf tools tools →</a></li></ul></li></ul><a class="tv-mobile-cta" href="/calculators/">Browse all calculators</a></nav><a class="tv-cta" href="/#search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Search tools</span></a></div></header><!-- /tv:header -->
+<!-- tv:crumbs --><nav id="tv-crumbs" aria-label="Breadcrumb"><div class="tv-container tv-crumbs-inner"><ol><li><a href="/">ToolVault</a></li><li><a href="/solar/">Solar</a></li><li aria-current="page">Solar Load Calculator</li></ol></div></nav><!-- /tv:crumbs -->
+
+<main id="main" class="page wrap">
 <section class="hero">
 <div>
 <div class="kicker">◉ Renewable Energy Planning</div>
@@ -254,7 +271,6 @@ input,select,.control{background:#fbfefd;border-color:#c9ddd7}
     <a href="/solar/how-to-calculate-solar-system-size">How to Calculate Solar System Size</a>
   </p>
 </section></details>
-<footer>© 2026 ToolVault · Practical tools for renewable energy planning</footer>
 
 <script>
 (function(){
@@ -264,7 +280,7 @@ const $=id=>document.getElementById(id),tbody=$("appliances");
 const W_PER={W:1,kW:1000},H_PER={h:1,min:1/60};
 function num(el,fallback=0){const n=parseFloat(el&&el.value);return Number.isFinite(n)?n:fallback}
 function makeInput(cls,type,value,min="0",max="",step="1"){const el=document.createElement("input");el.className="control "+cls;el.type=type;el.value=value;el.min=min;if(max!=="")el.max=max;el.step=step;return el}
-function group(input,units,current){const wrap=document.createElement("div");wrap.className="inlineMeasure";wrap.append(input);const sel=document.createElement("select");units.forEach(u=>{const o=document.createElement("option");o.value=u;o.textContent=u;o.selected=u===current;sel.append(o)});wrap.append(sel);sel.dataset.prev=sel.value;sel.addEventListener("change",()=>{const old=sel.dataset.prev||sel.value,next=sel.value,v=num(input);const factor=units===W_PER?W_PER:H_PER;input.value=(v*factor[old]/factor[next]).toFixed(4).replace(/.?0+$/,'');sel.dataset.prev=next;update()});return wrap}
+function group(input,units,current){const wrap=document.createElement("div");wrap.className="inlineMeasure";wrap.append(input);const sel=document.createElement("select");Object.keys(units).forEach(u=>{const o=document.createElement("option");o.value=u;o.textContent=u;o.selected=u===current;sel.append(o)});wrap.append(sel);sel.dataset.prev=sel.value;sel.addEventListener("change",()=>{const old=sel.dataset.prev||sel.value,next=sel.value,v=num(input);const factor=units===W_PER?W_PER:H_PER;input.value=String(Number((v*factor[old]/factor[next]).toFixed(6)));sel.dataset.prev=next;update()});return wrap}
 function addAppliance(name="Other",qty=1,watts=100,hours=1){
  const tr=document.createElement("tr"),tdName=document.createElement("td"),select=document.createElement("select");select.className="control name";
  APPLIANCES.forEach(item=>{const option=document.createElement("option");option.value=item[0];option.textContent=item[0];option.dataset.watts=item[1];if(item[0]===name)option.selected=true;select.appendChild(option)});tdName.appendChild(select);
@@ -303,5 +319,8 @@ $("calculate").addEventListener("click",()=>{update();$("results").classList.add
     Try the Solar Energy Generation Calculator →
   </a>
 </div>
+</main>
+
+<!-- tv:footer --><footer id="tv-footer"><div class="tv-container tv-foot-grid"><div class="tv-foot-brand"><a class="tv-logo" href="/"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><rect width="64" height="64" rx="14" fill="#073f39"/><path d="M18 17h28v7H35v23h-6V24H18z" fill="#fff"/><path d="M34 25l8 16 9-18h-8l-5 10-5-10z" fill="#42e6ad"/><path d="M12 49h40" stroke="#0b8f78" stroke-width="3" stroke-linecap="round"/></svg><span>Tool<b>Vault</b></span></a><p>Free calculators and PDF tools that show their working: the formula, the units and the assumptions behind every result.</p></div><div><h2>Construction</h2><ul><li><a href="/construction/concrete-calculator">Concrete Calculator</a></li><li><a href="/construction/gravel-calculator">Gravel Calculator</a></li><li><a href="/construction/mulch-calculator">Mulch Calculator</a></li><li><a href="/construction/paint-calculator">Paint Calculator</a></li><li><a href="/construction/stair-calculator">Stair Calculator</a></li><li><a href="/construction/roof-pitch-calculator">Roof Pitch Calculator</a></li><li><a href="/construction/board-foot-calculator">Board Foot Calculator</a></li></ul></div><div><h2>Solar &amp; electrical</h2><ul><li><a href="/solar/solar-load-calculator">Solar Load Calculator</a></li><li><a href="/solar/solar-energy-generation-calculator">Solar Energy Generation</a></li><li><a href="/solar/solar-panel-area-calculator">Solar Panel Area</a></li><li><a href="/engineering/voltage-drop-calculator">Voltage Drop Calculator</a></li></ul></div><div><h2>Home &amp; PDF</h2><ul><li><a href="/calculators/square-footage-calculator">Square Footage Calculator</a></li><li><a href="/calculators/ac-btu-calculator">AC BTU Calculator</a></li><li><a href="/documents/merge-pdf">Merge PDF</a></li><li><a href="/documents/pdf-to-word">PDF to Word</a></li></ul></div><div><h2>ToolVault</h2><ul><li><a href="/calculators/">All calculators</a></li><li><a href="/about">About</a></li><li><a href="/contact">Contact</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/terms">Terms</a></li></ul></div></div><div class="tv-container tv-foot-bottom"><span>© 2026 ToolVault. Free practical tools.</span><span>Results are planning estimates. Check critical work with a qualified professional.</span></div></footer><!-- /tv:footer -->
 </body>
 </html>

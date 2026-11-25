@@ -1,0 +1,19 @@
+// Cloudflare Workers deploy config for the static ToolVault site.
+// Workers Builds runs `npx wrangler deploy`; without this file Wrangler
+// starts an interactive setup and the build fails.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "toolvault",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": ".",
+    // /about serves about.html, /solar/ serves solar/index.html.
+    "html_handling": "auto-trailing-slash",
+    // Unknown URLs get 404.html with a real 404 status.
+    "not_found_handling": "404-page"
+  },
+  // Required by `npx wrangler preview`, which Workers Builds runs for
+  // non-production branches (pull requests). Empty: previews use the
+  // same assets and settings as production.
+  "previews": {}
+}

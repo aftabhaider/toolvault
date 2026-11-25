@@ -13,6 +13,7 @@ Koyeb documents one free Web Service instance per organization with 512 MB RAM, 
 5. Set these environment variables:
    - `ALLOWED_ORIGINS=https://toolvault.aftabjordan1.workers.dev`
    - `MAX_UPLOAD_MB=10` (keep the upload limit modest for the free instance)
+   - Optional: `CONVERSION_TIMEOUT_SECONDS` (default 90) and `MAX_CONCURRENT_CONVERSIONS` (default 1). The defaults suit the free instance.
 6. Select the **Free** instance and a supported region (Frankfurt or Washington, D.C., according to current Koyeb free-instance documentation).
 7. Deploy, then open the public service URL with `/health` appended. It should return JSON with `"ok": true`.
 8. Keep the base service URL (without `/health`) for the frontend connection step.
