@@ -39,8 +39,13 @@ Calculators normalise units before calculating, keep full precision internally a
 ## PDF & Documents
 
 - [Free PDF Tools Online | Merge PDF Files](https://toolvault.aftabjordan1.workers.dev/documents/): Use free PDF tools online with ToolVault. Merge PDF files or convert selectable PDF text into an editable Word DOCX document in your browser.
+- [Compress PDF – Reduce PDF File Size Online (Free, No Upload)](https://toolvault.aftabjordan1.workers.dev/documents/compress-pdf): Reduce PDF file size in your browser, for email and upload limits. Choose basic (keeps text) or strong compression, see the size before and after. No upload.
+- [JPG to PDF Converter – Combine Images into a PDF (Free)](https://toolvault.aftabjordan1.workers.dev/documents/jpg-to-pdf): Convert JPG, PNG and WebP images to a PDF in your browser. Put several photos in one PDF, choose A4, Letter or original size, and download. No upload, no sign-up.
 - [Merge PDF Files Online Free — Combine PDFs Privately](https://toolvault.aftabjordan1.workers.dev/documents/merge-pdf): Merge multiple PDF files into one document for free. Reorder or remove files before combining them. Files are processed in your browser and are not uploaded to ToolVault.
+- [PDF to JPG Converter – Save PDF Pages as Images (Free)](https://toolvault.aftabjordan1.workers.dev/documents/pdf-to-jpg): Convert PDF pages to JPG or PNG images in your browser. Choose the resolution (up to 300 DPI), convert all pages or selected ones, and download a ZIP. No upload.
 - [PDF to Word Converter Online Free — PDF to DOCX](https://toolvault.aftabjordan1.workers.dev/documents/pdf-to-word): Convert PDF to Word online for free. Preserve the original page appearance in a Word DOCX, including logos, headers, footers and fonts, or extract selectable text for editing. Two of the three modes run entirely in your browser.
+- [Rotate PDF – Turn Pages 90°, 180° or 270° (Free, No Upload)](https://toolvault.aftabjordan1.workers.dev/documents/rotate-pdf): Rotate PDF pages permanently in your browser: turn all pages or selected pages by 90°, 180° or 270°, then download. No upload, no sign-up.
+- [Split PDF – Extract Pages or Split into Separate Files (Free)](https://toolvault.aftabjordan1.workers.dev/documents/split-pdf): Split a PDF in your browser: extract selected pages into a new PDF, split every page into its own file, or split into equal parts. No upload, no sign-up.
 
 ## About
 
