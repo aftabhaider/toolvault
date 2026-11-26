@@ -179,3 +179,21 @@ Square Footage Calculator is now implemented at /calculators/square-footage-calc
 
 Next portfolio target:
 8. Deepen an existing construction or engineering cluster using Search Console data before creating another broad calculator.
+
+## Roadmap after the November 2026 expansion
+
+Live since 2026-11-25: 10 unit converters (/converters/), 5 browser PDF tools (JPG to PDF, PDF to JPG, Split, Rotate, Compress) and 4 browser image tools (/images/: HEIC to JPG, Compress, Resize, Convert).
+
+Tier 2 — everyday tools (high demand; some queries also get a Google answer box):
+1. Percentage calculator (percent of, percent change, X is what % of Y)
+2. Age calculator (exact years, months, days; next birthday)
+3. Date difference / days between dates, add or subtract days
+4. Time card / hours calculator (breaks, overtime, weekly total)
+5. GPA calculator and final grade calculator
+6. Gauge converter: wire gauge (AWG ↔ mm² ↔ diameter, SWG) and sheet metal gauge (gauge ↔ mm/in thickness for steel, galvanized, aluminum and stainless — each uses a different table). Links to the voltage drop calculator.
+
+Tier 3 — deepen existing clusters (lower volume each, easiest to rank):
+- Construction: cubic yard, tile, flooring, drywall, brick/block, fence, deck, topsoil/sand, asphalt
+- Electrical: wire size, amps ↔ watts, Ohm's law, kWh electricity cost
+
+Avoid for now: mortgage, loan, BMI/calorie, take-home pay/tax (dominated by banks and authorities; YMYL; rules change yearly).
